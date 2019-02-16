@@ -12,3 +12,9 @@
   height: 60px; 
   background-color: white; 
 }
+
+@media screen and (max-width: 720px) {
+  .content {
+   padding: 20px
+  }
+}
