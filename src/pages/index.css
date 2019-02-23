@@ -1,15 +1,11 @@
 
 .normal {
   font-family: Georgia, sans-serif;
-  margin-top: 4em;
   text-align: center;
+  background-color: white;
 }
 
-.welcome {
-  height: 328px;
-  background: url(../assets/yay.jpg) no-repeat center 0;
-  background-size: 388px 328px;
-}
+
 
 .list {
   font-size: 1.2em;
@@ -20,4 +16,15 @@
 
 .list code {
   background: #f7f7f7;
+}
+
+.playerWrapper {
+  position: relative;
+  padding-top: 56.25%; /* 720 / 1280 = 0.5625 */
+}
+
+.reactPlayer {
+  position: absolute;
+  top: 0;
+  left: 0;
 }
