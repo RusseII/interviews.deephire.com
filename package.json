@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "antd": "^3.13.2",
+    "eslint-plugin-react-hooks": "^1.2.0",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
     "react-player": "^1.9.3"
