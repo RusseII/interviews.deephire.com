@@ -1,5 +1,5 @@
 
-import styles from "./index.css"
+import styles from "./index.less"
 import { Layout, Row, Col } from 'antd';
 
 const { Footer, Content, Header } = Layout;
