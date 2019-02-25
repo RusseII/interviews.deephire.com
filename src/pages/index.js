@@ -11,7 +11,7 @@ const Index = () => (
     </div>
 
     <Row type="flex" justify="center">
-      <Col span={15}>
+      <Col span={15} xxl={11} xl={12}> 
         <div className={styles.playerWrapper}>
           <ReactPlayer
             className={styles.reactPlayer}
