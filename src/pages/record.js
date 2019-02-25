@@ -6,17 +6,14 @@ import { Button, Progress, Row, Col } from 'antd';
 import styles from './index.less';
 
 import { camerakit } from './assets/camerakit-web.min.js';
+import vimeo from "./vimeo.js"
 
 let myStream;
 export default () => {
   const { interview_config: interviewConfig, interview_questions: interviewQuestions } = data.data;
   const { answerTime, prepTime, retakesAllowed } = interviewConfig;
   const [videoUrl, setUrl] = useState();
-  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
 
-  function handleClick() {
-    forceUpdate();
-  }
 
 const setUrlHack = (objectURL) => {
     // I have no idea why I have to do this, if i just call setURL directly, the
@@ -38,6 +35,7 @@ setTimeout(function(){    setUrl(objectURL)
     // Stop using camera
     myStream.destroy();
     setUrlHack(objectURL)
+    // vimeo(recordedVideo)
 
 
   };
@@ -68,7 +66,6 @@ setTimeout(function(){    setUrl(objectURL)
       <Row type="flex" justify="center">
         <Col span={15}>
           <div className={styles.playerWrapper}>
-          {console.log(videoUrl, "videoUrl")}
             <ReactPlayer 
             className={styles.reactPlayer} controls playing url={videoUrl} width="100%" height="100%" />
           </div>
