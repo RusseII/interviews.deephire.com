@@ -52,6 +52,9 @@ setTimeout(function(){    setUrl(objectURL)
     
 
     myStream.setResolution({ aspect: 16 / 9 });
+    
+    this.player && this.player.setVolume(0);
+    
     myStream.recorder.start();
     const streamUrl = await myStream.getMediaStream();
     setUrl(streamUrl);
@@ -70,7 +73,7 @@ setTimeout(function(){    setUrl(objectURL)
           <div className={styles.playerWrapper}>
           {console.log(videoUrl, "videoUrl")}
             <ReactPlayer 
-            className={styles.reactPlayer} controls playing url={videoUrl} width="100%" height="100%" />
+            ref={ (ref) => { this.player = ref;} } className={styles.reactPlayer} controls playing url={videoUrl} width="100%" height="100%" />
           </div>
         </Col>
       </Row>
