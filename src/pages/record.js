@@ -26,16 +26,6 @@ export default () => {
     countDown: true,
     buttonText: 'Start Recording',
   });
-
-  const setUrlHack = objectURL => {
-    // I have no idea why I have to do this, if i just call setURL directly, the
-    // url is not changed and it still renders the mediastream obj
-    setUrl('');
-    setTimeout(function() {
-      setUrl(objectURL);
-    }, 1);
-  };
-
   const prepareScreen = () => {
     setInterview({
       key: 0,
@@ -102,7 +92,8 @@ export default () => {
     const recordedVideo = myStream.recorder.stop();
     const objectURL = URL.createObjectURL(recordedVideo);
     myStream.destroy();
-    setUrlHack(objectURL);
+    setUrl(objectURL);
+
     reviewScreen();
   };
 
@@ -135,6 +126,7 @@ export default () => {
           ) : (
             <div className={styles.playerWrapper}>
               <ReactPlayer
+                key={videoUrl}
                 className={styles.reactPlayer}
                 playing
                 muted
