@@ -6,7 +6,7 @@ import { Button, Row, Col } from 'antd';
 import styles from './record.less';
 
 import { camerakit } from './assets/camerakit-web.min.js';
-import vimeo from './vimeo.js';
+// import vimeo from './vimeo.js';
 import Timer from '@/components/Timer';
 import { router } from 'umi';
 
@@ -51,7 +51,7 @@ export default () => {
   const reviewScreen = () => {
     setInterview({
       key: 2,
-      time: 1,
+      time: prepTime,
       paused: true,
       countDown: true,
       buttonText: 'Next Question',
@@ -62,12 +62,17 @@ export default () => {
 
   const nextQuestion = () => {
     prepareScreen();
-    if (interviewQuestions.length === index + 1)
-    {
+    if (interviewQuestions.length === index + 1) {
       router.push(``);
+    } else {
+      setIndex(index + 1);
     }
-    else {
-    setIndex(index + 1);
+  };
+
+  const retake = () => {
+    if (retakes > 0) {
+      setRetakes(retakes - 1);
+      prepareScreen();
     }
   };
 
@@ -125,6 +130,15 @@ export default () => {
             </div>
           ) : (
             <div className={styles.playerWrapper}>
+            {(interview.key ===0) ? 
+              <img
+                height="100%"
+                width="100%"
+                className={styles.reactPlayer}
+                src="http://www.geekersmagazine.com/wp-content/uploads/2010/04/resoluci-n-visor...eo-copia-2a16122.png"
+                alt="Prepare to Record!"
+              /> :
+
               <ReactPlayer
                 key={videoUrl}
                 className={styles.reactPlayer}
@@ -132,8 +146,11 @@ export default () => {
                 muted
                 url={videoUrl}
                 width="100%"
-                height="100%"
+                                height="100%"
+
+                
               />
+          }
             </div>
           )}
         </Col>
@@ -150,7 +167,7 @@ export default () => {
         </Button>
       ) : (
         <>
-          {interview.review && <Button onClick={() => prepareScreen}>{`Retake (${retakes} left)`}</Button>}
+          {interview.review && <Button onClick={retake}>{`Retake (${retakes} left)`}</Button>}
           <Button className={styles.button} onClick={buttonAction}>
             {interview.buttonText}
           </Button>
