@@ -1,17 +1,22 @@
 import data from './temp.js';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import ReactPlayer from 'react-player';
 import { Button, Row, Col } from 'antd';
 import styles from './record.less';
+import qs from 'qs';
+
 
 import { camerakit } from './assets/camerakit-web.min.js';
+import {fetchInterview} from '@/services/api'
 // import vimeo from './vimeo.js';
 import Timer from '@/components/Timer';
 import { router } from 'umi';
 
 let myStream;
-export default () => {
+export default ({location}) => {
+
+  // const [data, setData] = useState(fetchInterview(id));
   const [before, setBefore] = useState(true);
   const { interview_config: interviewConfig, interview_questions: interviewQuestions } = data.data;
   const { answerTime, prepTime, retakesAllowed } = interviewConfig;
@@ -34,7 +39,7 @@ export default () => {
       countDown: true,
       buttonText: 'Start Recording',
     });
-    setButtonAction(() => start);
+    setButtonAction(() => () => start());
     setUrl('https://www.youtube.com/watch?v=zORQDzbb2Mg');
   };
 
@@ -46,9 +51,9 @@ export default () => {
       countDown: false,
       buttonText: 'Stop Recording',
     });
-    setButtonAction(() => stop);
+    setButtonAction((index) => (index) => stop(index));
   };
-  const reviewScreen = () => {
+  const reviewScreen = (index) => {
     setInterview({
       key: 2,
       time: prepTime,
@@ -57,15 +62,16 @@ export default () => {
       buttonText: 'Next Question',
       review: true,
     });
-    setButtonAction(() => nextQuestion);
+    setButtonAction((index) => (index) => nextQuestion(index));
   };
 
-  const nextQuestion = () => {
+  const nextQuestion = (index) => {
     prepareScreen();
     if (interviewQuestions.length === index + 1) {
-      router.push(``);
+      router.push('/victory');
     } else {
       setIndex(index + 1);
+
     }
   };
 
@@ -91,15 +97,15 @@ export default () => {
     setUrl(streamUrl);
   };
 
-  const [buttonAction, setButtonAction] = useState(() => start);
+  const [buttonAction, setButtonAction] = useState(() => () => start());
 
-  const stop = () => {
+  const stop = (index) => {
     const recordedVideo = myStream.recorder.stop();
     const objectURL = URL.createObjectURL(recordedVideo);
     myStream.destroy();
     setUrl(objectURL);
 
-    reviewScreen();
+    reviewScreen(index);
   };
 
   if (!interview) return null;
@@ -108,6 +114,7 @@ export default () => {
     <div className={styles.normal}>
       <div style={{ paddingTop: '24px' }}>
         <h1> {interviewQuestions[index].question}</h1>{' '}
+        Review your video
       </div>
       <Timer
         key={interview.key}
@@ -168,7 +175,7 @@ export default () => {
       ) : (
         <>
           {interview.review && <Button onClick={retake}>{`Retake (${retakes} left)`}</Button>}
-          <Button className={styles.button} onClick={buttonAction}>
+          <Button className={styles.button} onClick={() => buttonAction(index)}>
             {interview.buttonText}
           </Button>
         </>
