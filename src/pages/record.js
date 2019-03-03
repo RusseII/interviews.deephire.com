@@ -1,89 +1,33 @@
-import data from './temp.js';
+// import data from './temp.js';
 import React, { useState, useEffect } from 'react';
 
 import ReactPlayer from 'react-player';
-import { Button, Row, Col } from 'antd';
+import { Timeline, Button, Row, Col } from 'antd';
 import styles from './record.less';
 import qs from 'qs';
 
-
 import { camerakit } from './assets/camerakit-web.min.js';
-import {fetchInterview} from '@/services/api'
+import { fetchInterview } from '@/services/api';
 // import vimeo from './vimeo.js';
 import Timer from '@/components/Timer';
 import { router } from 'umi';
 
 let myStream;
-export default ({location}) => {
-
-  // const [data, setData] = useState(fetchInterview(id));
+export default ({ location }) => {
+  const id = qs.parse(location.search)['id'];
   const [before, setBefore] = useState(true);
-  const { interview_config: interviewConfig, interview_questions: interviewQuestions } = data.data;
-  const { answerTime, prepTime, retakesAllowed } = interviewConfig;
-  const [retakes, setRetakes] = useState(retakesAllowed);
+  const [videoUrl, setUrl] = useState();
   const [index, setIndex] = useState(0);
-  const [videoUrl, setUrl] = useState('https://www.youtube.com/watch?v=zORQDzbb2Mg');
+  const [data, setData] = useState(null);
+  const [retakes, setRetakes] = useState(null);
+  const [buttonAction, setButtonAction] = useState(null);
+  const [interview, setInterview] = useState(null);
+  const [startingData, setStartingData] = useState({interviewQuestions: [{question: "test"}]});
 
-  const [interview, setInterview] = useState({
-    key: 0,
-    paused: true,
-    time: prepTime,
-    countDown: true,
-    buttonText: 'Start Recording',
-  });
-  const prepareScreen = () => {
-    setInterview({
-      key: 0,
-      paused: false,
-      time: prepTime,
-      countDown: true,
-      buttonText: 'Start Recording',
-    });
-    setButtonAction(() => () => start());
-    setUrl('https://www.youtube.com/watch?v=zORQDzbb2Mg');
-  };
 
-  const recordScreen = () => {
-    setInterview({
-      key: 1,
-      time: answerTime,
-      paused: false,
-      countDown: false,
-      buttonText: 'Stop Recording',
-    });
-    setButtonAction((index) => (index) => stop(index));
-  };
-  const reviewScreen = (index) => {
-    setInterview({
-      key: 2,
-      time: prepTime,
-      paused: true,
-      countDown: true,
-      buttonText: 'Next Question',
-      review: true,
-    });
-    setButtonAction((index) => (index) => nextQuestion(index));
-  };
 
-  const nextQuestion = (index) => {
-    prepareScreen();
-    if (interviewQuestions.length === index + 1) {
-      router.push('/victory');
-    } else {
-      setIndex(index + 1);
-
-    }
-  };
-
-  const retake = () => {
-    if (retakes > 0) {
-      setRetakes(retakes - 1);
-      prepareScreen();
-    }
-  };
-
-  const start = async () => {
-    recordScreen();
+  const start = async (index, startingData) => {
+    recordScreen(startingData);
 
     const devices = await camerakit.getDevices();
     myStream = await camerakit.createCaptureStream({
@@ -95,69 +39,160 @@ export default ({location}) => {
     myStream.recorder.start();
     const streamUrl = await myStream.getMediaStream();
     setUrl(streamUrl);
+  }; 
+
+  // const { interview_config: interviewConfig, interview_questions: startingData.interviewQuestions } = data[0];
+
+
+  const prepareScreen = (startingData) => {
+    setInterview({
+      key: 0,
+      paused: false,
+      time: startingData.prepTime,
+      countDown: true,
+      buttonText: 'Start Recording',
+      helperText: 'Prepare your answer',
+    });
+    setButtonAction((index, startingData) => (index, startingData) => start(index, startingData));
+    setUrl(null);
   };
 
-  const [buttonAction, setButtonAction] = useState(() => () => start());
+  const recordScreen = (startingData) => {
+    setInterview({
+      key: 1,
+      time: startingData.answerTime,
+      paused: false,
+      countDown: false,
+      buttonText: 'Stop Recording',
+      helperText: 'Recording...',
+    });
+    setButtonAction((index, startingData) => (index, startingData) => stop(index, startingData));
+  };
+  const reviewScreen = (index, startingData) => {
+    setInterview({
+      key: 2,
+      time: startingData.prepTime,
+      paused: true,
+      countDown: true,
+      buttonText: 'Next Question',
+      review: true,
+      helperText: 'Review your video',
+      controls: true,
+    });
+    setButtonAction((index, startingData) => (index, startingData) => nextQuestion(index, startingData));
+  };
 
-  const stop = (index) => {
+  const nextQuestion = (index, startingData) => {
+    prepareScreen(startingData);
+    if (startingData.interviewQuestions.length === index + 1) {
+      router.push('/victory');
+    } else {
+      setIndex(index + 1);
+    }
+  };
+
+  const retake = () => {
+    if (retakes > 0) {
+      setRetakes(retakes - 1);
+      prepareScreen(startingData);
+    }
+  };
+
+
+
+  const stop = (index, startingData) => {
     const recordedVideo = myStream.recorder.stop();
     const objectURL = URL.createObjectURL(recordedVideo);
     myStream.destroy();
     setUrl(objectURL);
 
-    reviewScreen(index);
+    reviewScreen(index, startingData);
   };
 
+
+  // for any hooks noobs, passing in [] as 2nd paramater makes useEffect work the same for componenetDidMount
+  useEffect(() => {
+    fetchInterview(id).then(data => {
+      setData(data[0])
+      const { interview_config: {answerTime, prepTime, retakesAllowed} = {}, interview_questions: interviewQuestions=[] } = data[0] || {};
+      setStartingData({answerTime, prepTime, retakesAllowed, interviewQuestions })
+      setRetakes(retakesAllowed);
+      setInterview({
+        key: 0,
+        paused: true,
+        time: prepTime,
+        countDown: true,
+        buttonText: 'Start Recording',
+        // helperText: "Good luck!"
+      })
+    });
+    setButtonAction((index, startingData) => (index, startingData) => start(index, startingData));
+
+  }, []);
+  if (!data) return null;
+
   if (!interview) return null;
+
 
   return (
     <div className={styles.normal}>
       <div style={{ paddingTop: '24px' }}>
-        <h1> {interviewQuestions[index].question}</h1>{' '}
-        Review your video
+        <h1> {before ? 'Whats Next' : startingData.interviewQuestions[index].question}</h1>{' '}
+        {interview.helperText}
       </div>
-      <Timer
-        key={interview.key}
-        reset={true}
-        countDown={interview.countDown}
-        paused={interview.paused}
-        onFinish={() => console.log('finished')}
-        seconds={interview.time}
-      />
+      {!before && (
+        <Timer
+          key={interview.key}
+          reset={true}
+          countDown={interview.countDown}
+          paused={interview.paused}
+          onFinish={() => buttonAction(index)}
+          seconds={interview.time}
+        />
+      )}
       <br />
 
       <Row type="flex" justify="center">
         <Col span={15}>
           {before ? (
-            <div>
-              Welcome to your video Interview. You will be presented 5 different questions, with 40
-              seconds to prepare for each question, 90 seconds to answer each question, and 8
-              retakes throughout the entire interview. If you have any questins about the
-              experience, send me a message on the bottom right.
-            </div>
+            <>
+              <h3>{`You will have 3 questions in a practice interview, then ${
+                startingData.interviewQuestions.length
+              } questions in your real interview.`}</h3>
+              <br /> <br />
+              <h4>Each question will follow the below format:</h4>
+              <br />
+              <br />
+              <Timeline mode="alternate">
+                <Timeline.Item>{`${startingData.prepTime} Seconds to Prepare`}</Timeline.Item>
+                <Timeline.Item color="blue">{`${startingData.answerTime} Seconds to Record`}</Timeline.Item>
+                <Timeline.Item color="red">Review Video</Timeline.Item>
+                {/* <Timeline.Item color="blue">Repeat...</Timeline.Item>
+    <Timeline.Item color="green">Interview Completed!</Timeline.Item> */}
+              </Timeline>
+            </>
           ) : (
             <div className={styles.playerWrapper}>
-            {(interview.key ===0) ? 
-              <img
-                height="100%"
-                width="100%"
-                className={styles.reactPlayer}
-                src="http://www.geekersmagazine.com/wp-content/uploads/2010/04/resoluci-n-visor...eo-copia-2a16122.png"
-                alt="Prepare to Record!"
-              /> :
-
-              <ReactPlayer
-                key={videoUrl}
-                className={styles.reactPlayer}
-                playing
-                muted
-                url={videoUrl}
-                width="100%"
-                                height="100%"
-
-                
-              />
-          }
+              {interview.key === 0 ? (
+                <img
+                  height="100%"
+                  // width="100%"
+                  className={styles.img}
+                  src="https://icons-for-free.com/free-icons/png/512/1511312.png"
+                  alt="Prepare to Record!"
+                />
+              ) : (
+                <ReactPlayer
+                  key={videoUrl}
+                  className={styles.reactPlayer}
+                  playing
+                  muted
+                  controls={interview.controls}
+                  url={videoUrl}
+                  width="100%"
+                  height="100%"
+                />
+              )}
             </div>
           )}
         </Col>
@@ -167,7 +202,7 @@ export default ({location}) => {
           className={styles.button}
           onClick={() => {
             setBefore(false);
-            setInterview({ ...interview, paused: false });
+            setInterview({ ...interview, helperText: 'Prepare your answer', paused: false });
           }}
         >
           Start Pracice Interview
@@ -175,7 +210,7 @@ export default ({location}) => {
       ) : (
         <>
           {interview.review && <Button onClick={retake}>{`Retake (${retakes} left)`}</Button>}
-          <Button className={styles.button} onClick={() => buttonAction(index)}>
+          <Button className={styles.button} onClick={() => buttonAction(index, startingData)}>
             {interview.buttonText}
           </Button>
         </>
