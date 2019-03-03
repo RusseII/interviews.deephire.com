@@ -1,4 +1,4 @@
-// import data from './temp.js';
+import practiceQuestions from './temp.js';
 import React, { useState, useEffect } from 'react';
 
 import ReactPlayer from 'react-player';
@@ -15,6 +15,10 @@ import { router } from 'umi';
 let myStream;
 export default ({ location }) => {
   const id = qs.parse(location.search)['id'];
+  const name = qs.parse(location.search)['?name'];
+  const email = qs.parse(location.search)['email'];
+  const practice = qs.parse(location.search)['practice'];
+
   const [before, setBefore] = useState(true);
   const [videoUrl, setUrl] = useState();
   const [index, setIndex] = useState(0);
@@ -85,7 +89,9 @@ export default ({ location }) => {
   const nextQuestion = (index, startingData) => {
     prepareScreen(startingData);
     if (startingData.interviewQuestions.length === index + 1) {
-      router.push('/victory');
+      if (practice)  router.push(`/real?name=${name}&email=${email}&id=${id}`)
+
+      else {router.push('/victory');}
     } else {
       setIndex(index + 1);
     }
@@ -112,7 +118,11 @@ export default ({ location }) => {
 
   // for any hooks noobs, passing in [] as 2nd paramater makes useEffect work the same for componenetDidMount
   useEffect(() => {
+    if (!practice) setBefore(false);
+
     fetchInterview(id).then(data => {
+
+      if (practice) data = practiceQuestions
       setData(data[0])
       const { interview_config: {answerTime, prepTime, retakesAllowed} = {}, interview_questions: interviewQuestions=[] } = data[0] || {};
       setStartingData({answerTime, prepTime, retakesAllowed, interviewQuestions })
@@ -178,7 +188,8 @@ export default ({ location }) => {
                   height="100%"
                   // width="100%"
                   className={styles.img}
-                  src="https://icons-for-free.com/free-icons/png/512/1511312.png"
+                  // src="https://icons-for-free.com/free-icons/png/512/1511312.png"
+                  src="https://s3.amazonaws.com/deephire/logos/undrawThinking.png"
                   alt="Prepare to Record!"
                 />
               ) : (
