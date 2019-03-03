@@ -25,7 +25,7 @@ export default () => {
           </div>
         </Col>
       </Row>
-      <Button className={styles.button}>Leave Feedback</Button>
+      <Button onClick={window.openChat} className={styles.button}>Leave Feedback</Button>
     </div>
   );
 };
