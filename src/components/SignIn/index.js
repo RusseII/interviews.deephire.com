@@ -2,19 +2,21 @@ import { Form, Input, Button } from 'antd';
 import { router } from 'umi';
 
 import styles from "./index.less"
+import qs from "qs"
 
 const FormItem = Form.Item;
 
 const SignIn = Form.create()(props => {
-    const { form } = props;
-  
+    const { form, location } = props;
+    const id = qs.parse(location.search)['id'];
+
     const okHandle = e => {
       e.preventDefault();
   
       form.validateFields((err, fieldsValue) => {
         if (err) return;
         const { fullName, email } = fieldsValue
-        router.push(`record?fullName=${fullName}&email=${email}`);
+        router.push(`record?fullName=${fullName}&email=${email}&id=${id}&practice=true`);
 
         form.resetFields();
 
@@ -22,7 +24,7 @@ const SignIn = Form.create()(props => {
     };
   
     return (
-      <div  className={styles.container}>
+      <div className={styles.container}>
         <Form hideRequiredMark onSubmit={okHandle}>
           <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 5 }} label="Name">
             {form.getFieldDecorator('fullName', {
