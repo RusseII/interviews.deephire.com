@@ -11,7 +11,7 @@ export const fetchInterview = id => {
 };
 
 export const sendEmail = data => {
-  return fetch(`${apiUrl}emails`, {
+  return fetch(`${apiUrl}/emails`, {
     method: 'POST',
     body: JSON.stringify(data),
     headers: {
@@ -21,4 +21,34 @@ export const sendEmail = data => {
   })
     .then(response => response.json())
     .then(data => data);
+};
+
+
+export const storeInterviewQuestion = (
+  interviewId,
+  userId,
+  userName,
+  candidateEmail,
+  interviewName,
+  question,
+  response,
+) => {
+  fetch(`${apiUrl}videos`, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      interviewId,
+      userId,
+      userName,
+      candidateEmail,
+      interviewName,
+      responses: {
+        question,
+        response,
+      },
+    }),
+  });
 };
