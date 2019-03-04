@@ -1,14 +1,25 @@
-let Vimeo = require('vimeo').Vimeo;
-//set client here with secret key
+import {storeInterviewQuestion} from "@/services/api"
 
-const vimeo = (path) => {
+let Vimeo = require('vimeo').Vimeo;
+
+const vimeoUpload = (path,interviewId,
+  userId,
+  userName,
+  candidateEmail,
+  interviewName,
+  question) => {
     console.log(path)
     let file_name = path
     client.upload(
       file_name,
       {
-        'name': 'Untitled',
-        'description': 'testing'
+        'name': `${userName} ${candidateEmail} 's video interview `,
+        'description':
+         `userId: ${userId}
+         userName: ${userName}
+         candidateEmail: ${candidateEmail}
+         interviewName: ${interviewName}
+         question: ${question}`
       },
       function (uri) {
         console.log('Your video URI is: ' + uri);
@@ -18,7 +29,14 @@ const vimeo = (path) => {
               console.log('Server reported: ' + error)
               return
             }
-          
+            storeInterviewQuestion(
+              interviewId,
+              userId,
+              userName,
+              candidateEmail,
+              interviewName,
+              question,
+              body.link)
             console.log('Your video link is: ' + body.link)
           })
       },
@@ -33,4 +51,4 @@ const vimeo = (path) => {
 
 }
 
-export default vimeo
+export default vimeoUpload

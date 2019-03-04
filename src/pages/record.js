@@ -1,14 +1,15 @@
-import practiceQuestions from '../services/practiceInterviewQuestions';
+import practiceQuestions from '@/services/practiceInterviewQuestions';
 import React, { useState, useEffect } from 'react';
 
 import ReactPlayer from 'react-player';
 import { Timeline, Button, Row, Col } from 'antd';
 import styles from './record.less';
 import qs from 'qs';
+import LoadingScreen from 'react-loading-screen';
 
 import { camerakit } from './assets/camerakit-web.min.js';
 import { fetchInterview } from '@/services/api';
-// import vimeo from './vimeo.js';
+import vimeoUpload from './vimeo.js';
 import Timer from '@/components/Timer';
 import { router } from 'umi';
 
@@ -20,15 +21,16 @@ export default ({ location }) => {
   const practice = qs.parse(location.search)['practice'];
 
   const [before, setBefore] = useState(true);
-  const [videoUrl, setUrl] = useState();
+  const [videosUploading, setVideosUploading] = useState(false);
+
+  const [videoUrl, setVideoUrl] = useState(null);
+  const [videoBlob, setVideoBlob] = useState(null);
   const [index, setIndex] = useState(0);
   const [data, setData] = useState(null);
   const [retakes, setRetakes] = useState(null);
   const [buttonAction, setButtonAction] = useState(null);
   const [interview, setInterview] = useState(null);
-  const [startingData, setStartingData] = useState({interviewQuestions: [{question: "test"}]});
-
-
+  const [startingData, setStartingData] = useState({ interviewQuestions: [{ question: 'test' }] });
 
   const start = async (index, startingData) => {
     recordScreen(startingData);
@@ -42,13 +44,12 @@ export default ({ location }) => {
     myStream.setResolution({ aspect: 16 / 9 });
     myStream.recorder.start();
     const streamUrl = await myStream.getMediaStream();
-    setUrl(streamUrl);
-  }; 
+    setVideoUrl(streamUrl);
+  };
 
   // const { interview_config: interviewConfig, interview_questions: startingData.interviewQuestions } = data[0];
 
-
-  const prepareScreen = (startingData) => {
+  const prepareScreen = startingData => {
     setInterview({
       key: 0,
       paused: false,
@@ -58,10 +59,10 @@ export default ({ location }) => {
       helperText: 'Prepare your answer',
     });
     setButtonAction((index, startingData) => (index, startingData) => start(index, startingData));
-    setUrl(null);
+    setVideoUrl(null);
   };
 
-  const recordScreen = (startingData) => {
+  const recordScreen = startingData => {
     setInterview({
       key: 1,
       time: startingData.answerTime,
@@ -83,15 +84,21 @@ export default ({ location }) => {
       helperText: 'Review your video',
       controls: true,
     });
-    setButtonAction((index, startingData) => (index, startingData) => nextQuestion(index, startingData));
+    setButtonAction((index, startingData, videoBlob, interviewName, question) => (index, startingData, videoBlob, interviewName, question) =>
+      nextQuestion(index, startingData, videoBlob, interviewName, question)
+    );
   };
 
-  const nextQuestion = (index, startingData) => {
+  const nextQuestion = (index, startingData, videoBlob, interviewName, question) => {
+    vimeoUpload(videoBlob, id, email, fullName, email, interviewName, question)
+
+
     prepareScreen(startingData);
     if (startingData.interviewQuestions.length === index + 1) {
-      if (practice)  router.push(`/real?id=${id}&fullName=${fullName}&email=${email}`)
-
-      else {router.push('/victory');}
+      if (practice) router.push(`/real?id=${id}&fullName=${fullName}&email=${email}`);
+      else {
+        router.push('/victory');
+      }
     } else {
       setIndex(index + 1);
     }
@@ -104,28 +111,29 @@ export default ({ location }) => {
     }
   };
 
-
-
   const stop = (index, startingData) => {
     const recordedVideo = myStream.recorder.stop();
     const objectURL = URL.createObjectURL(recordedVideo);
+    setVideoBlob(recordedVideo)
     myStream.destroy();
-    setUrl(objectURL);
+    setVideoUrl(objectURL);
 
     reviewScreen(index, startingData);
   };
-
 
   // for any hooks noobs, passing in [] as 2nd paramater makes useEffect work the same for componenetDidMount
   useEffect(() => {
     if (!practice) setBefore(false);
 
     fetchInterview(id).then(data => {
-
-      if (practice) data = practiceQuestions
-      setData(data[0])
-      const { interview_config: {answerTime, prepTime, retakesAllowed} = {}, interview_questions: interviewQuestions=[] } = data[0] || {};
-      setStartingData({answerTime, prepTime, retakesAllowed, interviewQuestions })
+      if (practice) data = practiceQuestions;
+      setData(data[0]);
+      const {
+        interviewName,
+        interview_config: { answerTime, prepTime, retakesAllowed } = {},
+        interview_questions: interviewQuestions = [],
+      } = data[0] || {};
+      setStartingData({ interviewName, answerTime, prepTime, retakesAllowed, interviewQuestions });
       setRetakes(retakesAllowed);
       setInterview({
         key: 0,
@@ -134,18 +142,23 @@ export default ({ location }) => {
         countDown: true,
         buttonText: 'Start Recording',
         // helperText: "Good luck!"
-      })
+      });
     });
     setButtonAction((index, startingData) => (index, startingData) => start(index, startingData));
-
   }, []);
   if (!data) return null;
 
   if (!interview) return null;
 
-
   return (
     <div className={styles.normal}>
+      <LoadingScreen
+        loading={videosUploading}
+        bgColor="#f1f1f1"
+        spinnerColor="#9ee5f8"
+        textColor="#676767"
+        text="Uploading your videos"
+      />
       <div style={{ paddingTop: '24px' }}>
         <h1> {before ? 'Whats Next' : startingData.interviewQuestions[index].question}</h1>{' '}
         {interview.helperText}
@@ -175,7 +188,9 @@ export default ({ location }) => {
               <br />
               <Timeline mode="alternate">
                 <Timeline.Item>{`${startingData.prepTime} Seconds to Prepare`}</Timeline.Item>
-                <Timeline.Item color="blue">{`${startingData.answerTime} Seconds to Record`}</Timeline.Item>
+                <Timeline.Item color="blue">{`${
+                  startingData.answerTime
+                } Seconds to Record`}</Timeline.Item>
                 <Timeline.Item color="red">Review Video</Timeline.Item>
                 {/* <Timeline.Item color="blue">Repeat...</Timeline.Item>
     <Timeline.Item color="green">Interview Completed!</Timeline.Item> */}
@@ -221,7 +236,7 @@ export default ({ location }) => {
       ) : (
         <>
           {interview.review && <Button onClick={retake}>{`Retake (${retakes} left)`}</Button>}
-          <Button className={styles.button} onClick={() => buttonAction(index, startingData)}>
+          <Button className={styles.button} onClick={() => buttonAction(index, startingData, videoBlob, startingData.interviewName, startingData.interviewQuestions[index].question)}>
             {interview.buttonText}
           </Button>
         </>
