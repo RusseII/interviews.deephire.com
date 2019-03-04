@@ -1,4 +1,4 @@
-import practiceQuestions from './temp.js';
+import practiceQuestions from '../services/practiceInterviewQuestions';
 import React, { useState, useEffect } from 'react';
 
 import ReactPlayer from 'react-player';
@@ -14,8 +14,8 @@ import { router } from 'umi';
 
 let myStream;
 export default ({ location }) => {
-  const id = qs.parse(location.search)['id'];
-  const name = qs.parse(location.search)['?name'];
+  const id = qs.parse(location.search)['?id'];
+  const fullName = qs.parse(location.search)['?fullName'];
   const email = qs.parse(location.search)['email'];
   const practice = qs.parse(location.search)['practice'];
 
@@ -89,7 +89,7 @@ export default ({ location }) => {
   const nextQuestion = (index, startingData) => {
     prepareScreen(startingData);
     if (startingData.interviewQuestions.length === index + 1) {
-      if (practice)  router.push(`/real?name=${name}&email=${email}&id=${id}`)
+      if (practice)  router.push(`/real?id=${id}&fullName=${fullName}&email=${email}`)
 
       else {router.push('/victory');}
     } else {
@@ -156,7 +156,7 @@ export default ({ location }) => {
           reset={true}
           countDown={interview.countDown}
           paused={interview.paused}
-          onFinish={() => buttonAction(index)}
+          onFinish={() => buttonAction(index, startingData)}
           seconds={interview.time}
         />
       )}

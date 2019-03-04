@@ -7,12 +7,12 @@ import { router } from 'umi';
 
 
 export default ({location}) => {
-  const id = qs.parse(location.search)['id'];
-  const name = qs.parse(location.search)['?name'];
+  const id = qs.parse(location.search)['?id'];
+  const fullName = qs.parse(location.search)['?fullName'];
   const email = qs.parse(location.search)['email'];
 
   const startInterview = () => {
-    router.push(`/record?name=${name}&email=${email}&id=${id}`)
+    router.push(`/record?id=${id}&fullName=${fullName}&email=${email}`)
 
     
   }
