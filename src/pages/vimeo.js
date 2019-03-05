@@ -2,12 +2,14 @@ import {storeInterviewQuestion} from "@/services/api"
 
 let Vimeo = require('vimeo').Vimeo;
 
+let client = new Vimeo("")
 const vimeoUpload = (path,interviewId,
   userId,
   userName,
   candidateEmail,
   interviewName,
   question) => {
+    return new Promise((resolve, reject) => {
     console.log(path)
     let file_name = path
     client.upload(
@@ -27,7 +29,7 @@ const vimeoUpload = (path,interviewId,
             if (error) {
               console.log('There was an error making the request.')
               console.log('Server reported: ' + error)
-              return
+              reject("error")
             }
             storeInterviewQuestion(
               interviewId,
@@ -38,6 +40,7 @@ const vimeoUpload = (path,interviewId,
               question,
               body.link)
             console.log('Your video link is: ' + body.link)
+            resolve(body.link)
           })
       },
       function (bytes_uploaded, bytes_total) {
@@ -49,6 +52,6 @@ const vimeoUpload = (path,interviewId,
       }
     )
 
-}
+    })}
 
 export default vimeoUpload
