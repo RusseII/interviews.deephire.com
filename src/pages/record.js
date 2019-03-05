@@ -185,7 +185,6 @@ export default ({ location }) => {
 
   return (
     <div className={styles.normal}>
-     <div>
       
         <Modal
           title="Please download our mobile app to Interview on IOS"
@@ -223,7 +222,6 @@ export default ({ location }) => {
             <Step title="Take the interview!" description="Good luck!" />
           </Steps>
         </Modal>
-      </div>
       <LoadingScreen
         loading={uploading}
         bgColor="#f1f1f1"
