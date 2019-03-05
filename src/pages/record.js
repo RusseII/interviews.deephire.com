@@ -16,7 +16,7 @@ import { router } from 'umi';
 let myStream;
 export default ({ location }) => {
   const id = qs.parse(location.search)['?id'];
-  const fullName = qs.parse(location.search)['?fullName'];
+  const fullName = qs.parse(location.search)['fullName'];
   const email = qs.parse(location.search)['email'];
   const practice = qs.parse(location.search)['practice'];
 
