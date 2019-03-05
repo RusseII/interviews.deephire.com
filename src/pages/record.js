@@ -21,7 +21,8 @@ export default ({ location }) => {
   const practice = qs.parse(location.search)['practice'];
 
   const [before, setBefore] = useState(true);
-  const [videosUploading, setVideosUploading] = useState(false);
+  const [videosUploading, setVideosUploading] = useState([]);
+  const [uploading, setUploading] = useState(false);
 
   const [videoUrl, setVideoUrl] = useState(null);
   const [videoBlob, setVideoBlob] = useState(null);
@@ -84,20 +85,44 @@ export default ({ location }) => {
       helperText: 'Review your video',
       controls: true,
     });
-    setButtonAction((index, startingData, videoBlob, interviewName, question) => (index, startingData, videoBlob, interviewName, question) =>
-      nextQuestion(index, startingData, videoBlob, interviewName, question)
+    setButtonAction(
+      (index, startingData, videoBlob, interviewName, question) => (
+        index,
+        startingData,
+        videoBlob,
+        interviewName,
+        question
+      ) => nextQuestion(index, startingData, videoBlob, interviewName, question)
     );
   };
 
   const nextQuestion = (index, startingData, videoBlob, interviewName, question) => {
-    vimeoUpload(videoBlob, id, email, fullName, email, interviewName, question)
+    if (!practice) {
+      var uploadStatus = vimeoUpload(
+        videoBlob,
+        id,
+        email,
+        fullName,
+        email,
+        interviewName,
+        question
+      );
 
-
+      //IMPORTANT i don't think this works completly
+      var status = [...videosUploading, uploadStatus];
+    }
+    setVideosUploading(status);
     prepareScreen(startingData);
     if (startingData.interviewQuestions.length === index + 1) {
       if (practice) router.push(`/real?id=${id}&fullName=${fullName}&email=${email}`);
       else {
-        router.push('/victory');
+        setUploading(true);
+        Promise.all(status).then(r => {
+          console.log(videosUploading);
+          console.log(r);
+          setUploading(false);
+          router.push('/victory');
+        });
       }
     } else {
       setIndex(index + 1);
@@ -114,7 +139,7 @@ export default ({ location }) => {
   const stop = (index, startingData) => {
     const recordedVideo = myStream.recorder.stop();
     const objectURL = URL.createObjectURL(recordedVideo);
-    setVideoBlob(recordedVideo)
+    setVideoBlob(recordedVideo);
     myStream.destroy();
     setVideoUrl(objectURL);
 
@@ -153,7 +178,7 @@ export default ({ location }) => {
   return (
     <div className={styles.normal}>
       <LoadingScreen
-        loading={videosUploading}
+        loading={uploading}
         bgColor="#f1f1f1"
         spinnerColor="#9ee5f8"
         textColor="#676767"
@@ -179,9 +204,7 @@ export default ({ location }) => {
         <Col span={15}>
           {before ? (
             <>
-              <h3>{`You will have 3 questions in a practice interview, then ${
-                startingData.interviewQuestions.length
-              } questions in your real interview.`}</h3>
+              <h3>{`You will have 3 questions in a practice interview, then you will be given a break, then your real interview will start`}</h3>
               <br /> <br />
               <h4>Each question will follow the below format:</h4>
               <br />
@@ -236,7 +259,18 @@ export default ({ location }) => {
       ) : (
         <>
           {interview.review && <Button onClick={retake}>{`Retake (${retakes} left)`}</Button>}
-          <Button className={styles.button} onClick={() => buttonAction(index, startingData, videoBlob, startingData.interviewName, startingData.interviewQuestions[index].question)}>
+          <Button
+            className={styles.button}
+            onClick={() =>
+              buttonAction(
+                index,
+                startingData,
+                videoBlob,
+                startingData.interviewName,
+                startingData.interviewQuestions[index].question
+              )
+            }
+          >
             {interview.buttonText}
           </Button>
         </>
