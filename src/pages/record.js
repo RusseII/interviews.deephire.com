@@ -2,7 +2,7 @@ import practiceQuestions from '@/services/practiceInterviewQuestions';
 import React, { useState, useEffect } from 'react';
 
 import ReactPlayer from 'react-player';
-import { Modal, Timeline, Button, Row, Col } from 'antd';
+import { Steps, Modal, Timeline, Button, Row, Col } from 'antd';
 import styles from './record.less';
 import qs from 'qs';
 import LoadingScreen from 'react-loading-screen';
@@ -12,6 +12,7 @@ import { fetchInterview } from '@/services/api';
 import vimeoUpload from './vimeo.js';
 import Timer from '@/components/Timer';
 import { router } from 'umi';
+const Step = Steps.Step;
 
 let myStream;
 export default ({ location }) => {
@@ -19,6 +20,8 @@ export default ({ location }) => {
   const fullName = qs.parse(location.search)['fullName'];
   const email = qs.parse(location.search)['email'];
   const practice = qs.parse(location.search)['practice'];
+  const pin = qs.parse(location.search)['pin'];
+
 
   const [before, setBefore] = useState(true);
   const [iOS, setIOS] = useState(!!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform));
@@ -148,6 +151,8 @@ export default ({ location }) => {
 
     reviewScreen(index, startingData);
   };
+  const downloadiOS = () => window.open("https://itunes.apple.com/us/app/deephire/id1380277628?mt=8", "_blank");
+
 
   // for any hooks noobs, passing in [] as 2nd paramater makes useEffect work the same for componenetDidMount
   useEffect(() => {
@@ -183,15 +188,40 @@ export default ({ location }) => {
      <div>
       
         <Modal
-          title="IOS and Safari Support Coming Soon"
+          title="Please download our mobile app to Interview on IOS"
           visible={iOS}
           onOk={() => setIOS(false)}
           onCancel={() => setIOS(false)}
         >
-        {`IOS and Safari support is coming very very soon - 
-        in the meantime please use an android phone, or google chrome on web
-        Your interview link is: interviews.deephire.com/?${id}`
-        }
+
+          <Steps
+            direction="vertical"
+            size="small"
+            current={0}
+          >
+            <Step
+              title="Download App"
+              description={
+                <div>
+                  <Button
+                    onClick={downloadiOS}
+                    type="secondary"
+                  >
+                    iOS
+    </Button>{" "}
+
+                </div>
+              }
+            />
+            <Step
+              title="Enter Code"
+              description={<div className="content" dangerouslySetInnerHTML={{ __html: "Your interview code is <h3 ><b>" + pin + "</b></h3>" }}></div>}
+            // description={"Your"+ <b>hi</b> +"interview code is " + this.state.pin}
+            // description=
+
+            />
+            <Step title="Take the interview!" description="Good luck!" />
+          </Steps>
         </Modal>
       </div>
       <LoadingScreen

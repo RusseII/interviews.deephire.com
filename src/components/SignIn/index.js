@@ -9,6 +9,8 @@ const FormItem = Form.Item;
 const SignIn = Form.create()(props => {
     const { form, location } = props;
     const id = qs.parse(location.search)['?id'];
+  const pin = qs.parse(location.search)['pin'];
+
 
     const okHandle = e => {
       e.preventDefault();
@@ -16,7 +18,7 @@ const SignIn = Form.create()(props => {
       form.validateFields((err, fieldsValue) => {
         if (err) return;
         const { fullName, email } = fieldsValue
-        router.push(`record?id=${id}&fullName=${fullName}&email=${email}&practice=true`);
+        router.push(`record?id=${id}&fullName=${fullName}&email=${email}&practice=true&pin=${pin}`);
 
         form.resetFields();
 
