@@ -2,7 +2,7 @@ import {storeInterviewQuestion} from "@/services/api"
 
 let Vimeo = require('vimeo').Vimeo;
 
-let client = new Vimeo("")
+let client = new Vimeo("0d543a3d71538837dee05c464eeb06f2d9094588", "OuZu7ZDXuNQJLKlS7+LOMx7rvW5B7cWrkwooCDyn7pSkIBDrS2SUxkQdbm2vfTWzW4T2Jb6XUVZ/lfYt19SXbDM2hxcH/odD8maw+TGyk9U6pAXSQBRGVld5i2+v2gpw", "061648e6439a87d8f9468d31a7f1164c");
 const vimeoUpload = (path,interviewId,
   userId,
   userName,
