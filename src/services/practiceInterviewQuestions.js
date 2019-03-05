@@ -18,9 +18,9 @@ export default
       {
         "question": "(Practice) What is your ideal work environment?"
       }, 
-      {
-        "question": "(Practice) What are your strengths?"
-      }, 
+      // {
+      //   "question": "(Practice) What are your strengths?"
+      // }, 
     
     ], 
     "long_url": "https://interview.deephire.com/pickInterview/http%3A%2F%2Fdeeplink.me%2Finterview.deephire.com%2Fhome%3Fid%3D5c607c60b62fdb0008f5afd0%26flow%3Dinterview%26pin%3D85619", 
@@ -38,7 +38,7 @@ export default
 // import { Button, Progress, Row, Col } from 'antd';
 // import styles from './index.less';
 
-// import { camerakit } from './assets/camerakit-web.min.js';
+// import { camerakit } from './assets/browser.min.js';
 
 // let myStream;
 // export default () => {
