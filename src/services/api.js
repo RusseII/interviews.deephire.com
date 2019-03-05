@@ -52,3 +52,27 @@ export const storeInterviewQuestion = (
     }),
   });
 };
+
+
+
+
+
+
+export const notifyRecruiter = (url, readable_name, candidate_email) => {
+var data = {
+  url: url,
+  readable_name: readable_name,
+  email: ["r@deephire.com", "s@deephire.com"],
+  candidate_email,
+};
+// console.log(data)
+
+fetch("https://api.dephire.com" + '/v1.0/notify_recruiter', {
+  method: 'POST',
+  headers: {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify(data),
+})
+}
