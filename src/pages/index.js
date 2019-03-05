@@ -4,14 +4,14 @@ import ReactPlayer from 'react-player';
 import { Row, Col } from 'antd';
 import SignIn from '@/components/SignIn';
 
-const Index = () => (
+const Index = ({location}) => (
   <div className={styles.normal}>
     <div style={{ paddingTop: '24px' }}>
       <h1>Welcome to your Video Interview!</h1>{' '}
     </div>
 
     <Row type="flex" justify="center">
-      <Col span={15}>
+      <Col span={15} xxl={11} xl={12}> 
         <div className={styles.playerWrapper}>
           <ReactPlayer
             className={styles.reactPlayer}
@@ -22,7 +22,7 @@ const Index = () => (
         </div>
       </Col>
     </Row>
-    <SignIn />
+    <SignIn location={location}/>
   </div>
 );
 

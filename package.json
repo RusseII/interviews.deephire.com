@@ -10,9 +10,13 @@
   "dependencies": {
     "antd": "^3.13.2",
     "eslint-plugin-react-hooks": "^1.2.0",
+    "isomorphic-fetch": "^2.2.1",
+    "qs": "^6.6.0",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
-    "react-player": "^1.9.3"
+    "react-loading-screen": "^0.0.17",
+    "react-player": "^1.9.3",
+    "vimeo": "^2.1.1"
   },
   "devDependencies": {
     "babel-eslint": "^9.0.0",

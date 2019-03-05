@@ -3,6 +3,10 @@
 <html>
 
 <head>
+
+    <script type="text/javascript">
+      window.$crisp = []; window.CRISP_WEBSITE_ID = "75eeec48-f14c-4ebf-aa7b-c70b538b63f4"; (function () { d = document; s = d.createElement("script"); s.src = "https://client.crisp.chat/l.js"; s.async = 1; d.getElementsByTagName("head")[0].appendChild(s); })();
+    </script>
   <link rel="icon" href="/favicon.png" type="image/x-icon" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" />
   <meta charset="utf-8" />
@@ -14,4 +18,9 @@
 <body>
   <div id="root"></div>
 </body>
+<script type="text/javascript">
+  function openChat() {
+    $crisp.push(["do", "chat:open"])
+  }
+</script>
 </html>

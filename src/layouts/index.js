@@ -5,7 +5,7 @@ import { Layout, Row, Col } from 'antd';
 const { Footer, Content, Header } = Layout;
 function BasicLayout(props) {
   return (
-    <Layout style={{ minHeight: '100vh' }}>
+    <Layout >
       <Header className={styles.header}>
         <Row type="flex"  justify="space-between">
           <Col>DeepHire</Col>
@@ -20,11 +20,7 @@ function BasicLayout(props) {
       </Header>
 
       <Content className={styles.content}>
-        {/* edit the padding to be smaller on mobile */}
-        {/* <Breadcrumb key="a" style={{ margin: '16px 0' }}> */}
-        {/* <Breadcrumb.Item>{props.title}</Breadcrumb.Item> */}
-        {/* </Breadcrumb> */}
-
+  
       {props.children}
       </Content>
       <Footer
