@@ -16,8 +16,8 @@ const Timer = ({countDown, seconds, onFinish, paused}) => {
   return (
     <div style={{paddingTop: "24px"}}>
         { countDown ? 
-      <Progress width="75px" type="circle" format={percent => time} percent={(time/seconds) * 100} /> :
-      <Progress width="75px" type="circle" format={percent => seconds - time + " sec" } percent={(1 - time/seconds) * 100} />
+      <Progress status="normal"  width="75px" type="circle" format={percent => time} percent={(time/seconds) * 100} /> :
+      <Progress status="normal"  width="75px" type="circle" format={percent => seconds - time + " sec" } percent={(1 - time/seconds) * 100} />
   }
     </div>
   );
