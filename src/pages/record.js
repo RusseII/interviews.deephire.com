@@ -8,7 +8,7 @@ import qs from 'qs';
 import LoadingScreen from 'react-loading-screen';
 
 import { camerakit } from './assets/camerakit-web.min.js';
-import { fetchInterview } from '@/services/api';
+import { fetchInterview, notifyRecruiter } from '@/services/api';
 import vimeoUpload from './vimeo.js';
 import Timer from '@/components/Timer';
 import { router } from 'umi';
@@ -127,6 +127,7 @@ export default ({ location }) => {
           console.log(videosUploading);
           console.log(r);
           setUploading(false);
+          notifyRecruiter(`recruiter.deephire.com/candidates/view-candidate/?id=${id}`,fullName, email)
           router.push('/victory');
         });
       }
