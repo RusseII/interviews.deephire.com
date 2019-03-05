@@ -2,7 +2,7 @@ import practiceQuestions from '@/services/practiceInterviewQuestions';
 import React, { useState, useEffect } from 'react';
 
 import ReactPlayer from 'react-player';
-import { Timeline, Button, Row, Col } from 'antd';
+import { Modal, Timeline, Button, Row, Col } from 'antd';
 import styles from './record.less';
 import qs from 'qs';
 import LoadingScreen from 'react-loading-screen';
@@ -21,6 +21,9 @@ export default ({ location }) => {
   const practice = qs.parse(location.search)['practice'];
 
   const [before, setBefore] = useState(true);
+  const [iOS, setIOS] = useState(!!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform));
+
+// console.log(!!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform))
   const [videosUploading, setVideosUploading] = useState([]);
   const [uploading, setUploading] = useState(false);
 
@@ -177,6 +180,20 @@ export default ({ location }) => {
 
   return (
     <div className={styles.normal}>
+     <div>
+      
+        <Modal
+          title="IOS and Safari Support Coming Soon"
+          visible={iOS}
+          onOk={() => setIOS(false)}
+          onCancel={() => setIOS(false)}
+        >
+        {`IOS and Safari support is coming very very soon - 
+        in the meantime please use an android phone, or google chrome on web
+        Your interview link is: interviews.deephire.com/?${id}`
+        }
+        </Modal>
+      </div>
       <LoadingScreen
         loading={uploading}
         bgColor="#f1f1f1"
@@ -273,6 +290,7 @@ export default ({ location }) => {
           >
             {interview.buttonText}
           </Button>
+          
         </>
       )}
 
