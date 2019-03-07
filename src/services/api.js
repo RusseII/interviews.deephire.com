@@ -69,7 +69,7 @@ var data = {
 };
 // console.log(data)
 
-fetch("https://dev-a.dephire.com/emails", {
+fetch("https://dev-a.dephire.com/v1/emails", {
   method: 'POST',
   headers: {
     Accept: 'application/json',
