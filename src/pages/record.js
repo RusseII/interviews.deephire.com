@@ -188,10 +188,15 @@ export default ({ location }) => {
     <div className={styles.normal}>
       
         <Modal
+          closable={false}
           title="Please download our mobile app to Interview on IOS"
           visible={iOS}
-          onOk={() => setIOS(false)}
-          onCancel={() => setIOS(false)}
+        footer={[
+          <Button key="Submit" type="primary" onClick={window.openChat}>
+            Contact Support
+            </Button>,
+        ]}
+          // onCancel={() => setIOS(false)}
         >
 
           <Steps
