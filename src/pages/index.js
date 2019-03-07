@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React, { Component, useState, useEffect } from 'react';
 import styles from './index.less';
 import ReactPlayer from 'react-player';
 import { Button, Steps, Modal,Row, Col } from 'antd';
@@ -12,8 +12,9 @@ const Index = ({location}) => {
   const pin = qs.parse(location.search)['pin'];
 
   const downloadiOS = () => window.open("https://itunes.apple.com/us/app/deephire/id1380277628?mt=8", "_blank");
+  const openCrisp = () => window.openChat()
+  const [iOS, setIOS] = useState(true);
 
-  const [iOS, setIOS] = useState(!!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform));
     // const [iOS, setIOS] = useState(true);
 
 return (
@@ -23,7 +24,7 @@ return (
       title="Please download our mobile app to Interview on IOS"
       visible={iOS}
       footer={[
-        <Button key="Submit" type="primary" onClick={window.openChat}>
+        <Button key="Submit" type="primary" onClick={openCrisp}>
           Contact Support
             </Button>,
       ]}
