@@ -58,16 +58,18 @@ export const storeInterviewQuestion = (
 
 
 
-export const notifyRecruiter = (url, readable_name, candidate_email) => {
+export const notifyRecruiter = (id, candidateName, candidateEmail, interviewName) => {
 var data = {
-  url: url,
-  readable_name: readable_name,
-  email: ["r@deephire.com", "s@deephire.com"],
-  candidate_email,
+  type: "interviewCompleted",
+  id,
+  candidateName,
+  email: [],
+  candidateEmail,
+  interviewName
 };
 // console.log(data)
 
-fetch("https://api.dephire.com" + '/v1.0/notify_recruiter', {
+fetch("https://dev-a.dephire.com/emails", {
   method: 'POST',
   headers: {
     Accept: 'application/json',

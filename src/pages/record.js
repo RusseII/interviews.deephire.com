@@ -122,9 +122,10 @@ export default ({ location }) => {
           console.log(r);
           setUploading(false);
           notifyRecruiter(
-            `recruiter.deephire.com/candidates/view-candidate/?id=${id}`,
+            id,
             fullName,
-            email
+            email,
+            interviewName,
           );
           router.push('/victory');
         });
