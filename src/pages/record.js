@@ -2,17 +2,16 @@ import practiceQuestions from '@/services/practiceInterviewQuestions';
 import React, { useState, useEffect } from 'react';
 
 import ReactPlayer from 'react-player';
-import { Steps, Modal, Timeline, Button, Row, Col } from 'antd';
+import {Timeline, Button, Row, Col } from 'antd';
 import styles from './record.less';
 import qs from 'qs';
 import LoadingScreen from 'react-loading-screen';
 
 import { camerakit } from './assets/camerakit-web.min.js';
-import { fetchInterview, notifyRecruiter } from '@/services/api';
+import { fetchInterview, notifyRecruiter, notifyCandidate } from '@/services/api';
 import vimeoUpload from './vimeo.js';
 import Timer from '@/components/Timer';
 import { router } from 'umi';
-const Step = Steps.Step;
 
 let myStream;
 export default ({ location }) => {
@@ -127,6 +126,7 @@ export default ({ location }) => {
             email,
             interviewName,
           );
+          notifyCandidate(fullName, email)
           router.push('/victory');
         });
       }
