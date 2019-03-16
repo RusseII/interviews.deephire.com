@@ -1,12 +1,19 @@
 import fetch from 'isomorphic-fetch';
 
-
 const apiUrl = 'https://dev-a.deephire.com/v1/';
 // const apiUrl = 'http://localhost:3000/v1/';
 
 export const fetchInterview = id => {
   return fetch(`${apiUrl}interviews/${id}`)
     .then(response => response.json())
+    .then(data => data);
+};
+
+export const fetchCompanyInfo = id => {
+  return fetch(`${apiUrl}companies/${id}`)
+    .then(response => {
+      if (response.ok) return response.json();
+    })
     .then(data => data);
 };
 
@@ -23,7 +30,6 @@ export const sendEmail = data => {
     .then(data => data);
 };
 
-
 export const storeInterviewQuestion = (
   interviewId,
   userId,
@@ -31,7 +37,7 @@ export const storeInterviewQuestion = (
   candidateEmail,
   interviewName,
   question,
-  response,
+  response
 ) => {
   fetch(`${apiUrl}videos`, {
     method: 'POST',
@@ -53,28 +59,23 @@ export const storeInterviewQuestion = (
   });
 };
 
-
-
-
-
-
 export const notifyRecruiter = (id, candidateName, candidateEmail, interviewName) => {
-var data = {
-  type: "interviewCompleted",
-  id,
-  candidateName,
-  email: [],
-  candidateEmail,
-  interviewName
-};
-// console.log(data)
+  var data = {
+    type: 'interviewCompleted',
+    id,
+    candidateName,
+    email: [],
+    candidateEmail,
+    interviewName,
+  };
+  // console.log(data)
 
-fetch("https://dev-a.deephire.com/v1/emails", {
-  method: 'POST',
-  headers: {
-    Accept: 'application/json',
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify(data),
-})
-}
+  fetch('https://dev-a.deephire.com/v1/emails', {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+};
