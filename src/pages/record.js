@@ -2,7 +2,7 @@ import practiceQuestions from '@/services/practiceInterviewQuestions';
 import React, { useState, useEffect } from 'react';
 
 import ReactPlayer from 'react-player';
-import {Timeline, Button, Row, Col } from 'antd';
+import { Timeline, Button, Row, Col } from 'antd';
 import styles from './record.less';
 import qs from 'qs';
 import LoadingScreen from 'react-loading-screen';
@@ -85,17 +85,18 @@ export default ({ location }) => {
       controls: true,
     });
     setButtonAction(
-      (index, startingData, videoBlob, interviewName, question) => (
+      (index, startingData, videoBlob, interviewName, question, createdBy) => (
         index,
         startingData,
         videoBlob,
         interviewName,
-        question
-      ) => nextQuestion(index, startingData, videoBlob, interviewName, question)
+        question,
+        createdBy
+      ) => nextQuestion(index, startingData, videoBlob, interviewName, question, createdBy)
     );
   };
 
-  const nextQuestion = (index, startingData, videoBlob, interviewName, question) => {
+  const nextQuestion = (index, startingData, videoBlob, interviewName, question, createdBy) => {
     if (!practice) {
       var uploadStatus = vimeoUpload(
         videoBlob,
@@ -104,7 +105,8 @@ export default ({ location }) => {
         fullName,
         email,
         interviewName,
-        question
+        question,
+        createdBy
       );
 
       //IMPORTANT i don't think this works completly
@@ -120,13 +122,8 @@ export default ({ location }) => {
           console.log(videosUploading);
           console.log(r);
           setUploading(false);
-          notifyRecruiter(
-            id,
-            fullName,
-            email,
-            interviewName,
-          );
-          notifyCandidate(fullName, email)
+          notifyRecruiter(id, fullName, email, interviewName, createdBy);
+          notifyCandidate(fullName, email);
           router.push('/victory');
         });
       }
@@ -160,11 +157,19 @@ export default ({ location }) => {
       if (practice) data = practiceQuestions;
       setData(data[0]);
       const {
+        email: createdBy,
         interviewName,
         interview_config: { answerTime, prepTime, retakesAllowed } = {},
         interview_questions: interviewQuestions = [],
       } = data[0] || {};
-      setStartingData({ interviewName, answerTime, prepTime, retakesAllowed, interviewQuestions });
+      setStartingData({
+        createdBy,
+        interviewName,
+        answerTime,
+        prepTime,
+        retakesAllowed,
+        interviewQuestions,
+      });
       setRetakes(retakesAllowed);
       setInterview({
         key: 0,

@@ -59,14 +59,33 @@ export const storeInterviewQuestion = (
   });
 };
 
-export const notifyRecruiter = (id, candidateName, candidateEmail, interviewName) => {
+export const notifyRecruiter = (id, candidateName, candidateEmail, interviewName, createdBy) => {
   var data = {
     type: 'interviewCompleted',
     id,
     candidateName,
-    email: [],
+    email: [createdBy],
     candidateEmail,
     interviewName,
+  };
+  // console.log(data)
+
+  fetch('https://dev-a.deephire.com/v1/emails', {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+};
+
+export const notifyCandidate = (candidateName, candidateEmail) => {
+  var data = {
+    type: 'jobSeekerCompleted',
+    candidateName,
+    email: [candidateEmail],
+    candidateEmail,
   };
   // console.log(data)
 
