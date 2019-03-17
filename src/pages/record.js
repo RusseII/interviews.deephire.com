@@ -30,11 +30,18 @@ export default ({ location }) => {
   const [index, setIndex] = useState(0);
   const [data, setData] = useState(null);
   const [retakes, setRetakes] = useState(null);
-  const [interview, setInterview] = useState(null);
+  const [interview, setInterview] = useState({
+    key: 0,
+    paused: true,
+    time: 45,
+    countDown: true,
+    buttonText: 'Start Recording',
+  });
   const [action, setAction] = useState('start');
 
   const [startingData, setStartingData] = useState({ interviewQuestions: [{ question: 'test' }] });
 
+  // for any hooks noobs, passing in [] as 2nd paramater makes useEffect work the same for componenetDidMount
   useEffect(() => {
     if (!practice) setBefore(false);
     setup();
@@ -42,22 +49,19 @@ export default ({ location }) => {
   }, []);
 
   const setup = async () => {
-    var data = await fetchInterview(id);
+    var [data] = await fetchInterview(id);
     if (practice) data = practiceQuestions;
-    setData(data[0]);
+    setData(data);
     const {
       interviewName,
       interview_config: { answerTime, prepTime, retakesAllowed } = {},
       interview_questions: interviewQuestions = [],
-    } = data[0] || {};
+    } = data || {};
     setStartingData({ interviewName, answerTime, prepTime, retakesAllowed, interviewQuestions });
     setRetakes(retakesAllowed);
     setInterview({
-      key: 0,
-      paused: true,
+      ...interview, 
       time: prepTime,
-      countDown: true,
-      buttonText: 'Start Recording',
     });
   };
 
@@ -179,14 +183,10 @@ export default ({ location }) => {
     setVideoBlob(recordedVideo);
     myStream.destroy();
     setVideoUrl(objectURL);
-
     reviewScreen();
   };
 
-  // for any hooks noobs, passing in [] as 2nd paramater makes useEffect work the same for componenetDidMount
-
   if (!data) return null;
-
   if (!interview) return null;
 
   return (
