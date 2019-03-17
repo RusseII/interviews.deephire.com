@@ -30,11 +30,36 @@ export default ({ location }) => {
   const [index, setIndex] = useState(0);
   const [data, setData] = useState(null);
   const [retakes, setRetakes] = useState(null);
-  // const [buttonAction, setButtonAction] = useState(null);
   const [interview, setInterview] = useState(null);
   const [action, setAction] = useState('start');
 
   const [startingData, setStartingData] = useState({ interviewQuestions: [{ question: 'test' }] });
+
+  useEffect(() => {
+    if (!practice) setBefore(false);
+    setup();
+    setAction('start');
+  }, []);
+
+  const setup = async () => {
+    var data = await fetchInterview(id);
+    if (practice) data = practiceQuestions;
+    setData(data[0]);
+    const {
+      interviewName,
+      interview_config: { answerTime, prepTime, retakesAllowed } = {},
+      interview_questions: interviewQuestions = [],
+    } = data[0] || {};
+    setStartingData({ interviewName, answerTime, prepTime, retakesAllowed, interviewQuestions });
+    setRetakes(retakesAllowed);
+    setInterview({
+      key: 0,
+      paused: true,
+      time: prepTime,
+      countDown: true,
+      buttonText: 'Start Recording',
+    });
+  };
 
   const changeButtonAction = action => {
     switch (action) {
@@ -53,7 +78,7 @@ export default ({ location }) => {
   };
 
   const start = async () => {
-     recordScreen();
+    recordScreen();
 
     const devices = await camerakit.getDevices();
     myStream = await camerakit.createCaptureStream({
@@ -159,30 +184,7 @@ export default ({ location }) => {
   };
 
   // for any hooks noobs, passing in [] as 2nd paramater makes useEffect work the same for componenetDidMount
-  useEffect(() => {
-    if (!practice) setBefore(false);
 
-    fetchInterview(id).then(data => {
-      if (practice) data = practiceQuestions;
-      setData(data[0]);
-      const {
-        interviewName,
-        interview_config: { answerTime, prepTime, retakesAllowed } = {},
-        interview_questions: interviewQuestions = [],
-      } = data[0] || {};
-      setStartingData({ interviewName, answerTime, prepTime, retakesAllowed, interviewQuestions });
-      setRetakes(retakesAllowed);
-      setInterview({
-        key: 0,
-        paused: true,
-        time: prepTime,
-        countDown: true,
-        buttonText: 'Start Recording',
-        // helperText: "Good luck!"
-      });
-    });
-    setAction('start');
-  }, []);
   if (!data) return null;
 
   if (!interview) return null;
