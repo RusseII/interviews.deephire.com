@@ -1,36 +1,44 @@
-
-import styles from "./index.less"
+import styles from './index.less';
 import { Layout, Row, Col } from 'antd';
+import React, { useState, useEffect } from 'react';
+import qs from 'qs';
+import { fetchInterview, fetchCompanyInfo } from '@/services/api';
 
 const { Footer, Content, Header } = Layout;
-function BasicLayout(props) {
+const BasicLayout = ({ children, location }) => {
+  const [companyInfo, setCompanyInfo] = useState({
+    companyName: 'Loading...',
+    logo:
+      'http://atelier.swiftideas.com/union-demo/wp-content/uploads/sites/5/2014/05/unionproducts-img-blank.png',
+  });
+  const id = qs.parse(location.search)['?id'];
+
+  useEffect(() => {
+    fetchInterview(id).then(r => {
+      const { email: createdBy } = r[0];
+      fetchCompanyInfo(createdBy).then(r => setCompanyInfo(r || {}));
+    });
+  }, []);
+
   return (
-    <Layout >
+    <Layout>
       <Header className={styles.header}>
-        <Row type="flex"  justify="space-between">
-          <Col>DeepHire</Col>
+        <Row type="flex" justify="space-between">
+          <Col>{companyInfo.companyName || 'DeepHire'}</Col>
           <Col>
             <img
-              src="https://s3.amazonaws.com/deephire/dh_vertical.png"
-              alt="Forge"
+              src={companyInfo.logo || 'https://s3.amazonaws.com/deephire/dh_vertical.png'}
+              alt={companyInfo.companyName}
               height="50px"
             />
           </Col>
         </Row>
       </Header>
 
-      <Content className={styles.content}>
-  
-      {props.children}
-      </Content>
-      <Footer
-  
-        className={styles.footer}
-      >
-        Powered by DeepHire | Find your fit.
-      </Footer>
+      <Content className={styles.content}>{children}</Content>
+      <Footer className={styles.footer}>Powered by DeepHire | Find your fit.</Footer>
     </Layout>
   );
-}
+};
 
 export default BasicLayout;

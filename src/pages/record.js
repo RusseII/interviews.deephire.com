@@ -146,6 +146,7 @@ export default ({ location }) => {
   };
 
   const nextQuestion = () => {
+
     if (!practice) {
       var uploadStatus = vimeoUpload(
         videoBlob,
@@ -155,6 +156,7 @@ export default ({ location }) => {
         email,
         startingData.interviewName,
         startingData.interviewQuestions[index].question
+        startingData.createdBy
       );
 
       //IMPORTANT i don't think this works completly
@@ -170,9 +172,10 @@ export default ({ location }) => {
           console.log(videosUploading);
           console.log(r);
           setUploading(false);
-          notifyRecruiter(id, fullName, email, startingData.interviewName);
+          notifyRecruiter(id, fullName, email, startingData.interviewName, startingData.createdBy);
           // notifyCandidate(fullName, email);
           myStream.destroy();
+
 
           router.push('/victory');
         });
@@ -196,6 +199,7 @@ export default ({ location }) => {
     setVideoUrl(objectURL);
     reviewScreen();
   };
+
 
   if (!data) return null;
   if (!interview) return null;
@@ -277,7 +281,7 @@ export default ({ location }) => {
             setInterview({ ...interview, helperText: 'Prepare your answer', paused: false });
           }}
         >
-          Start Pracice Interview
+          Start Practice Interview
         </Button>
       ) : (
         <>
