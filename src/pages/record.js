@@ -7,7 +7,7 @@ import styles from './record.less';
 import qs from 'qs';
 import LoadingScreen from 'react-loading-screen';
 
-import { camerakit } from './assets/camerakit-web.min.js';
+import { camerakit } from '@/services/browser.min.js';
 import { fetchInterview, notifyRecruiter, notifyCandidate } from '@/services/api';
 import vimeoUpload from './vimeo.js';
 import Timer from '@/components/Timer';
@@ -46,6 +46,7 @@ export default ({ location }) => {
     if (!practice) setBefore(false);
     setup();
     setAction('start');
+    initializeCameraKit()
   }, []);
 
   const setup = async () => {
@@ -65,6 +66,14 @@ export default ({ location }) => {
     });
   };
 
+  const initializeCameraKit = async () => {
+    const devices = await camerakit.getDevices();
+    myStream = await camerakit.createCaptureStream({
+      audio: devices.audio[0],
+      video: devices.video[0],
+    });
+    myStream.init()
+  }
   const changeButtonAction = action => {
     switch (action) {
       case 'start':
@@ -84,11 +93,7 @@ export default ({ location }) => {
   const start = async () => {
     recordScreen();
 
-    const devices = await camerakit.getDevices();
-    myStream = await camerakit.createCaptureStream({
-      audio: devices.audio[0],
-      video: devices.video[0],
-    });
+   
 
     myStream.setResolution({ aspect: 16 / 9 });
     myStream.recorder.start();
@@ -161,7 +166,9 @@ export default ({ location }) => {
           console.log(r);
           setUploading(false);
           notifyRecruiter(id, fullName, email, startingData.interviewName);
-          notifyCandidate(fullName, email);
+          // notifyCandidate(fullName, email);
+          myStream.destroy();
+
           router.push('/victory');
         });
       }
@@ -177,11 +184,10 @@ export default ({ location }) => {
     }
   };
 
-  const stop = () => {
-    const recordedVideo = myStream.recorder.stop();
+  const stop = async () => {
+    const [recordedVideo] = await myStream.recorder.stop();
     const objectURL = URL.createObjectURL(recordedVideo);
     setVideoBlob(recordedVideo);
-    myStream.destroy();
     setVideoUrl(objectURL);
     reviewScreen();
   };
