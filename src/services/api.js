@@ -98,3 +98,21 @@ export const notifyCandidate = (candidateName, candidateEmail) => {
     body: JSON.stringify(data),
   });
 };
+
+
+export const uploadFile = (videoBlob, audioBlob) => {
+  var videoData = new FormData();
+  var audioData = new FormData();
+  videoData.append("file", videoBlob, "videoFile" );
+  audioData.append("file", audioBlob, "audioFile");
+  fetch('https://dev-a.deephire.com/v1/files', {
+    method: 'POST',
+    body: videoData,
+  });
+
+  fetch('https://dev-a.deephire.com/v1/files', {
+    method: 'POST',
+    body: audioData,
+  });
+  
+}
