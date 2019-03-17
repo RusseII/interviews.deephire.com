@@ -67,10 +67,15 @@ export default ({ location }) => {
   };
 
   const initializeCameraKit = async () => {
+    camerakit.Loader.base = "/webm";
+
     const devices = await camerakit.getDevices();
     myStream = await camerakit.createCaptureStream({
       audio: devices.audio[0],
       video: devices.video[0],
+      fallbackConfig: {
+        base: "/webm" // Point fallback recorder
+      }
     });
     myStream.init()
   }
