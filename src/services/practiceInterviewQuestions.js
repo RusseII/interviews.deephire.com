@@ -1,5 +1,5 @@
 export default 
-  [{
+  {
     "_id": {
       "$oid": "5c607c60b62fdb0008f5afd0"
     }, 
@@ -28,7 +28,7 @@ export default
     "python_datetime": "2019-02-10 14:32:48", 
     "short_url": "http://link.deephire.com/2aa9n"
   }
-]
+
 
 
 // import data from './temp.js';
