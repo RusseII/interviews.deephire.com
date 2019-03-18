@@ -13,21 +13,18 @@ const Index = ({ location }) => {
   const downloadiOS = () =>
     window.open('https://itunes.apple.com/us/app/deephire/id1380277628?mt=8', '_blank');
   const openCrisp = () => window.openChat();
-  const [iOS] = useState(!!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform));
+  const [iOS, setIOS] = useState(!!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform));
 
   return (
     <div className={styles.normal}>
       <Modal
         closable={false}
-        title="Please download our mobile app to Interview on IOS"
+        title="Safari support is experimental - some features may not work correctly"
         visible={iOS}
-        footer={[
-          <Button key="Submit" type="primary" onClick={openCrisp}>
-            Contact Support
-          </Button>,
-        ]}
+        onOk={() => setIOS(false)}
+        onCancel={() => setIOS(false)}
       >
-        <Steps direction="vertical" size="small" current={0}>
+        {/* <Steps direction="vertical" size="small" current={0}>
           <Step
             title="Download App"
             description={
@@ -50,7 +47,7 @@ const Index = ({ location }) => {
             }
           />
           <Step title="Take the interview!" description="Good luck!" />
-        </Steps>
+        </Steps> */}
       </Modal>
       <div style={{ paddingTop: '24px' }}>
         <h1>Welcome to your Video Interview!</h1>{' '}

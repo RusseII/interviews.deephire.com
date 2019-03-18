@@ -2,13 +2,13 @@ import practiceQuestions from '@/services/practiceInterviewQuestions';
 import React, { useState, useEffect } from 'react';
 
 import ReactPlayer from 'react-player';
-import {Timeline, Button, Row, Col } from 'antd';
+import { Timeline, Button, Row, Col } from 'antd';
 import styles from './record.less';
 import qs from 'qs';
 import LoadingScreen from 'react-loading-screen';
 
-import { camerakit } from './assets/camerakit-web.min.js';
-import { fetchInterview, notifyRecruiter, notifyCandidate } from '@/services/api';
+import { camerakit } from '@/services/browser.min.js';
+import { fetchInterview, notifyRecruiter, notifyCandidate, uploadFile } from '@/services/api';
 import vimeoUpload from './vimeo.js';
 import Timer from '@/components/Timer';
 import { router } from 'umi';
@@ -27,22 +27,78 @@ export default ({ location }) => {
 
   const [videoUrl, setVideoUrl] = useState(null);
   const [videoBlob, setVideoBlob] = useState(null);
+  const [audioBlob, setAudioBlob] = useState(null);
+
   const [index, setIndex] = useState(0);
   const [data, setData] = useState(null);
   const [retakes, setRetakes] = useState(null);
-  const [buttonAction, setButtonAction] = useState(null);
-  const [interview, setInterview] = useState(null);
+  const [interview, setInterview] = useState({
+    key: 0,
+    paused: true,
+    time: 45,
+    countDown: true,
+    buttonText: 'Start Recording',
+  });
+  const [action, setAction] = useState('start');
+
   const [startingData, setStartingData] = useState({ interviewQuestions: [{ question: 'test' }] });
 
-  const start = async (index, startingData) => {
-    recordScreen(startingData);
+  // for any hooks noobs, passing in [] as 2nd paramater makes useEffect work the same for componenetDidMount
+  useEffect(() => {
+    if (!practice) setBefore(false);
+    setup();
+    setAction('start');
+    initializeCameraKit()
+  }, []);
+
+  const setup = async () => {
+    var [data] = await fetchInterview(id);
+    if (practice) data = practiceQuestions;
+    setData(data);
+    const {
+      interviewName,
+      interview_config: { answerTime, prepTime, retakesAllowed } = {},
+      interview_questions: interviewQuestions = [],
+    } = data || {};
+    setStartingData({ interviewName, answerTime, prepTime, retakesAllowed, interviewQuestions });
+    setRetakes(retakesAllowed);
+    setInterview({
+      ...interview, 
+      time: prepTime,
+    });
+  };
+
+  const initializeCameraKit = async () => {
+    camerakit.Loader.base = "/webm";
 
     const devices = await camerakit.getDevices();
     myStream = await camerakit.createCaptureStream({
       audio: devices.audio[0],
       video: devices.video[0],
+      fallbackConfig: {
+        base: "/webm" // Point fallback recorder
+      }
     });
+    myStream.init()
+  }
+  const changeButtonAction = action => {
+    switch (action) {
+      case 'start':
+        return start();
 
+      case 'stop':
+        return stop();
+
+      case 'nextQuestion':
+        return nextQuestion();
+
+      default:
+        return console.log('uh oh case returned default');
+    }
+  };
+
+  const start = async () => {
+    recordScreen();
     myStream.setResolution({ aspect: 16 / 9 });
     myStream.recorder.start();
     const streamUrl = await myStream.getMediaStream();
@@ -58,11 +114,11 @@ export default ({ location }) => {
       buttonText: 'Start Recording',
       helperText: 'Prepare your answer',
     });
-    setButtonAction((index, startingData) => (index, startingData) => start(index, startingData));
+    setAction('start');
     setVideoUrl(null);
   };
 
-  const recordScreen = startingData => {
+  const recordScreen = () => {
     setInterview({
       key: 1,
       time: startingData.answerTime,
@@ -71,9 +127,10 @@ export default ({ location }) => {
       buttonText: 'Stop Recording',
       helperText: 'Recording...',
     });
-    setButtonAction((index, startingData) => (index, startingData) => stop(index, startingData));
+    setAction('stop');
   };
-  const reviewScreen = (index, startingData) => {
+
+  const reviewScreen = () => {
     setInterview({
       key: 2,
       time: startingData.prepTime,
@@ -84,18 +141,10 @@ export default ({ location }) => {
       helperText: 'Review your video',
       controls: true,
     });
-    setButtonAction(
-      (index, startingData, videoBlob, interviewName, question) => (
-        index,
-        startingData,
-        videoBlob,
-        interviewName,
-        question
-      ) => nextQuestion(index, startingData, videoBlob, interviewName, question)
-    );
+    setAction('nextQuestion');
   };
 
-  const nextQuestion = (index, startingData, videoBlob, interviewName, question) => {
+  const nextQuestion = () => {
     if (!practice) {
       var uploadStatus = vimeoUpload(
         videoBlob,
@@ -103,9 +152,11 @@ export default ({ location }) => {
         email,
         fullName,
         email,
-        interviewName,
-        question
+        startingData.interviewName,
+        startingData.interviewQuestions[index].question
       );
+      if (audioBlob) { uploadFile(videoBlob, audioBlob, email, startingData.interviewQuestions[index].question) }
+
 
       //IMPORTANT i don't think this works completly
       var status = [...videosUploading, uploadStatus];
@@ -120,13 +171,10 @@ export default ({ location }) => {
           console.log(videosUploading);
           console.log(r);
           setUploading(false);
-          notifyRecruiter(
-            id,
-            fullName,
-            email,
-            interviewName,
-          );
-          notifyCandidate(fullName, email)
+          notifyRecruiter(id, fullName, email, startingData.interviewName);
+          notifyCandidate(fullName, email);
+          myStream.destroy();
+
           router.push('/victory');
         });
       }
@@ -142,43 +190,18 @@ export default ({ location }) => {
     }
   };
 
-  const stop = (index, startingData) => {
-    const recordedVideo = myStream.recorder.stop();
-    const objectURL = URL.createObjectURL(recordedVideo);
+  const stop = async () => {
+    //recorded Audio only exists in safari
+    const [recordedVideo, recordedAudio] = await myStream.recorder.stop();
+    var videoUrl = URL.createObjectURL(recordedVideo);
+    if (recordedAudio)  videoUrl = URL.createObjectURL(recordedAudio);
     setVideoBlob(recordedVideo);
-    myStream.destroy();
-    setVideoUrl(objectURL);
-
-    reviewScreen(index, startingData);
+    setAudioBlob(recordedAudio)
+    setVideoUrl(videoUrl);
+    reviewScreen();
   };
 
-  // for any hooks noobs, passing in [] as 2nd paramater makes useEffect work the same for componenetDidMount
-  useEffect(() => {
-    if (!practice) setBefore(false);
-
-    fetchInterview(id).then(data => {
-      if (practice) data = practiceQuestions;
-      setData(data[0]);
-      const {
-        interviewName,
-        interview_config: { answerTime, prepTime, retakesAllowed } = {},
-        interview_questions: interviewQuestions = [],
-      } = data[0] || {};
-      setStartingData({ interviewName, answerTime, prepTime, retakesAllowed, interviewQuestions });
-      setRetakes(retakesAllowed);
-      setInterview({
-        key: 0,
-        paused: true,
-        time: prepTime,
-        countDown: true,
-        buttonText: 'Start Recording',
-        // helperText: "Good luck!"
-      });
-    });
-    setButtonAction((index, startingData) => (index, startingData) => start(index, startingData));
-  }, []);
   if (!data) return null;
-
   if (!interview) return null;
 
   return (
@@ -200,7 +223,7 @@ export default ({ location }) => {
           reset={true}
           countDown={interview.countDown}
           paused={interview.paused}
-          onFinish={() => buttonAction(index, startingData)}
+          onFinish={() => changeButtonAction(action)}
           seconds={interview.time}
         />
       )}
@@ -235,16 +258,24 @@ export default ({ location }) => {
                   alt="Prepare to Record!"
                 />
               ) : (
+                <>
+
                 <ReactPlayer
                   key={videoUrl}
                   className={styles.reactPlayer}
                   playing
-                  muted
+                  // muted
                   controls={interview.controls}
                   url={videoUrl}
                   width="100%"
                   height="100%"
                 />
+            {audioBlob && interview.review && <div                   className={styles.reactPlayer}
+ >WARNING - There is no video playback here for Safari - once you submit, your recrutier will be able to see both your video and audio.</div> }
+
+
+                </>
+
               )}
             </div>
           )}
@@ -263,25 +294,11 @@ export default ({ location }) => {
       ) : (
         <>
           {interview.review && <Button onClick={retake}>{`Retake (${retakes} left)`}</Button>}
-          <Button
-            className={styles.button}
-            onClick={() =>
-              buttonAction(
-                index,
-                startingData,
-                videoBlob,
-                startingData.interviewName,
-                startingData.interviewQuestions[index].question
-              )
-            }
-          >
+          <Button className={styles.button} onClick={() => changeButtonAction(action)}>
             {interview.buttonText}
           </Button>
         </>
       )}
-
-      {/* <Button onClick={start}>start</Button>
-      <Button onClick={stop}>stop</Button> */}
     </div>
   );
 };
