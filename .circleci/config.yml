@@ -32,4 +32,6 @@ jobs:
           command: |
             if [ "${CIRCLE_BRANCH}" == "develop" ]; then
               CI=false yarn && yarn build
+              aws s3 sync dist/ s3://dev-interviews.deephire.com
+              aws cloudfront create-invalidation --distribution-id ELZOVK7TPOMZP  --paths "/*"
             fi
