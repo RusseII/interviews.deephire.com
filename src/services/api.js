@@ -60,11 +60,12 @@ export const storeInterviewQuestion = (
 };
 
 export const notifyRecruiter = (id, candidateName, candidateEmail, interviewName, createdBy) => {
+
   var data = {
     type: 'interviewCompleted',
     id,
     candidateName,
-    email: [createdBy],
+    recipients: [createdBy || "noemail@deephire.com"],
     candidateEmail,
     interviewName,
   };
@@ -84,7 +85,7 @@ export const notifyCandidate = (candidateName, candidateEmail) => {
   var data = {
     type: 'jobSeekerCompleted',
     candidateName,
-    email: [candidateEmail],
+    recipients: [candidateEmail || "noCandidateEmail@deephire.com"],
     candidateEmail,
   };
   // console.log(data)
@@ -100,17 +101,17 @@ export const notifyCandidate = (candidateName, candidateEmail) => {
 };
 
 
-export const uploadFile = (videoBlob, audioBlob) => {
+export const uploadFile = (videoBlob, audioBlob, key, question) => {
   var videoData = new FormData();
   var audioData = new FormData();
-  videoData.append("file", videoBlob, "videoFile" );
-  audioData.append("file", audioBlob, "audioFile");
-  fetch('https://dev-a.deephire.com/v1/files', {
+  videoData.append("upfile", videoBlob,  `${question}.webm` );
+  audioData.append("upfile", audioBlob, `${question}.wav`);
+  fetch(`https://dev-a.deephire.com/v1/files/${key}`, {
     method: 'POST',
     body: videoData,
   });
 
-  fetch('https://dev-a.deephire.com/v1/files', {
+  fetch(`https://dev-a.deephire.com/v1/files/${key}`, {
     method: 'POST',
     body: audioData,
   });
