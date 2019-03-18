@@ -8,7 +8,7 @@ import qs from 'qs';
 import LoadingScreen from 'react-loading-screen';
 
 import { camerakit } from '@/services/browser.min.js';
-import { fetchInterview, notifyRecruiter, notifyCandidate } from '@/services/api';
+import { fetchInterview, notifyRecruiter, notifyCandidate, uploadFile } from '@/services/api';
 import vimeoUpload from './vimeo.js';
 import Timer from '@/components/Timer';
 import { router } from 'umi';
@@ -27,6 +27,8 @@ export default ({ location }) => {
 
   const [videoUrl, setVideoUrl] = useState(null);
   const [videoBlob, setVideoBlob] = useState(null);
+  const [audioBlob, setAudioBlob] = useState(null);
+
   const [index, setIndex] = useState(0);
   const [data, setData] = useState(null);
   const [retakes, setRetakes] = useState(null);
@@ -97,9 +99,6 @@ export default ({ location }) => {
 
   const start = async () => {
     recordScreen();
-
-   
-
     myStream.setResolution({ aspect: 16 / 9 });
     myStream.recorder.start();
     const streamUrl = await myStream.getMediaStream();
@@ -146,7 +145,6 @@ export default ({ location }) => {
   };
 
   const nextQuestion = () => {
-
     if (!practice) {
       var uploadStatus = vimeoUpload(
         videoBlob,
@@ -156,8 +154,9 @@ export default ({ location }) => {
         email,
         startingData.interviewName,
         startingData.interviewQuestions[index].question
-        startingData.createdBy
       );
+      if (audioBlob) { uploadFile(videoBlob, audioBlob, email, startingData.interviewQuestions[index].question) }
+
 
       //IMPORTANT i don't think this works completly
       var status = [...videosUploading, uploadStatus];
@@ -172,10 +171,9 @@ export default ({ location }) => {
           console.log(videosUploading);
           console.log(r);
           setUploading(false);
-          notifyRecruiter(id, fullName, email, startingData.interviewName, startingData.createdBy);
-          // notifyCandidate(fullName, email);
+          notifyRecruiter(id, fullName, email, startingData.interviewName);
+          notifyCandidate(fullName, email);
           myStream.destroy();
-
 
           router.push('/victory');
         });
@@ -193,13 +191,15 @@ export default ({ location }) => {
   };
 
   const stop = async () => {
-    const [recordedVideo] = await myStream.recorder.stop();
-    const objectURL = URL.createObjectURL(recordedVideo);
+    //recorded Audio only exists in safari
+    const [recordedVideo, recordedAudio] = await myStream.recorder.stop();
+    var videoUrl = URL.createObjectURL(recordedVideo);
+    if (recordedAudio)  videoUrl = URL.createObjectURL(recordedAudio);
     setVideoBlob(recordedVideo);
-    setVideoUrl(objectURL);
+    setAudioBlob(recordedAudio)
+    setVideoUrl(videoUrl);
     reviewScreen();
   };
-
 
   if (!data) return null;
   if (!interview) return null;
@@ -258,16 +258,24 @@ export default ({ location }) => {
                   alt="Prepare to Record!"
                 />
               ) : (
+                <>
+
                 <ReactPlayer
                   key={videoUrl}
                   className={styles.reactPlayer}
                   playing
-                  muted
+                  // muted
                   controls={interview.controls}
                   url={videoUrl}
                   width="100%"
                   height="100%"
                 />
+            {audioBlob && interview.review && <div                   className={styles.reactPlayer}
+ >WARNING - There is no video playback here for Safari - once you submit, your recrutier will be able to see both your video and audio.</div> }
+
+
+                </>
+
               )}
             </div>
           )}
@@ -281,7 +289,7 @@ export default ({ location }) => {
             setInterview({ ...interview, helperText: 'Prepare your answer', paused: false });
           }}
         >
-          Start Practice Interview
+          Start Pracice Interview
         </Button>
       ) : (
         <>
