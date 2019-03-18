@@ -19,7 +19,7 @@ const Index = ({ location }) => {
     <div className={styles.normal}>
       <Modal
         closable={false}
-        title="Safari support is experimental, some features may not work correctly"
+        title="Safari support is experimental - some features may not work correctly"
         visible={iOS}
         onOk={() => setIOS(false)}
         onCancel={() => setIOS(false)}
