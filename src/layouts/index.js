@@ -15,8 +15,10 @@ const BasicLayout = ({ children, location }) => {
 
   useEffect(() => {
     fetchInterview(id).then(r => {
+      if (r[0]) {
       const { email: createdBy } = r[0];
       fetchCompanyInfo(createdBy).then(r => setCompanyInfo(r || {}));
+      }
     });
   }, []);
 
