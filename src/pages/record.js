@@ -265,7 +265,7 @@ export default ({ location }) => {
                   key={videoUrl}
                   className={styles.reactPlayer}
                   playing
-                  // muted
+                  muted
                   controls={interview.controls}
                   url={videoUrl}
                   width="100%"
