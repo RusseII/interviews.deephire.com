@@ -164,6 +164,8 @@ export default ({ location }) => {
     setVideosUploading(status);
     prepareScreen(startingData);
     if (startingData.interviewQuestions.length === index + 1) {
+    myStream.destroy();
+
       if (practice) router.push(`/real?id=${id}&fullName=${fullName}&email=${email}`);
       else {
         setUploading(true);
@@ -173,7 +175,6 @@ export default ({ location }) => {
           setUploading(false);
           notifyRecruiter(id, fullName, email, startingData.interviewName);
           notifyCandidate(fullName, email);
-          myStream.destroy();
 
           router.push('/victory');
         });
