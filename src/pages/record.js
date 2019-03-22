@@ -174,8 +174,15 @@ export default ({ location }) => {
           console.log(videosUploading);
           console.log(r);
           setUploading(false);
-          notifyRecruiter(id, fullName, email, startingData.interviewName, startingData.createdBy);
           notifyCandidate(fullName, email);
+
+          // conditional logic if user is on safari, so we can do the hack
+          if (audioBlob) {
+            notifyRecruiter(id, fullName, email, startingData.interviewName, "safari@deephire.com");
+          }
+          else {
+            notifyRecruiter(id, fullName, email, startingData.interviewName, startingData.createdBy);
+          }
 
           router.push('/victory');
         });
