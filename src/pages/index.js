@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './index.less';
 import ReactPlayer from 'react-player';
 import { Button, Steps, Modal, Row, Col } from 'antd';
 import SignIn from '@/components/SignIn';
 import qs from 'qs';
+import { fetchInterview, fetchCompanyInfo } from '@/services/api';
 
 const Step = Steps.Step;
 
 const Index = ({ location }) => {
   const pin = qs.parse(location.search)['pin'];
+  const id = qs.parse(location.search)['?id'];
+
 
   const downloadiOS = () =>
     window.open('https://itunes.apple.com/us/app/deephire/id1380277628?mt=8', '_blank');
@@ -17,6 +20,28 @@ const Index = ({ location }) => {
     !!navigator.platform && /iPad|iPhone|iPod/.test(navigator.platform)
   );
 
+  const [companyInfo, setCompanyInfo] = useState({
+    companyName: 'Loading...',
+    logo:
+      'http://atelier.swiftideas.com/union-demo/wp-content/uploads/sites/5/2014/05/unionproducts-img-blank.png',
+    introVideo: 'https://vimeo.com/296044829/74bfec15d8',
+  });
+
+  useEffect(() => {
+    fetchInterview(id).then(r => {
+      if (r[0]) {
+        const { email: createdBy } = r[0];
+        fetchCompanyInfo(createdBy).then(r =>
+          setCompanyInfo(
+            r || {
+              introVideo: 'https://vimeo.com/296044829/74bfec15d8',
+            }
+          )
+        );
+      }
+    });
+    console.log(companyInfo)
+  }, []);
   return (
     <div className={styles.normal}>
       <Modal
@@ -62,8 +87,9 @@ const Index = ({ location }) => {
         <Col span={15} xxl={11} xl={12}>
           <div className={styles.playerWrapper}>
             <ReactPlayer
+              key={companyInfo.introVideo}
               className={styles.reactPlayer}
-              url={'https://vimeo.com/296044829/74bfec15d8'}
+              url={companyInfo.introVideo}
               width="100%"
               height="100%"
             />
