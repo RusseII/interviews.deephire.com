@@ -56,12 +56,11 @@ export default ({ location }) => {
     if (practice) data = practiceQuestions;
     setData(data);
     const {
-      email: createdBy,
       interviewName,
       interview_config: { answerTime, prepTime, retakesAllowed } = {},
       interview_questions: interviewQuestions = [],
     } = data || {};
-    setStartingData({ interviewName, answerTime, prepTime, retakesAllowed, interviewQuestions, createdBy });
+    setStartingData({ interviewName, answerTime, prepTime, retakesAllowed, interviewQuestions });
     setRetakes(retakesAllowed);
     setInterview({
       ...interview, 
@@ -174,15 +173,8 @@ export default ({ location }) => {
           console.log(videosUploading);
           console.log(r);
           setUploading(false);
+          notifyRecruiter(id, fullName, email, startingData.interviewName);
           notifyCandidate(fullName, email);
-
-          // conditional logic if user is on safari, so we can do the hack
-          if (audioBlob) {
-            notifyRecruiter(id, fullName, email, startingData.interviewName, "safari@deephire.com");
-          }
-          else {
-            notifyRecruiter(id, fullName, email, startingData.interviewName, startingData.createdBy);
-          }
 
           router.push('/victory');
         });
@@ -214,7 +206,7 @@ export default ({ location }) => {
   if (!interview) return null;
 
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.normal}>
       <LoadingScreen
         loading={uploading}
         bgColor="#f1f1f1"
