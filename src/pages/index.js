@@ -1,17 +1,37 @@
 import React, { useState, useEffect } from 'react';
 import styles from './index.less';
 import ReactPlayer from 'react-player';
-import { Button, Steps, Modal, Row, Col } from 'antd';
+import { Upload, Button, Steps, Modal, Row, Col } from 'antd';
 import SignIn from '@/components/SignIn';
 import qs from 'qs';
 import { fetchInterview, fetchCompanyInfo } from '@/services/api';
 
 const Step = Steps.Step;
 
+const props = {
+  action: '//jsonplaceholder.typicode.com/posts/',
+  onChange({ file, fileList }) {
+    if (file.status !== 'uploading') {
+      console.log(file, fileList);
+    }
+  },
+  defaultFileList: [
+    {
+      uid: '1',
+      name: 'HR Director.docx',
+      url: 'https://s3.amazonaws.com/deephire/logos/HR+Director.docx',
+    },
+    {
+      uid: '2',
+      name: 'Electrocraft Overview.pdf',
+      url: 'https://s3.amazonaws.com/deephire/logos/Electrocraft+overview.pdf',
+    },
+  ],
+};
+
 const Index = ({ location }) => {
   const pin = qs.parse(location.search)['pin'];
   const id = qs.parse(location.search)['?id'];
-
 
   const downloadiOS = () =>
     window.open('https://itunes.apple.com/us/app/deephire/id1380277628?mt=8', '_blank');
@@ -40,7 +60,7 @@ const Index = ({ location }) => {
         );
       }
     });
-    console.log(companyInfo)
+    console.log(companyInfo);
   }, []);
   return (
     <div className={styles.normal}>
@@ -96,6 +116,10 @@ const Index = ({ location }) => {
           </div>
         </Col>
       </Row>
+      <Row type="flex" justify="center">
+        {id == '5c93849154b7ba00088dde51' && <Upload {...props} />}
+      </Row>
+
       <SignIn location={location} />
     </div>
   );
