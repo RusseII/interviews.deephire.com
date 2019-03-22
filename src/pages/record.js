@@ -56,11 +56,12 @@ export default ({ location }) => {
     if (practice) data = practiceQuestions;
     setData(data);
     const {
+      email: createdBy,
       interviewName,
       interview_config: { answerTime, prepTime, retakesAllowed } = {},
       interview_questions: interviewQuestions = [],
     } = data || {};
-    setStartingData({ interviewName, answerTime, prepTime, retakesAllowed, interviewQuestions });
+    setStartingData({ interviewName, answerTime, prepTime, retakesAllowed, interviewQuestions, createdBy });
     setRetakes(retakesAllowed);
     setInterview({
       ...interview, 
@@ -173,7 +174,7 @@ export default ({ location }) => {
           console.log(videosUploading);
           console.log(r);
           setUploading(false);
-          notifyRecruiter(id, fullName, email, startingData.interviewName);
+          notifyRecruiter(id, fullName, email, startingData.interviewName, startingData.createdBy);
           notifyCandidate(fullName, email);
 
           router.push('/victory');
@@ -206,7 +207,7 @@ export default ({ location }) => {
   if (!interview) return null;
 
   return (
-    <div className={styles.normal}>
+    <div className={styles.wrapper}>
       <LoadingScreen
         loading={uploading}
         bgColor="#f1f1f1"
