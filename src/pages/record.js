@@ -298,7 +298,7 @@ export default ({ location }) => {
             setInterview({ ...interview, helperText: 'Prepare your answer', paused: false });
           }}
         >
-          Start Pracice Interview
+          Start Practice Interview
         </Button>
       ) : (
         <>
