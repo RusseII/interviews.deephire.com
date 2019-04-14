@@ -167,7 +167,6 @@ export default ({ location }) => {
       helperText: 'Prepare your answer',
     });
     setAction('start');
-    setVideoUrl(null);
   };
 
   const recordScreen = () => {
@@ -309,6 +308,7 @@ export default ({ location }) => {
                     key={videoUrl}
                     // className={styles.reactPlayer}
                     playing
+                    playsinline={true}
                     controls={interview.controls}
                     url={videoUrl}
                     width="100%"
