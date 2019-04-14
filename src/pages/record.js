@@ -237,7 +237,7 @@ export default ({ location }) => {
         setVideoUrl(
           `https://s3.amazonaws.com/deephire-video-dump/${apiKey}/${archiveId}/archive.mp4`
         ),
-      5000
+      4000
     );
     setVideoUrl(videoUrl);
   };
@@ -303,30 +303,30 @@ export default ({ location }) => {
                     STOP
         </button> */}
 
-                {interview.review ? (
+                {interview.review &&  (
                   <ReactPlayer
                     key={videoUrl}
                     // className={styles.reactPlayer}
-                    playing
+                    playing={true}
                     playsinline={true}
                     controls={interview.controls}
                     url={videoUrl}
                     width="100%"
                     height="100%"
                   />
-                ) : (
+                ) } 
                   <OTPublisher
                     properties={{
                       height: '33.75vw',
                       width: '60vw',
-                      publishVideo: recording,
-                      publishAudio: recording,
+                      publishVideo: true,
+                      publishAudio: true,
                     }}
                     onPublish={onPublish}
                     onError={onPublishError}
                     eventHandlers={publisherEventHandlers}
                   />
-                )}
+                
               </OTSession>
             </div>
           )}
