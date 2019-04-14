@@ -230,10 +230,17 @@ export default ({ location }) => {
   };
 
   const stop = async () => {
-    var videoUrl = 'url';
+    var videoUrl = 'https://www.youtube.com/watch?v=cmLfnswNTDE';
     stopRecording();
-    setVideoUrl(videoUrl);
     reviewScreen();
+    setTimeout(
+      () =>
+        setVideoUrl(
+          `https://s3.amazonaws.com/deephire-video-dump/${apiKey}/${archiveId}/archive.mp4`
+        ),
+      5000
+    );
+    setVideoUrl(videoUrl);
   };
 
   if (!data) return null;
@@ -296,17 +303,30 @@ export default ({ location }) => {
                   <button id="stop" onClick={stopArchive}>
                     STOP
         </button> */}
-                <OTPublisher
-                  properties={{
-                    height: '33.75vw',
-                    width: '60vw',
-                    publishVideo: recording,
-                    publishAudio: recording,
-                  }}
-                  onPublish={onPublish}
-                  onError={onPublishError}
-                  eventHandlers={publisherEventHandlers}
-                />
+
+                {interview.review ? (
+                  <ReactPlayer
+                    key={videoUrl}
+                    // className={styles.reactPlayer}
+                    playing
+                    controls={interview.controls}
+                    url={videoUrl}
+                    width="100%"
+                    height="100%"
+                  />
+                ) : (
+                  <OTPublisher
+                    properties={{
+                      height: '33.75vw',
+                      width: '60vw',
+                      publishVideo: recording,
+                      publishAudio: recording,
+                    }}
+                    onPublish={onPublish}
+                    onError={onPublishError}
+                    eventHandlers={publisherEventHandlers}
+                  />
+                )}
               </OTSession>
             </div>
           )}

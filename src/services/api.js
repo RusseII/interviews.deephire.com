@@ -2,7 +2,8 @@ import fetch from 'isomorphic-fetch';
 
 const apiUrl = 'https://a.deephire.com/v1/';
 // const apiUrl = 'http://localhost:3000/v1/';
-const openTokApi = 'http://localhost:8080';
+// const openTokApi = 'http://localhost:8081';
+const openTokApi = 'https://tokbox.deephire.com';
 
 export const fetchInterview = id => {
   return fetch(`${apiUrl}interviews/${id}`)
