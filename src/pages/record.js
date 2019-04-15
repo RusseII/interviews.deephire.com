@@ -1,33 +1,42 @@
 import practiceQuestions from '@/services/practiceInterviewQuestions';
 import React, { useState, useEffect } from 'react';
+import { OTSession, OTPublisher } from 'opentok-react';
 
 import ReactPlayer from 'react-player';
 import { Timeline, Button, Row, Col } from 'antd';
 import styles from './record.less';
 import qs from 'qs';
-import LoadingScreen from 'react-loading-screen';
 
-import { camerakit } from '@/services/browser.min.js';
-import { fetchInterview, notifyRecruiter, notifyCandidate, uploadFile } from '@/services/api';
-import vimeoUpload from './vimeo.js';
+import {
+  fetchInterview,
+  notifyRecruiter,
+  notifyCandidate,
+  startArchive,
+  stopArchive,
+  storeInterviewQuestion, getCredentials
+} from '@/services/api';
 import Timer from '@/components/Timer';
 import { router } from 'umi';
 
-let myStream;
 export default ({ location }) => {
   const id = qs.parse(location.search)['?id'];
   const fullName = qs.parse(location.search)['fullName'];
   const email = qs.parse(location.search)['email'];
   const practice = qs.parse(location.search)['practice'];
 
+  const [connection, setConnection] = useState('Disconnected');
+  const [error, setError] = useState(null);
+  const [archiveId, setArchiveId] = useState(null);
+  const [connectionDetails, setApi] = useState(null)
+  
+
   const [before, setBefore] = useState(true);
 
-  const [videosUploading, setVideosUploading] = useState([]);
-  const [uploading, setUploading] = useState(false);
+  const [recording, setRecording] = useState(false);
 
   const [videoUrl, setVideoUrl] = useState(null);
-  const [videoBlob, setVideoBlob] = useState(null);
-  const [audioBlob, setAudioBlob] = useState(null);
+  const [k, setK] = useState('Disconnected');
+
 
   const [index, setIndex] = useState(0);
   const [data, setData] = useState(null);
@@ -48,10 +57,64 @@ export default ({ location }) => {
     if (!practice) setBefore(false);
     setup();
     setAction('start');
-    initializeCameraKit()
+    getCredentials().then(session => setApi(session))
+
   }, []);
 
+  const sessionEventHandlers = {
+    sessionConnected: () => {
+      setConnection('Connected');
+      console.log('w');
+    },
+    sessionDisconnected: () => {
+      setConnection('Disconnected');
+    },
+    sessionReconnected: () => {
+      setConnection('Reconnected');
+    },
+    sessionReconnecting: () => {
+      setConnection('Reconnecting');
+    },
+  };
+
+  const publisherEventHandlers = {
+    accessDenied: () => {
+      console.log('User denied access to media source');
+    },
+    streamCreated: () => {
+      console.log('Publisher stream created');
+    },
+    streamDestroyed: ({ reason }) => {
+      console.log(`Publisher stream destroyed because: ${reason}`);
+    },
+  };
+
+  const onSessionError = error => {
+    setError(JSON.stringify(error));
+  };
+
+  const onPublish = () => {
+    console.log('Publish Success');
+  };
+
+  const onPublishError = error => {
+    setError(JSON.stringify(error));
+  };
+
+  const startRecording = () => {
+    setRecording(true);
+    startArchive(connectionDetails.sessionId)
+      .then(r => r.json())
+      .then(r => console.log(setArchiveId(r.id)));
+  };
+
+  const stopRecording = () => {
+    setRecording(false);
+    stopArchive(archiveId);
+  };
+
   const setup = async () => {
+
     var [data] = await fetchInterview(id);
     if (practice) data = practiceQuestions;
     setData(data);
@@ -61,27 +124,22 @@ export default ({ location }) => {
       interview_config: { answerTime, prepTime, retakesAllowed } = {},
       interview_questions: interviewQuestions = [],
     } = data || {};
-    setStartingData({ interviewName, answerTime, prepTime, retakesAllowed, interviewQuestions, createdBy });
+    setStartingData({
+      interviewName,
+      answerTime,
+      prepTime,
+      retakesAllowed,
+      interviewQuestions,
+      createdBy,
+    });
     setRetakes(retakesAllowed);
     setInterview({
-      ...interview, 
+      ...interview,
       time: prepTime,
     });
+
   };
 
-  const initializeCameraKit = async () => {
-    camerakit.Loader.base = "/webm";
-
-    const devices = await camerakit.getDevices();
-    myStream = await camerakit.createCaptureStream({
-      audio: devices.audio[0],
-      video: devices.video[0],
-      fallbackConfig: {
-        base: "/webm" // Point fallback recorder
-      }
-    });
-    myStream.init()
-  }
   const changeButtonAction = action => {
     switch (action) {
       case 'start':
@@ -100,11 +158,11 @@ export default ({ location }) => {
 
   const start = async () => {
     recordScreen();
-    myStream.setResolution({ aspect: 16 / 9 });
-    myStream.recorder.start();
-    const streamUrl = await myStream.getMediaStream();
-    setVideoUrl(streamUrl);
-  };
+    startRecording();
+    document.getElementsByClassName('OTPublisherContainer')[0].style.display = "block"
+    document.getElementsByClassName('OTPublisherContainer')[0].style.opacity = 1
+
+  }; 
 
   const prepareScreen = startingData => {
     setInterview({
@@ -116,7 +174,10 @@ export default ({ location }) => {
       helperText: 'Prepare your answer',
     });
     setAction('start');
-    setVideoUrl(null);
+    document.getElementsByClassName('OTPublisherContainer')[0].style.display = "block"
+    document.getElementsByClassName('OTPublisherContainer')[0].style.opacity = .3
+
+
   };
 
   const recordScreen = () => {
@@ -146,46 +207,25 @@ export default ({ location }) => {
   };
 
   const nextQuestion = () => {
+    prepareScreen(startingData);
+
     if (!practice) {
-      var uploadStatus = vimeoUpload(
-        videoBlob,
+      storeInterviewQuestion(
         id,
         email,
         fullName,
         email,
         startingData.interviewName,
-        startingData.interviewQuestions[index].question
+        startingData.interviewQuestions[index].question,
+        `https://s3.amazonaws.com/deephire-video-dump/${connectionDetails.apiKey}/${archiveId}/archive.mp4`
       );
-      if (audioBlob) { uploadFile(videoBlob, audioBlob, email, startingData.interviewQuestions[index].question) }
-
-
-      //IMPORTANT i don't think this works completly
-      var status = [...videosUploading, uploadStatus];
     }
-    setVideosUploading(status);
-    prepareScreen(startingData);
     if (startingData.interviewQuestions.length === index + 1) {
-    myStream.destroy();
-
       if (practice) router.push(`/real?id=${id}&fullName=${fullName}&email=${email}`);
       else {
-        setUploading(true);
-        Promise.all(status).then(r => {
-          console.log(videosUploading);
-          console.log(r);
-          setUploading(false);
-          notifyCandidate(fullName, email);
-
-          // conditional logic if user is on safari, so we can do the hack
-          if (audioBlob) {
-            notifyRecruiter(id, fullName, email, startingData.interviewName, "safari@deephire.com");
-          }
-          else {
-            notifyRecruiter(id, fullName, email, startingData.interviewName, startingData.createdBy);
-          }
-
-          router.push('/victory');
-        });
+        notifyCandidate(fullName, email);
+        notifyRecruiter(id, fullName, email, startingData.interviewName, startingData.createdBy);
+        router.push('/victory');
       }
     } else {
       setIndex(index + 1);
@@ -200,14 +240,16 @@ export default ({ location }) => {
   };
 
   const stop = async () => {
-    //recorded Audio only exists in safari
-    const [recordedVideo, recordedAudio] = await myStream.recorder.stop();
-    var videoUrl = URL.createObjectURL(recordedVideo);
-    if (recordedAudio)  videoUrl = URL.createObjectURL(recordedAudio);
-    setVideoBlob(recordedVideo);
-    setAudioBlob(recordedAudio)
-    setVideoUrl(videoUrl);
+    stopRecording();
     reviewScreen();
+
+    setVideoUrl(
+      `https://s3.amazonaws.com/deephire-video-dump/${connectionDetails.apiKey}/${archiveId}/archive.mp4`
+    )
+    setK(10)
+    document.getElementsByClassName('OTPublisherContainer')[0].style.display = "none"
+
+
   };
 
   if (!data) return null;
@@ -215,13 +257,13 @@ export default ({ location }) => {
 
   return (
     <div className={styles.wrapper}>
-      <LoadingScreen
-        loading={uploading}
-        bgColor="#f1f1f1"
-        spinnerColor="#9ee5f8"
-        textColor="#676767"
-        text="Uploading your videos"
-      />
+      {/* <div id="sessionStatus">Session Status: {connection}</div> */}
+      {error ? (
+        <div className="error">
+          <strong>Error:</strong> {error}
+        </div>
+      ) : null}
+
       <div style={{ paddingTop: '24px' }}>
         <h1> {before ? 'Whats Next' : startingData.interviewQuestions[index].question}</h1>{' '}
         {interview.helperText}
@@ -237,7 +279,15 @@ export default ({ location }) => {
         />
       )}
       <br />
-
+      {connectionDetails && 
+      <OTSession
+        {...connectionDetails}
+        // apiKey={apiKey}
+        // sessionId={sessionId}
+        // token={token}
+        onError={onSessionError}
+        eventHandlers={sessionEventHandlers}
+      >
       <Row type="flex" justify="center">
         <Col span={15}>
           {before ? (
@@ -256,45 +306,62 @@ export default ({ location }) => {
               </Timeline>
             </>
           ) : (
-            <div className={styles.playerWrapper}>
-              {interview.key === 0 ? (
-                <img
-                  height="100%"
-                  // width="100%"
-                  className={styles.img}
-                  // src="https://icons-for-free.com/free-icons/png/512/1511312.png"
-                  src="https://s3.amazonaws.com/deephire/logos/undrawThinking.png"
-                  alt="Prepare to Record!"
-                />
-              ) : (
-                <>
+            <div>
+         
+                {/* <button id="record" onClick={archive}>
+                    Record
+        </button>
+                  <button id="stop" onClick={stopArchive}>
+                    STOP
+        </button> */}
 
-                <ReactPlayer
-                  key={videoUrl}
-                  className={styles.reactPlayer}
-                  playing
-                  muted
-                  controls={interview.controls}
-                  url={videoUrl}
-                  width="100%"
-                  height="100%"
-                />
-            {audioBlob && interview.review && <div                   className={styles.reactPlayer}
- >WARNING - There is no video playback here for Safari - once you submit, your recrutier will be able to see both your video and audio.</div> }
-
-
-                </>
-
-              )}
+                {interview.review &&  (
+                  <ReactPlayer
+                 
+                    key={k}
+                    onError={(err) => setTimeout(() => {
+                      console.log(err) 
+                      if (err.type) setK(k + 1)
+                      },500)
+                    }
+                    controls
+                    // className={styles.reactPlayer}
+                    playing={true}
+                    playsinline={true}
+                    url={videoUrl}
+                    width="100%"
+                    height="100%"
+                  />
+                ) } 
+                  <OTPublisher 
+                   properties={{
+                      fitMode:"contains",
+                      frameRate: "30",
+                                          
+                                        height: '33.75vw',
+                                        width: '60vw',
+                                    
+                                      }}
+                    onPublish={onPublish}
+                    onError={onPublishError}
+                    eventHandlers={publisherEventHandlers}
+                  />
+                
             </div>
           )}
         </Col>
+
       </Row>
+      </OTSession>
+      }
+
       {before ? (
         <Button
           className={styles.button}
           onClick={() => {
             setBefore(false);
+            setTimeout(() => document.getElementsByClassName('OTPublisherContainer')[0].style.opacity = .3, 1)
+
             setInterview({ ...interview, helperText: 'Prepare your answer', paused: false });
           }}
         >

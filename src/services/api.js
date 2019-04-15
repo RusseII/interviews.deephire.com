@@ -1,7 +1,10 @@
 import fetch from 'isomorphic-fetch';
+const uuidv1 = require('uuid/v1');
 
 const apiUrl = 'https://a.deephire.com/v1/';
 // const apiUrl = 'http://localhost:3000/v1/';
+// const openTokApi = 'http://localhost:8081';
+const openTokApi = 'https://tokbox.deephire.com';
 
 export const fetchInterview = id => {
   return fetch(`${apiUrl}interviews/${id}`)
@@ -18,7 +21,7 @@ export const fetchCompanyInfo = id => {
 };
 
 export const sendEmail = data => {
-  return fetch(`${apiUrl}/emails`, {
+  return fetch(`${apiUrl}emails`, {
     method: 'POST',
     body: JSON.stringify(data),
     headers: {
@@ -60,12 +63,11 @@ export const storeInterviewQuestion = (
 };
 
 export const notifyRecruiter = (id, candidateName, candidateEmail, interviewName, createdBy) => {
-
   var data = {
     type: 'interviewCompleted',
     id,
     candidateName,
-    recipients: [createdBy || "noemail@deephire.com"],
+    recipients: [createdBy || 'noemail@deephire.com'],
     candidateEmail,
     interviewName,
   };
@@ -85,7 +87,7 @@ export const notifyCandidate = (candidateName, candidateEmail) => {
   var data = {
     type: 'jobSeekerCompleted',
     candidateName,
-    recipients: [candidateEmail || "noCandidateEmail@deephire.com"],
+    recipients: [candidateEmail || 'noCandidateEmail@deephire.com'],
     candidateEmail,
   };
   // console.log(data)
@@ -100,20 +102,19 @@ export const notifyCandidate = (candidateName, candidateEmail) => {
   });
 };
 
-
-export const uploadFile = (videoBlob, audioBlob, key, question) => {
-  var videoData = new FormData();
-  var audioData = new FormData();
-  videoData.append("upfile", videoBlob,  `${question}.webm` );
-  audioData.append("upfile", audioBlob, `${question}.wav`);
-  fetch(`https://dev-a.deephire.com/v1/files/${key}`, {
+export const stopArchive = archiveId => {
+  return fetch(`${openTokApi}/archive/${archiveId}/stop`, {
     method: 'POST',
-    body: videoData,
   });
+};
 
-  fetch(`https://dev-a.deephire.com/v1/files/${key}`, {
+export const startArchive = archiveId => {
+  return fetch(`${openTokApi}/archive/start/${archiveId}`, {
     method: 'POST',
-    body: audioData,
   });
-  
-}
+};
+
+export const getCredentials = () => {
+  const uid = uuidv1()
+  return fetch(`${openTokApi}/room/${uid}`).then(r => r.json());
+};
