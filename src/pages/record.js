@@ -159,7 +159,7 @@ export default ({ location }) => {
   const start = async () => {
     recordScreen();
     startRecording();
-    otpContainer.node.className =  'OTPublisherContainer otp-show';
+    otpContainer.current.node.childNodes[0].classList.add('otp-hide');
   }; 
 
   const prepareScreen = startingData => {
@@ -350,7 +350,7 @@ export default ({ location }) => {
           className={styles.button}
           onClick={() => {
             setBefore(false);
-            setTimeout(() => (otpContainer.node.className =  'OTPublisherContainer otp-fade'), 1)
+            // setTimeout(() => (otpContainer.node.className =  'OTPublisherContainer otp-fade'), 1)
 
             setInterview({ ...interview, helperText: 'Prepare your answer', paused: false });
           }}

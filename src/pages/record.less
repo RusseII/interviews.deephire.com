@@ -1,52 +1,51 @@
 @import '~antd/lib/style/themes/default.less';
 
 .wrapper {
-    text-align: center;
-    background-color: white;
-  }
-  
+  text-align: center;
+  background-color: white;
+}
+
+.playerWrapper {
+  position: relative;
+  padding-top: 56.25%; /* 720 / 1280 = 0.5625 */
+}
+
+.reactPlayer {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.img {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+}
+
+.button {
+  margin: @padding-lg;
+}
+
+.otp-show {
+  display: block;
+  opacity: 1;
+}
+
+.otp-fade {
+  display: block;
+  opacity: 0.3;
+}
+
+.otp-hide {
+  display: none;
+}
+
+@media screen and (max-width: @screen-md) {
   .playerWrapper {
     position: relative;
-    padding-top: 56.25%; /* 720 / 1280 = 0.5625 */
+    padding-top: 56.25%;
+    height: 30vh;
   }
-  
-  .reactPlayer {
-    position: absolute;
-    top: 0;
-    left: 0;
-  }
-
-  .img {
-    position: absolute;
-    top: 0;
-    left: 50%;
-    -webkit-transform: translateX(-50%);
-    transform: translateX(-50%)
-  }
-
-  .button {
-    margin: @padding-lg;
-  }
-
-  .otp-show  {
-    display: block;
-    opacity: 1;
-  }
-
-  .otp-fade {
-    display: block;
-    opacity: .3;
-  }
-
-  .otp-hide {
-    display: none;
-  }
-  
-
-  @media screen and (max-width: @screen-md) {
-    .playerWrapper {
-      position: relative;
-      padding-top: 56.25%;
-      height: 30vh;
-    }
-  }
+}
