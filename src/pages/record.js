@@ -35,6 +35,8 @@ export default ({ location }) => {
   const [recording, setRecording] = useState(false);
 
   const [videoUrl, setVideoUrl] = useState(null);
+  const [k, setK] = useState('Disconnected');
+
 
   const [index, setIndex] = useState(0);
   const [data, setData] = useState(null);
@@ -229,17 +231,14 @@ export default ({ location }) => {
   };
 
   const stop = async () => {
-    var videoUrl = 'https://www.youtube.com/watch?v=cmLfnswNTDE';
     stopRecording();
     reviewScreen();
-    setTimeout(
-      () =>
-        setVideoUrl(
-          `https://s3.amazonaws.com/deephire-video-dump/${connectionDetails.apiKey}/${archiveId}/archive.mp4`
-        ),
-      4000
-    );
-    setVideoUrl(videoUrl);
+
+    setVideoUrl(
+      `https://s3.amazonaws.com/deephire-video-dump/${connectionDetails.apiKey}/${archiveId}/archive.mp4`
+    )
+    setK(10)
+
   };
 
   if (!data) return null;
@@ -306,7 +305,8 @@ export default ({ location }) => {
 
                 {interview.review &&  (
                   <ReactPlayer
-                    key={videoUrl}
+                    key={k}
+                    onError={() => setTimeout(() => setK(k+1),200)}
                     // className={styles.reactPlayer}
                     playing={true}
                     playsinline={true}
