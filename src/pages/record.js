@@ -279,7 +279,15 @@ export default ({ location }) => {
         />
       )}
       <br />
-
+      {connectionDetails && 
+      <OTSession
+        {...connectionDetails}
+        // apiKey={apiKey}
+        // sessionId={sessionId}
+        // token={token}
+        onError={onSessionError}
+        eventHandlers={sessionEventHandlers}
+      >
       <Row type="flex" justify="center">
         <Col span={15}>
           {before ? (
@@ -299,14 +307,7 @@ export default ({ location }) => {
             </>
           ) : (
             <div>
-              <OTSession
-              {...connectionDetails}
-                // apiKey={apiKey}
-                // sessionId={sessionId}
-                // token={token}
-                onError={onSessionError}
-                eventHandlers={sessionEventHandlers}
-              >
+         
                 {/* <button id="record" onClick={archive}>
                     Record
         </button>
@@ -346,11 +347,14 @@ export default ({ location }) => {
                     eventHandlers={publisherEventHandlers}
                   />
                 
-              </OTSession>
             </div>
           )}
         </Col>
+
       </Row>
+      </OTSession>
+      }
+
       {before ? (
         <Button
           className={styles.button}
