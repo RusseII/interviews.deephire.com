@@ -1,5 +1,5 @@
 import practiceQuestions from '@/services/practiceInterviewQuestions';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { OTSession, OTPublisher } from 'opentok-react';
 
 import ReactPlayer from 'react-player';
@@ -51,7 +51,7 @@ export default ({ location }) => {
   const [action, setAction] = useState('start');
 
   const [startingData, setStartingData] = useState({ interviewQuestions: [{ question: 'test' }] });
-  const [otpClass, setOtpClass] = useState('otp');
+  const otpContainer = useRef(null);
 
   // for any hooks noobs, passing in [] as 2nd paramater makes useEffect work the same for componenetDidMount
   useEffect(() => {
@@ -159,7 +159,7 @@ export default ({ location }) => {
   const start = async () => {
     recordScreen();
     startRecording();
-    setOtpClass('otp');
+    otpContainer.node.className =  'OTPublisherContainer otp-show';
   }; 
 
   const prepareScreen = startingData => {
@@ -172,7 +172,7 @@ export default ({ location }) => {
       helperText: 'Prepare your answer',
     });
     setAction('start');
-    setOtpClass('otp-fade');
+    otpContainer.node.className =  'OTPublisherContainer otp-fade'
   };
 
   const recordScreen = () => {
@@ -242,7 +242,7 @@ export default ({ location }) => {
       `https://s3.amazonaws.com/deephire-video-dump/${connectionDetails.apiKey}/${archiveId}/archive.mp4`
     )
     setK(10)
-    setOtpClass('otp-hide');
+    otpContainer.node.className =  'OTPublisherContainer otp-hide';
   };
 
   if (!data) return null;
@@ -337,7 +337,7 @@ export default ({ location }) => {
                     onPublish={onPublish}
                     onError={onPublishError}
                     eventHandlers={publisherEventHandlers}
-                    className={otpClass}
+                    ref={otpContainer}
                   />
                 
               </OTSession>
@@ -350,7 +350,7 @@ export default ({ location }) => {
           className={styles.button}
           onClick={() => {
             setBefore(false);
-            setTimeout(() => setOtpClass('otp-fade'), 1)
+            setTimeout(() => (otpContainer.node.className =  'OTPublisherContainer otp-fade'), 1)
 
             setInterview({ ...interview, helperText: 'Prepare your answer', paused: false });
           }}
