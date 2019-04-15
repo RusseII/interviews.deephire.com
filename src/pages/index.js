@@ -35,7 +35,7 @@ const Index = ({ location }) => {
     companyName: 'Loading...',
     logo:
       'http://atelier.swiftideas.com/union-demo/wp-content/uploads/sites/5/2014/05/unionproducts-img-blank.png',
-    introVideo: 'https://vimeo.com/296044829/74bfec15d8',
+    introVideo: '',
   });
 
   useEffect(() => {
@@ -47,11 +47,12 @@ const Index = ({ location }) => {
             (r.introVideo) ? console.log("companyVideo exists") : (r.introVideo = "https://vimeo.com/296044829/74bfec15d8")
             setCompanyInfo(r)
           }
-          else { 
-          setCompanyInfo({companyName: "Not Found", introVideo: 'https://vimeo.com/296044829/74bfec15d8'}
-          )
-          }
+      
           });
+      }
+      else {
+        setCompanyInfo({ companyName: "Not Found", introVideo: 'https://vimeo.com/296044829/74bfec15d8' }
+        )
       }
     });
     console.log(companyInfo);
