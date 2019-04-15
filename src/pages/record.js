@@ -58,6 +58,7 @@ export default ({ location }) => {
     setup();
     setAction('start');
     getCredentials().then(session => setApi(session))
+
   }, []);
 
   const sessionEventHandlers = {
@@ -136,6 +137,7 @@ export default ({ location }) => {
       ...interview,
       time: prepTime,
     });
+
   };
 
   const changeButtonAction = action => {
@@ -157,7 +159,10 @@ export default ({ location }) => {
   const start = async () => {
     recordScreen();
     startRecording();
-  };
+    document.getElementsByClassName('OTPublisherContainer')[0].style.display = "block"
+    document.getElementsByClassName('OTPublisherContainer')[0].style.opacity = 1
+
+  }; 
 
   const prepareScreen = startingData => {
     setInterview({
@@ -169,6 +174,10 @@ export default ({ location }) => {
       helperText: 'Prepare your answer',
     });
     setAction('start');
+    document.getElementsByClassName('OTPublisherContainer')[0].style.display = "block"
+    document.getElementsByClassName('OTPublisherContainer')[0].style.opacity = .3
+
+
   };
 
   const recordScreen = () => {
@@ -238,6 +247,8 @@ export default ({ location }) => {
       `https://s3.amazonaws.com/deephire-video-dump/${connectionDetails.apiKey}/${archiveId}/archive.mp4`
     )
     setK(10)
+    document.getElementsByClassName('OTPublisherContainer')[0].style.display = "none"
+
 
   };
 
@@ -305,12 +316,17 @@ export default ({ location }) => {
 
                 {interview.review &&  (
                   <ReactPlayer
+                 
                     key={k}
-                    onError={() => setTimeout(() => setK(k+1),200)}
+                    onError={(err) => setTimeout(() => {
+                      console.log(err) 
+                      if (err.type) setK(k + 1)
+                      },500)
+                    }
+                    controls
                     // className={styles.reactPlayer}
                     playing={true}
                     playsinline={true}
-                    controls={interview.controls}
                     url={videoUrl}
                     width="100%"
                     height="100%"
@@ -318,13 +334,11 @@ export default ({ location }) => {
                 ) } 
                   <OTPublisher 
                    properties={{
-                      style: { height: 20, display: "none" } ,
                       fitMode:"contains",
                       frameRate: "30",
-                      // insertDefaultUI: recording,
                                           
-                                        // height: '33.75vw',
-                                        // width: '60vw',
+                                        height: '33.75vw',
+                                        width: '60vw',
                                     
                                       }}
                     onPublish={onPublish}
@@ -342,6 +356,8 @@ export default ({ location }) => {
           className={styles.button}
           onClick={() => {
             setBefore(false);
+            setTimeout(() => document.getElementsByClassName('OTPublisherContainer')[0].style.opacity = .3, 1)
+
             setInterview({ ...interview, helperText: 'Prepare your answer', paused: false });
           }}
         >
