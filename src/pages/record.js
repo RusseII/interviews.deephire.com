@@ -13,7 +13,7 @@ import {
   notifyCandidate,
   startArchive,
   stopArchive,
-  storeInterviewQuestion,
+  storeInterviewQuestion, getCredentials
 } from '@/services/api';
 import Timer from '@/components/Timer';
 import { router } from 'umi';
@@ -27,10 +27,8 @@ export default ({ location }) => {
   const [connection, setConnection] = useState('Disconnected');
   const [error, setError] = useState(null);
   const [archiveId, setArchiveId] = useState(null);
-  const apiKey = '46307922';
-  const sessionId = '2_MX40NjMwNzkyMn5-MTU1NTE3MDY1OTIyOH4rWUxsNFBNMHlhMTZETjRnSFJBWDUvWG9-fg';
-  const token =
-    'T1==cGFydG5lcl9pZD00NjMwNzkyMiZzaWc9NGIwOTcxNzU3MTgxMjhhNzY5YjMwMjUzYjM2NmIyYjJlOGMwNmZmMDpzZXNzaW9uX2lkPTJfTVg0ME5qTXdOemt5TW41LU1UVTFOVEUzTURZMU9USXlPSDRyV1V4c05GQk5NSGxoTVRaRVRqUm5TRkpCV0RVdldHOS1mZyZjcmVhdGVfdGltZT0xNTU1MTc1MTI5Jm5vbmNlPTAuOTYwOTk4NTQxNTIwNjAxOSZyb2xlPXB1Ymxpc2hlciZleHBpcmVfdGltZT0xNTU1MjYxNTI4JmluaXRpYWxfbGF5b3V0X2NsYXNzX2xpc3Q9';
+  const [connectionDetails, setApi] = useState(null)
+  
 
   const [before, setBefore] = useState(true);
 
@@ -57,6 +55,7 @@ export default ({ location }) => {
     if (!practice) setBefore(false);
     setup();
     setAction('start');
+    getCredentials().then(session => setApi(session))
   }, []);
 
   const sessionEventHandlers = {
@@ -101,7 +100,7 @@ export default ({ location }) => {
 
   const startRecording = () => {
     setRecording(true);
-    startArchive(sessionId)
+    startArchive(connectionDetails.sessionId)
       .then(r => r.json())
       .then(r => console.log(setArchiveId(r.id)));
   };
@@ -112,6 +111,7 @@ export default ({ location }) => {
   };
 
   const setup = async () => {
+
     var [data] = await fetchInterview(id);
     if (practice) data = practiceQuestions;
     setData(data);
@@ -206,7 +206,7 @@ export default ({ location }) => {
         email,
         startingData.interviewName,
         startingData.interviewQuestions[index].question,
-        `https://s3.amazonaws.com/deephire-video-dump/${apiKey}/${archiveId}/archive.mp4`
+        `https://s3.amazonaws.com/deephire-video-dump/${connectionDetails.apiKey}/${archiveId}/archive.mp4`
       );
     }
     if (startingData.interviewQuestions.length === index + 1) {
@@ -235,7 +235,7 @@ export default ({ location }) => {
     setTimeout(
       () =>
         setVideoUrl(
-          `https://s3.amazonaws.com/deephire-video-dump/${apiKey}/${archiveId}/archive.mp4`
+          `https://s3.amazonaws.com/deephire-video-dump/${connectionDetails.apiKey}/${archiveId}/archive.mp4`
         ),
       4000
     );
@@ -290,9 +290,10 @@ export default ({ location }) => {
           ) : (
             <div>
               <OTSession
-                apiKey={apiKey}
-                sessionId={sessionId}
-                token={token}
+              {...connectionDetails}
+                // apiKey={apiKey}
+                // sessionId={sessionId}
+                // token={token}
                 onError={onSessionError}
                 eventHandlers={sessionEventHandlers}
               >
@@ -315,13 +316,17 @@ export default ({ location }) => {
                     height="100%"
                   />
                 ) } 
-                  <OTPublisher
-                    properties={{
-                      height: '33.75vw',
-                      width: '60vw',
-                      publishVideo: true,
-                      publishAudio: true,
-                    }}
+                  <OTPublisher 
+                   properties={{
+                      style: { height: 20, display: "none" } ,
+                      fitMode:"contains",
+                      frameRate: "30",
+                      // insertDefaultUI: recording,
+                                          
+                                        // height: '33.75vw',
+                                        // width: '60vw',
+                                    
+                                      }}
                     onPublish={onPublish}
                     onError={onPublishError}
                     eventHandlers={publisherEventHandlers}

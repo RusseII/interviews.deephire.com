@@ -1,4 +1,5 @@
 import fetch from 'isomorphic-fetch';
+const uuidv1 = require('uuid/v1');
 
 const apiUrl = 'https://a.deephire.com/v1/';
 // const apiUrl = 'http://localhost:3000/v1/';
@@ -111,4 +112,9 @@ export const startArchive = archiveId => {
   return fetch(`${openTokApi}/archive/start/${archiveId}`, {
     method: 'POST',
   });
+};
+
+export const getCredentials = () => {
+  const uid = uuidv1()
+  return fetch(`${openTokApi}/room/${uid}`).then(r => r.json());
 };
