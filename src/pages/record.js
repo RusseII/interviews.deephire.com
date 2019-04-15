@@ -257,7 +257,7 @@ export default ({ location }) => {
 
   return (
     <div className={styles.wrapper}>
-      <div id="sessionStatus">Session Status: {connection}</div>
+      {/* <div id="sessionStatus">Session Status: {connection}</div> */}
       {error ? (
         <div className="error">
           <strong>Error:</strong> {error}
