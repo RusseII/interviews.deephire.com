@@ -67,6 +67,8 @@ const Index = ({ location }) => {
         <Col span={15} xxl={11} xl={12}>
           <div className={styles.playerWrapper}>
             <ReactPlayer
+              controls
+
               key={companyInfo.introVideo}
               className={styles.reactPlayer}
               url={companyInfo.introVideo}
