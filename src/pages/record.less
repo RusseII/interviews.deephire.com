@@ -28,16 +28,20 @@
     margin: @padding-lg;
   }
 
-  .otp  {
+  .otp-show  {
     display: block;
     opacity: 1;
-    &-fade {
-      opacity: .3;
-    }
-    &-hide {
-      display: none;
-    }
   }
+
+  .otp-fade {
+    display: block;
+    opacity: .3;
+  }
+
+  .otp-hide {
+    display: none;
+  }
+  
 
   @media screen and (max-width: @screen-md) {
     .playerWrapper {
