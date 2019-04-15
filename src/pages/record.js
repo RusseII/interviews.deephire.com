@@ -51,6 +51,7 @@ export default ({ location }) => {
   const [action, setAction] = useState('start');
 
   const [startingData, setStartingData] = useState({ interviewQuestions: [{ question: 'test' }] });
+  const [otpClass, setOtpClass] = useState('otp');
 
   // for any hooks noobs, passing in [] as 2nd paramater makes useEffect work the same for componenetDidMount
   useEffect(() => {
@@ -58,7 +59,6 @@ export default ({ location }) => {
     setup();
     setAction('start');
     getCredentials().then(session => setApi(session))
-
   }, []);
 
   const sessionEventHandlers = {
@@ -159,9 +159,7 @@ export default ({ location }) => {
   const start = async () => {
     recordScreen();
     startRecording();
-    document.getElementsByClassName('OTPublisherContainer')[0].style.display = "block"
-    document.getElementsByClassName('OTPublisherContainer')[0].style.opacity = 1
-
+    setOtpClass('otp');
   }; 
 
   const prepareScreen = startingData => {
@@ -174,10 +172,7 @@ export default ({ location }) => {
       helperText: 'Prepare your answer',
     });
     setAction('start');
-    document.getElementsByClassName('OTPublisherContainer')[0].style.display = "block"
-    document.getElementsByClassName('OTPublisherContainer')[0].style.opacity = .3
-
-
+    setOtpClass('otp-fade');
   };
 
   const recordScreen = () => {
@@ -247,9 +242,7 @@ export default ({ location }) => {
       `https://s3.amazonaws.com/deephire-video-dump/${connectionDetails.apiKey}/${archiveId}/archive.mp4`
     )
     setK(10)
-    document.getElementsByClassName('OTPublisherContainer')[0].style.display = "none"
-
-
+    setOtpClass('otp-hide');
   };
 
   if (!data) return null;
@@ -344,6 +337,7 @@ export default ({ location }) => {
                     onPublish={onPublish}
                     onError={onPublishError}
                     eventHandlers={publisherEventHandlers}
+                    className={otpClass}
                   />
                 
               </OTSession>
@@ -356,7 +350,7 @@ export default ({ location }) => {
           className={styles.button}
           onClick={() => {
             setBefore(false);
-            setTimeout(() => document.getElementsByClassName('OTPublisherContainer')[0].style.opacity = .3, 1)
+            setTimeout(() => setOtpClass('otp-fade'), 1)
 
             setInterview({ ...interview, helperText: 'Prepare your answer', paused: false });
           }}
