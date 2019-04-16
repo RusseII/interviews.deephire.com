@@ -13,9 +13,12 @@ import {
   notifyCandidate,
   startArchive,
   stopArchive,
-  storeInterviewQuestion, getCredentials
+  storeInterviewQuestion,
+  getCredentials,
 } from '@/services/api';
 import Timer from '@/components/Timer';
+import Video from '@/components/Video';
+
 import { router } from 'umi';
 
 export default ({ location }) => {
@@ -27,16 +30,13 @@ export default ({ location }) => {
   const [connection, setConnection] = useState('Disconnected');
   const [error, setError] = useState(null);
   const [archiveId, setArchiveId] = useState(null);
-  const [connectionDetails, setApi] = useState(null)
-  
+  const [connectionDetails, setApi] = useState(null);
 
   const [before, setBefore] = useState(true);
 
-  const [recording, setRecording] = useState(false);
 
   const [videoUrl, setVideoUrl] = useState(null);
   const [k, setK] = useState('Disconnected');
-
 
   const [index, setIndex] = useState(0);
   const [data, setData] = useState(null);
@@ -47,6 +47,7 @@ export default ({ location }) => {
     time: 45,
     countDown: true,
     buttonText: 'Start Recording',
+    screen: 'prepare',
   });
   const [action, setAction] = useState('start');
 
@@ -57,8 +58,7 @@ export default ({ location }) => {
     if (!practice) setBefore(false);
     setup();
     setAction('start');
-    getCredentials().then(session => setApi(session))
-
+    getCredentials().then(session => setApi(session));
   }, []);
 
   const sessionEventHandlers = {
@@ -102,19 +102,16 @@ export default ({ location }) => {
   };
 
   const startRecording = () => {
-    setRecording(true);
     startArchive(connectionDetails.sessionId)
       .then(r => r.json())
       .then(r => console.log(setArchiveId(r.id)));
   };
 
   const stopRecording = () => {
-    setRecording(false);
     stopArchive(archiveId);
   };
 
   const setup = async () => {
-
     var [data] = await fetchInterview(id);
     if (practice) data = practiceQuestions;
     setData(data);
@@ -137,7 +134,6 @@ export default ({ location }) => {
       ...interview,
       time: prepTime,
     });
-
   };
 
   const changeButtonAction = action => {
@@ -159,10 +155,7 @@ export default ({ location }) => {
   const start = async () => {
     recordScreen();
     startRecording();
-    document.getElementsByClassName('OTPublisherContainer')[0].style.display = "block"
-    document.getElementsByClassName('OTPublisherContainer')[0].style.opacity = 1
-
-  }; 
+  };
 
   const prepareScreen = startingData => {
     setInterview({
@@ -172,12 +165,9 @@ export default ({ location }) => {
       countDown: true,
       buttonText: 'Start Recording',
       helperText: 'Prepare your answer',
+      screen: 'prepare',
     });
     setAction('start');
-    document.getElementsByClassName('OTPublisherContainer')[0].style.display = "block"
-    document.getElementsByClassName('OTPublisherContainer')[0].style.opacity = .3
-
-
   };
 
   const recordScreen = () => {
@@ -188,6 +178,7 @@ export default ({ location }) => {
       countDown: false,
       buttonText: 'Stop Recording',
       helperText: 'Recording...',
+      screen: 'record',
     });
     setAction('stop');
   };
@@ -201,7 +192,7 @@ export default ({ location }) => {
       buttonText: 'Next Question',
       review: true,
       helperText: 'Review your video',
-      controls: true,
+      screen: 'review',
     });
     setAction('nextQuestion');
   };
@@ -217,7 +208,9 @@ export default ({ location }) => {
         email,
         startingData.interviewName,
         startingData.interviewQuestions[index].question,
-        `https://s3.amazonaws.com/deephire-video-dump/${connectionDetails.apiKey}/${archiveId}/archive.mp4`
+        `https://s3.amazonaws.com/deephire-video-dump/${
+          connectionDetails.apiKey
+        }/${archiveId}/archive.mp4`
       );
     }
     if (startingData.interviewQuestions.length === index + 1) {
@@ -244,12 +237,11 @@ export default ({ location }) => {
     reviewScreen();
 
     setVideoUrl(
-      `https://s3.amazonaws.com/deephire-video-dump/${connectionDetails.apiKey}/${archiveId}/archive.mp4`
-    )
-    setK(10)
-    document.getElementsByClassName('OTPublisherContainer')[0].style.display = "none"
-
-
+      `https://s3.amazonaws.com/deephire-video-dump/${
+        connectionDetails.apiKey
+      }/${archiveId}/archive.mp4`
+    );
+    setK(10);
   };
 
   if (!data) return null;
@@ -279,88 +271,83 @@ export default ({ location }) => {
         />
       )}
       <br />
-      {connectionDetails && 
-      <OTSession
-        {...connectionDetails}
-        // apiKey={apiKey}
-        // sessionId={sessionId}
-        // token={token}
-        onError={onSessionError}
-        eventHandlers={sessionEventHandlers}
-      >
-      <Row type="flex" justify="center">
-        <Col span={15}>
-          {before ? (
-            <>
-              <h3>{`You’ll be taken to a Practice Interview (2 Questions) so you can get used to the system. After you finish the Practice Interview, there is a break and then your real interview will begin! Good luck! `}</h3>
-              <br /> <br />
-              <h4>Each questions follows the following format:</h4>
-              <br />
-              <br />
-              <Timeline mode="alternate">
-                <Timeline.Item>{`${startingData.prepTime} Seconds to Prepare`}</Timeline.Item>
-                <Timeline.Item color="blue">{`${
-                  startingData.answerTime
-                } Seconds to Record`}</Timeline.Item>
-                <Timeline.Item color="red">Review Video Answer</Timeline.Item>
-              </Timeline>
-            </>
-          ) : (
-            <div>
-         
-                {/* <button id="record" onClick={archive}>
+      {connectionDetails && (
+        <OTSession
+          {...connectionDetails}
+          // apiKey={apiKey}
+          // sessionId={sessionId}
+          // token={token}
+          onError={onSessionError}
+          eventHandlers={sessionEventHandlers}
+        >
+          <Row type="flex" justify="center">
+            <Col span={15}>
+              {before ? (
+                <>
+                  <h3>{`You’ll be taken to a Practice Interview (2 Questions) so you can get used to the system. After you finish the Practice Interview, there is a break and then your real interview will begin! Good luck! `}</h3>
+                  <br /> <br />
+                  <h4>Each questions follows the following format:</h4>
+                  <br />
+                  <br />
+                  <Timeline mode="alternate">
+                    <Timeline.Item>{`${startingData.prepTime} Seconds to Prepare`}</Timeline.Item>
+                    <Timeline.Item color="blue">{`${
+                      startingData.answerTime
+                    } Seconds to Record`}</Timeline.Item>
+                    <Timeline.Item color="red">Review Video Answer</Timeline.Item>
+                  </Timeline>
+                </>
+              ) : (
+                <div>
+                  {/* <button id="record" onClick={archive}>
                     Record
         </button>
                   <button id="stop" onClick={stopArchive}>
                     STOP
         </button> */}
 
-                {interview.review &&  (
-                  <ReactPlayer
-                 
-                    key={k}
-                    onError={(err) => setTimeout(() => {
-                      console.log(err) 
-                      if (err.type) setK(k + 1)
-                      },500)
-                    }
-                    controls
-                    // className={styles.reactPlayer}
-                    playing={true}
-                    playsinline={true}
-                    url={videoUrl}
-                    width="100%"
-                    height="100%"
-                  />
-                ) } 
-                  <OTPublisher 
-                   properties={{
-                      fitMode:"contains",
-                      frameRate: "30",
-                                          
-                                        height: '33.75vw',
-                                        width: '60vw',
-                                    
-                                      }}
+                  {interview.review && (
+                    <ReactPlayer
+                      key={k}
+                      onError={err =>
+                        setTimeout(() => {
+                          console.log(err);
+                          if (err.type) setK(k + 1);
+                        }, 500)
+                      }
+                      controls
+                      // className={styles.reactPlayer}
+                      playing={true}
+                      playsinline={true}
+                      url={videoUrl}
+                      width="100%"
+                      height="100%"
+                    />
+                  )}
+                  <Video
+                    screen={interview.screen}
+                    properties={{
+                      fitMode: 'contains',
+                      frameRate: '30',
+                      height: '33.75vw',
+                      width: '60vw',
+                    }}
                     onPublish={onPublish}
                     onError={onPublishError}
                     eventHandlers={publisherEventHandlers}
                   />
-                
-            </div>
-          )}
-        </Col>
-
-      </Row>
-      </OTSession>
-      }
+                </div>
+              )}
+            </Col>
+          </Row>
+        </OTSession>
+      )}
 
       {before ? (
         <Button
           className={styles.button}
           onClick={() => {
             setBefore(false);
-            setTimeout(() => document.getElementsByClassName('OTPublisherContainer')[0].style.opacity = .3, 1)
 
             setInterview({ ...interview, helperText: 'Prepare your answer', paused: false });
           }}
