@@ -292,7 +292,7 @@ export default ({ location }) => {
         <Col span={15}>
           {before ? (
             <>
-              <h3>{`You’ll be taken to a Practice Interview (2 Questions) so you can get used to the system. After you finish the Practice Interview, there is a break (30 seconds), and then your real interview will begin! Good luck! `}</h3>
+              <h3>{`You’ll be taken to a Practice Interview (2 Questions) so you can get used to the system. After you finish the Practice Interview, there is a break and then your real interview will begin! Good luck! `}</h3>
               <br /> <br />
               <h4>Each questions follows the following format:</h4>
               <br />
