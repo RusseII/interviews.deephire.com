@@ -30,12 +30,7 @@ const Video = props => {
         <OTPublisher {...props} />
       </div>
       <div
-        style={{
-          position: 'absolute',
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%,-50%)',
-        }}
+        className={styles.center}
       >
         <h1>{recordingOn.text}</h1>
       </div>
