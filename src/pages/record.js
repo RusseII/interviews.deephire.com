@@ -1,6 +1,8 @@
 import practiceQuestions from '@/services/practiceInterviewQuestions';
 import React, { useState, useEffect } from 'react';
-import { OTSession, OTPublisher } from 'opentok-react';
+import { OTSession } from 'opentok-react';
+
+import LoadingScreen from 'react-loading-screen';
 
 import ReactPlayer from 'react-player';
 import { Timeline, Button, Row, Col } from 'antd';
@@ -34,9 +36,9 @@ export default ({ location }) => {
 
   const [before, setBefore] = useState(true);
 
-
   const [videoUrl, setVideoUrl] = useState(null);
-  const [k, setK] = useState('Disconnected');
+  const [k, setK] = useState(0);
+  const [published, setPublished] = useState(false);
 
   const [index, setIndex] = useState(0);
   const [data, setData] = useState(null);
@@ -94,6 +96,7 @@ export default ({ location }) => {
   };
 
   const onPublish = () => {
+    setPublished(true);
     console.log('Publish Success');
   };
 
@@ -313,7 +316,7 @@ export default ({ location }) => {
                         setTimeout(() => {
                           console.log(err);
                           if (err.type) setK(k + 1);
-                        }, 500)
+                        }, 1000)
                       }
                       controls
                       // className={styles.reactPlayer}
@@ -324,6 +327,14 @@ export default ({ location }) => {
                       height="100%"
                     />
                   )}
+
+                  <LoadingScreen
+                    loading={!published}
+                    bgColor="#f1f1f1"
+                    spinnerColor="#9ee5f8"
+                    textColor="#676767"
+                    text="Connecting to Camera..."
+                  />
                   <Video
                     screen={interview.screen}
                     properties={{
