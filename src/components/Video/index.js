@@ -17,7 +17,7 @@ const Video = props => {
         setOptions({ opacity: 0.3, text: 'Prepare',  display: "block" });
         break;
       case 'review':
-        setOptions({ opacity: 0.3, text: '0', display: "none" });
+        setOptions({ opacity: 0.3, text: '', display: "none" });
         break;
       default:
         console.log('Invalid screen prop');
