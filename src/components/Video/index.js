@@ -6,33 +6,33 @@ import { OTPublisher } from 'opentok-react';
 const Video = props => {
   const {  screen } = props;
 
-  const [recordingOn, setRecordingOn] = useState({ opacity: 0.3, text: 'Prepare' });
+  const [options, setOptions] = useState({ opacity: 0.3, text: 'Prepare' });
 
   useEffect(() => {
     switch (screen) {
       case 'record':
-        setRecordingOn({ opacity: 1, text: '',  display: "block" });
+        setOptions({ opacity: 1, text: '',  display: "block" });
         break;
       case 'prepare':
-        setRecordingOn({ opacity: 0.3, text: 'Prepare',  display: "block" });
+        setOptions({ opacity: 0.3, text: 'Prepare',  display: "block" });
         break;
       case 'review':
-        setRecordingOn({ opacity: 0.3, text: '0', display: "none" });
+        setOptions({ opacity: 0.3, text: '0', display: "none" });
         break;
       default:
-        console.log('Invalid Screen Prop');
+        console.log('Invalid screen prop');
     }
   }, [screen]);
 
   return (
     <>
-      <div style={{ display: recordingOn.display, opacity: recordingOn.opacity }}>
-        <OTPublisher {...props} />
+      <div style={{ display: options.display, opacity: options.opacity }}>
+        <OTPublisher {...props}  />
       </div>
       <div
         className={styles.center}
       >
-        <h1>{recordingOn.text}</h1>
+        <h1>{options.text}</h1>
       </div>
     </>
   );
