@@ -30,7 +30,7 @@ const Results = ({ testResults }) => {
     <>
       <Row style={{ paddingTop: '24px' }} type="flex" justify="space-between">
         <Col span={8}>
-          <Status type="camera" color={testResults.camera ? '#52c41a' : '#ffa39e'} text="Camera" />;
+          <Status type="camera" color={testResults.camera ? '#52c41a' : '#ffa39e'} text="Camera" />
         </Col>
         <Col span={8}>
           <Status
@@ -38,11 +38,11 @@ const Results = ({ testResults }) => {
             color={testResults.connection ? '#52c41a' : '#ffa39e'}
             text="Network"
           />
-          ;
+          
         </Col>
 
         <Col span={8}>
-          <Status type="audio" color={testResults.audio ? '#52c41a' : '#ffa39e'} text="Audio" />;
+          <Status type="audio" color={testResults.audio ? '#52c41a' : '#ffa39e'} text="Audio" />
         </Col>
       </Row>
     </>
@@ -65,7 +65,7 @@ const PreInterviewTest = ({ visible, setVisible }) => {
   }, []);
 
   const timer = setTimeout(() => {
-    if (!run) setProgress(100)
+    if (!run) setProgress(100);
     else if (progress < 100) setProgress(progress + 1);
   }, 1000);
 
@@ -97,6 +97,16 @@ const PreInterviewTest = ({ visible, setVisible }) => {
         console.log('OpenTok connectivity test results', results);
         // setTestResults({ ...testResults, connection: results.success });
         let c = results.success;
+        if (results.failedTests[0]) {
+          const result = {
+            audio: false,
+            camera: false,
+            connection: false,
+          };
+          setTestResults(result);
+          setProgress(100);
+          setRun(false);
+        }
 
         otNetworkTest
           .testQuality(function updateCallback(stats) {
@@ -112,7 +122,7 @@ const PreInterviewTest = ({ visible, setVisible }) => {
             };
             setTestResults({ ...testResults, ...result });
             setProgress(100);
-            setRun(false)
+            setRun(false);
             let publisherSettings = {};
             if (results.video.reason) {
               console.log('Video not supported:', results.video.reason);
