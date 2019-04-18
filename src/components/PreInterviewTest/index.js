@@ -70,7 +70,7 @@ const PreInterviewTest = ({ visible, setVisible, location }) => {
   const timer = setTimeout(() => {
     if (!run) setProgress(100);
     else if (progress < 100) setProgress(progress + 1);
-  }, 1000);
+  }, 400);
 
   if (progress >= 100) {
     clearTimeout(timer);
@@ -79,7 +79,7 @@ const PreInterviewTest = ({ visible, setVisible, location }) => {
   const checkSessionConnection = testSession => {
     try {
       // eslint-disable-next-line
-      var otNetworkTest = new NetworkTest(OT, testSession);
+      var otNetworkTest = new NetworkTest(OT, testSession, {timeout: 5000});
     } catch (error) {
       switch (error.name) {
         case ErrorNames.MISSING_OPENTOK_INSTANCE:
