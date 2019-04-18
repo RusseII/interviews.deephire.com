@@ -260,7 +260,7 @@ export default ({ location }) => {
           <strong>Error:</strong> {error}
         </div>
       ) : null}
-      <PreInterviewTest location={location} visible={visible} setVisible={setVisible} />
+      {practice && <PreInterviewTest  visible={visible} setVisible={setVisible} />}
       <div style={{ paddingTop: '24px' }}>
         <h1> {before ? 'Whats Next' : startingData.interviewQuestions[index].question}</h1>{' '}
         {interview.helperText}

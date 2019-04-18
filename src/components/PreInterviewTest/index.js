@@ -2,7 +2,6 @@ import NetworkTest, { ErrorNames } from 'opentok-network-test-js';
 import React, { useState, useEffect } from 'react';
 import { getCredentials } from '@/services/api';
 import { Modal, Progress, Icon, Row, Col, Button } from 'antd';
-import qs from 'qs';
 
 // import styles from './index.less';
 
@@ -49,22 +48,19 @@ const Results = ({ testResults }) => {
   );
 };
 
-const PreInterviewTest = ({ visible, setVisible, location }) => {
+const PreInterviewTest = ({ visible, setVisible }) => {
   const [progress, setProgress] = useState(0);
   const [run, setRun] = useState(true);
 
   const [testResults, setTestResults] = useState({});
-  const practice = qs.parse(location.search)['practice'];
 
   useEffect(() => {
     // the test must have seprate credentials to run correctly
-    if (practice) {
       getCredentials()
         .then(testSession => {
           return testSession;
         })
         .then(testSession => checkSessionConnection(testSession));
-    }
   }, []);
 
   const timer = setTimeout(() => {
@@ -79,7 +75,7 @@ const PreInterviewTest = ({ visible, setVisible, location }) => {
   const checkSessionConnection = testSession => {
     try {
       // eslint-disable-next-line
-      var otNetworkTest = new NetworkTest(OT, testSession, {timeout: 5000});
+      var otNetworkTest = new NetworkTest(OT, testSession, { timeout: 5000 });
     } catch (error) {
       switch (error.name) {
         case ErrorNames.MISSING_OPENTOK_INSTANCE:
