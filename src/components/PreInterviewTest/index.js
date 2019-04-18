@@ -51,6 +51,8 @@ const Results = ({ testResults }) => {
 
 const PreInterviewTest = ({ visible, setVisible }) => {
   const [progress, setProgress] = useState(0);
+  const [run, setRun] = useState(true);
+
   const [testResults, setTestResults] = useState({});
 
   useEffect(() => {
@@ -62,9 +64,14 @@ const PreInterviewTest = ({ visible, setVisible }) => {
       .then(testSession => checkSessionConnection(testSession));
   }, []);
 
-  setTimeout(() => {
-    if (progress < 100) setProgress(progress + 1);
+  const timer = setTimeout(() => {
+    if (!run) setProgress(100)
+    else if (progress < 100) setProgress(progress + 1);
   }, 1000);
+
+  if (progress >= 100) {
+    clearTimeout(timer);
+  }
 
   const checkSessionConnection = testSession => {
     try {
@@ -104,7 +111,8 @@ const PreInterviewTest = ({ visible, setVisible }) => {
               connection: c,
             };
             setTestResults({ ...testResults, ...result });
-            setProgress(100)
+            setProgress(100);
+            setRun(false)
             let publisherSettings = {};
             if (results.video.reason) {
               console.log('Video not supported:', results.video.reason);
