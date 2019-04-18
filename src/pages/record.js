@@ -20,7 +20,6 @@ import {
 } from '@/services/api';
 import Timer from '@/components/Timer';
 import Video from '@/components/Video';
-import PreInterviewTest from '@/components/PreInterviewTest';
 
 import { router } from 'umi';
 
@@ -34,7 +33,6 @@ export default ({ location }) => {
   const [error, setError] = useState(null);
   const [archiveId, setArchiveId] = useState(null);
   const [connectionDetails, setApi] = useState(null);
-  const [visible, setVisible] = useState(true);
 
   const [before, setBefore] = useState(true);
 
@@ -260,7 +258,7 @@ export default ({ location }) => {
           <strong>Error:</strong> {error}
         </div>
       ) : null}
-      <PreInterviewTest visible={visible} setVisible={setVisible} />
+
       <div style={{ paddingTop: '24px' }}>
         <h1> {before ? 'Whats Next' : startingData.interviewQuestions[index].question}</h1>{' '}
         {interview.helperText}
@@ -355,6 +353,7 @@ export default ({ location }) => {
           </Row>
         </OTSession>
       )}
+
       {before ? (
         <Button
           className={styles.button}
