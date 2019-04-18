@@ -1,7 +1,7 @@
 import styles from './index.less';
 import React, { useState, useEffect } from 'react';
 
-import { OTPublisher } from 'opentok-react';
+import { OTPublisher } from 'opentok-react';  
 
 const Video = props => {
   const {  screen } = props;
@@ -26,7 +26,7 @@ const Video = props => {
 
   return (
     <>
-      <div style={{ display: options.display, opacity: options.opacity }}>
+      <div className={styles.video} style={{ display: options.display, opacity: options.opacity }}>
         <OTPublisher {...props}  />
       </div>
       <div
