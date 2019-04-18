@@ -2,6 +2,7 @@ import NetworkTest, { ErrorNames } from 'opentok-network-test-js';
 import React, { useState, useEffect } from 'react';
 import { getCredentials } from '@/services/api';
 import { Modal, Progress, Icon, Row, Col, Button } from 'antd';
+import qs from 'qs';
 
 // import styles from './index.less';
 
@@ -38,7 +39,6 @@ const Results = ({ testResults }) => {
             color={testResults.connection ? '#52c41a' : '#ffa39e'}
             text="Network"
           />
-          
         </Col>
 
         <Col span={8}>
@@ -49,19 +49,22 @@ const Results = ({ testResults }) => {
   );
 };
 
-const PreInterviewTest = ({ visible, setVisible }) => {
+const PreInterviewTest = ({ visible, setVisible, location }) => {
   const [progress, setProgress] = useState(0);
   const [run, setRun] = useState(true);
 
   const [testResults, setTestResults] = useState({});
+  const practice = qs.parse(location.search)['practice'];
 
   useEffect(() => {
     // the test must have seprate credentials to run correctly
-    getCredentials()
-      .then(testSession => {
-        return testSession;
-      })
-      .then(testSession => checkSessionConnection(testSession));
+    if (practice) {
+      getCredentials()
+        .then(testSession => {
+          return testSession;
+        })
+        .then(testSession => checkSessionConnection(testSession));
+    }
   }, []);
 
   const timer = setTimeout(() => {
