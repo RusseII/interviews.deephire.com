@@ -8,11 +8,11 @@
     "precommit": "lint-staged"
   },
   "dependencies": {
-    "@opentok/client": "^2.15.9",
     "antd": "^3.13.2",
     "array.prototype.findindex": "^2.0.2",
     "eslint-plugin-react-hooks": "^1.2.0",
     "isomorphic-fetch": "^2.2.1",
+    "opentok-network-test-js": "2.0.0",
     "opentok-react": "0.9.0",
     "qs": "^6.6.0",
     "react": "^16.7.0",
