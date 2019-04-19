@@ -1,7 +1,7 @@
 import NetworkTest, { ErrorNames } from 'opentok-network-test-js';
 import React, { useState, useEffect } from 'react';
 import { getCredentials } from '@/services/api';
-import { Modal, Progress, Icon, Row, Col, Button } from 'antd';
+import { Spin, Modal, Progress, Icon, Row, Col, Button } from 'antd';
 
 // import styles from './index.less';
 
@@ -24,24 +24,39 @@ const Status = ({ type, color, text }) => (
 );
 
 const Results = ({ testResults }) => {
+  console.log('TR', testResults);
   //ad proptypes
 
   return (
     <>
       <Row style={{ paddingTop: '24px' }} type="flex" justify="space-between">
         <Col span={8}>
-          <Status type="camera" color={testResults.camera ? '#52c41a' : '#ffa39e'} text="Camera" />
+          <Status
+            type="camera"
+            color={
+              !Object.keys(testResults).length ? 'grey' : testResults.camera ? '#52c41a' : '#ffa39e'
+            }
+            text="Camera"
+          />
         </Col>
         <Col span={8}>
           <Status
             type="dashboard"
-            color={testResults.connection ? '#52c41a' : '#ffa39e'}
+            color={
+              !Object.keys(testResults).length ? 'grey' : testResults.camera ? '#52c41a' : '#ffa39e'
+            }
             text="Network"
           />
         </Col>
 
         <Col span={8}>
-          <Status type="audio" color={testResults.audio ? '#52c41a' : '#ffa39e'} text="Audio" />
+          <Status
+            type="audio"
+            color={
+              !Object.keys(testResults).length ? 'grey' : testResults.camera ? '#52c41a' : '#ffa39e'
+            }
+            text="Audio"
+          />
         </Col>
       </Row>
     </>
@@ -50,22 +65,60 @@ const Results = ({ testResults }) => {
 
 const PreInterviewTest = ({ visible, setVisible }) => {
   const [progress, setProgress] = useState(0);
-  const [run, setRun] = useState(true);
 
   const [testResults, setTestResults] = useState({});
 
   useEffect(() => {
     // the test must have seprate credentials to run correctly
-      getCredentials()
-        .then(testSession => {
-          return testSession;
-        })
-        .then(testSession => checkSessionConnection(testSession));
+    getCredentials()
+      .then(testSession => {
+        return testSession;
+      })
+      .then(testSession => checkSessionConnection(testSession));
   }, []);
 
+  let counter = 0;
+  const testConnection = async nT => {
+    const connectionResults = await nT.testConnectivity();
+    console.log('OpenTok connectivity test connectionResults', connectionResults);
+    if (connectionResults.failedTests[0]) {
+      const result = {
+        audio: false,
+        camera: false,
+        connection: false,
+      };
+      setTestResults(result);
+      setProgress(100);
+    }
+    return connectionResults.success;
+  };
 
+  const testQuality = async (nT, network) => {
+    const qualityResults = await nT
+      .testQuality(stats => {
+        console.log('intermediate testQuality stats', stats);
+        setProgress((counter += 20));
+      })
+      .catch(err => console.log(err));
+    // This function is called when the quality test is completed.
+    console.log('OpenTok quality qualityResults', qualityResults);
+    const result = {
+      audio: qualityResults.audio.supported,
+      camera: qualityResults.video.supported,
+      connection: network,
+    };
+    setTestResults(result);
+    setProgress(100);
+    if (qualityResults.video.reason) {
+      console.log('Video not supported:', qualityResults.video.reason);
+    }
 
-  const  checkSessionConnection = async testSession => {
+    if (!qualityResults.audio.supported) {
+      console.log('Audio not supported:', qualityResults.audio.reason);
+    }
+  };
+
+  const checkSessionConnection = async testSession => {
     try {
       // eslint-disable-next-line
       var otNetworkTest = new NetworkTest(OT, testSession, { timeout: 5000 });
@@ -83,82 +136,10 @@ const PreInterviewTest = ({ visible, setVisible }) => {
           console.error('Unknown error .');
       }
     }
-    otNetworkTest
-      .testConnectivity()
-      .then(results => {
-        console.log('OpenTok connectivity test results', results);
-        // setTestResults({ ...testResults, connection: results.success });
-        let c = results.success;
-        if (results.failedTests[0]) {
-          const result = {
-            audio: false,
-            camera: false,
-            connection: false,
-          };
-          setTestResults(result);
-          setProgress(100);
-          setRun(false);
-        }
 
-        otNetworkTest
-          .testQuality((stats) => {
-            console.log('intermediate testQuality stats', stats);
-            setProgress(progress + 20)
-          })
-          .then(results => {
-            // This function is called when the quality test is completed.
-            console.log('OpenTok quality results', results);
-            const result = {
-              audio: results.audio.supported,
-              camera: results.video.supported,
-              connection: c,
-            };
-            setTestResults({ ...testResults, ...result });
-            setProgress(100);
-            setRun(false);
-            let publisherSettings = {};
-            if (results.video.reason) {
-              console.log('Video not supported:', results.video.reason);
-              publisherSettings.videoSource = null; // audio-only
-            } else {
-              publisherSettings.frameRate = results.video.recommendedFrameRate;
-              publisherSettings.resolution = results.video.recommendedResolution;
-            }
-            if (!results.audio.supported) {
-              console.log('Audio not supported:', results.audio.reason);
-              publisherSettings.audioSource = null;
-              // video-only, but you probably don't want this -- notify the user?
-            }
-            if (!publisherSettings.videoSource && !publisherSettings.audioSource) {
-              // Do not publish. Notify the user.
-            } else {
-              // Publish to the "real" session, using the publisherSettings object.
-            }
-          })
-          .catch(error => {
-            switch (error.name) {
-      case ErrorNames.UNSUPPORTED_BROWSER:
-        // Display UI message about unsupported browser
-        break;
-      case ErrorNames.CONNECT_TO_SESSION_NETWORK_ERROR:
-        // Display UI message about network error
-        break;
-      case ErrorNames.FAILED_TO_OBTAIN_MEDIA_DEVICES:
-        // Display UI message about granting access to the microphone and camera
-        break;
-      case ErrorNames.NO_AUDIO_CAPTURE_DEVICES:
-      case ErrorNames.NO_VIDEO_CAPTURE_DEVICES:
-        // Display UI message about no available camera or microphone
-        break;
-      default:
-            console.log('OpenTok quality test error', error);
-          }
-      })
-      .catch(function(error) {
-        console.log('OpenTok connectivity test error', error);
-      });
-  })
-}
+    const network = await testConnection(otNetworkTest);
+    await testQuality(otNetworkTest, network);
+  };
 
   const handleOk = () => {
     setVisible(false);
@@ -185,7 +166,7 @@ const PreInterviewTest = ({ visible, setVisible }) => {
     <div>
       <Modal
         visible={visible}
-        title="Check Network/Camera/Audio"
+        title="Setting up device"
         footer={
           !Object.keys(testResults).length
             ? null
@@ -195,7 +176,9 @@ const PreInterviewTest = ({ visible, setVisible }) => {
         }
       >
         <Progress percent={progress} />
-        <Results testResults={testResults} />
+        <Spin spinning={progress < 100}>
+          <Results testResults={testResults} />
+        </Spin>
       </Modal>
     </div>
   );
