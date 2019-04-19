@@ -13,11 +13,9 @@ export default
     "interview_questions": [
       {
         "question": "(Practice) Tell me about yourself."
-      }, 
+      }
     
-      {
-        "question": "(Practice) What is your ideal work environment?"
-      }, 
+   
       // {
       //   "question": "(Practice) What are your strengths?"
       // }, 
