@@ -63,16 +63,9 @@ const PreInterviewTest = ({ visible, setVisible }) => {
         .then(testSession => checkSessionConnection(testSession));
   }, []);
 
-  const timer = setTimeout(() => {
-    if (!run) setProgress(100);
-    else if (progress < 100) setProgress(progress + 1);
-  }, 400);
 
-  if (progress >= 100) {
-    clearTimeout(timer);
-  }
 
-  const checkSessionConnection = testSession => {
+  const  checkSessionConnection = async testSession => {
     try {
       // eslint-disable-next-line
       var otNetworkTest = new NetworkTest(OT, testSession, { timeout: 5000 });
@@ -108,8 +101,9 @@ const PreInterviewTest = ({ visible, setVisible }) => {
         }
 
         otNetworkTest
-          .testQuality(function updateCallback(stats) {
+          .testQuality((stats) => {
             console.log('intermediate testQuality stats', stats);
+            setProgress(progress + 20)
           })
           .then(results => {
             // This function is called when the quality test is completed.
@@ -142,13 +136,29 @@ const PreInterviewTest = ({ visible, setVisible }) => {
             }
           })
           .catch(error => {
+            switch (error.name) {
+      case ErrorNames.UNSUPPORTED_BROWSER:
+        // Display UI message about unsupported browser
+        break;
+      case ErrorNames.CONNECT_TO_SESSION_NETWORK_ERROR:
+        // Display UI message about network error
+        break;
+      case ErrorNames.FAILED_TO_OBTAIN_MEDIA_DEVICES:
+        // Display UI message about granting access to the microphone and camera
+        break;
+      case ErrorNames.NO_AUDIO_CAPTURE_DEVICES:
+      case ErrorNames.NO_VIDEO_CAPTURE_DEVICES:
+        // Display UI message about no available camera or microphone
+        break;
+      default:
             console.log('OpenTok quality test error', error);
-          });
+          }
       })
       .catch(function(error) {
         console.log('OpenTok connectivity test error', error);
       });
-  };
+  })
+}
 
   const handleOk = () => {
     setVisible(false);
