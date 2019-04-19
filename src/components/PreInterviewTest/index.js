@@ -43,7 +43,7 @@ const Results = ({ testResults }) => {
           <Status
             type="dashboard"
             color={
-              !Object.keys(testResults).length ? 'grey' : testResults.camera ? '#52c41a' : '#ffa39e'
+              !Object.keys(testResults).length ? 'grey' : testResults.connection ? '#52c41a' : '#ffa39e'
             }
             text="Network"
           />
@@ -53,7 +53,7 @@ const Results = ({ testResults }) => {
           <Status
             type="audio"
             color={
-              !Object.keys(testResults).length ? 'grey' : testResults.camera ? '#52c41a' : '#ffa39e'
+              !Object.keys(testResults).length ? 'grey' : testResults.audio ? '#52c41a' : '#ffa39e'
             }
             text="Audio"
           />
