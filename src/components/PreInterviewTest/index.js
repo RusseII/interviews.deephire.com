@@ -43,7 +43,11 @@ const Results = ({ testResults }) => {
           <Status
             type="dashboard"
             color={
-              !Object.keys(testResults).length ? 'grey' : testResults.connection ? '#52c41a' : '#ffa39e'
+              !Object.keys(testResults).length
+                ? 'grey'
+                : testResults.connection
+                ? '#52c41a'
+                : '#ffa39e'
             }
             text="Network"
           />
@@ -68,16 +72,19 @@ const PreInterviewTest = ({ visible, setVisible }) => {
 
   const [testResults, setTestResults] = useState({});
 
-  useEffect(() => {
-    // the test must have seprate credentials to run correctly
+  const runTest = () => {
     getCredentials()
       .then(testSession => {
         return testSession;
       })
       .then(testSession => checkSessionConnection(testSession));
+  };
+  useEffect(() => {
+    // the test must have seprate credentials to run correctly
+    runTest();
   }, []);
 
-  let counter = 0;
+  let counter = 20;
   const testConnection = async nT => {
     const connectionResults = await nT.testConnectivity();
     console.log('OpenTok connectivity test connectionResults', connectionResults);
@@ -89,6 +96,8 @@ const PreInterviewTest = ({ visible, setVisible }) => {
       };
       setTestResults(result);
       setProgress(100);
+    } else {
+      setProgress(20);
     }
     return connectionResults.success;
   };
@@ -97,7 +106,7 @@ const PreInterviewTest = ({ visible, setVisible }) => {
     const qualityResults = await nT
       .testQuality(stats => {
         console.log('intermediate testQuality stats', stats);
-        setProgress((counter += 20));
+        setProgress((counter += 16));
       })
       .catch(err => console.log(err));
     // This function is called when the quality test is completed.
@@ -156,7 +165,14 @@ const PreInterviewTest = ({ visible, setVisible }) => {
     </Button>,
   ];
 
+  const reload = () => {
+    // window.location.reload();
+    window.open(window.location.href, '_self');
+  };
   const failureFooter = [
+    <Button key="retake" type="info" onClick={reload}>
+      Retake
+    </Button>,
     <Button key="Take Interview" type="danger" onClick={handleError}>
       Error: Contact Support
     </Button>,
@@ -165,6 +181,7 @@ const PreInterviewTest = ({ visible, setVisible }) => {
   return (
     <div>
       <Modal
+        closable={false}
         visible={visible}
         title="Setting up device"
         footer={
