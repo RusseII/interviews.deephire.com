@@ -342,7 +342,7 @@ export default ({ location }) => {
                     properties={{
                       fitMode: 'contains',
                       frameRate: '30',
-                      height: '33.75vw',
+                      height: '45vw',
                       width: '60vw',
                     }}
                     onPublish={onPublish}
