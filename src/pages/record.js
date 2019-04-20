@@ -30,7 +30,7 @@ export default ({ location }) => {
   const email = qs.parse(location.search)['email'];
   const practice = qs.parse(location.search)['practice'];
 
-  const [connection, setConnection] = useState('Disconnected');
+  // const [connection, setConnection] = useState('Disconnected');
   const [error, setError] = useState(null);
   const [archiveId, setArchiveId] = useState(null);
   const [connectionDetails, setApi] = useState(null);
@@ -65,21 +65,21 @@ export default ({ location }) => {
     getCredentials().then(session => setApi(session));
   }, []);
 
-  const sessionEventHandlers = {
-    sessionConnected: () => {
-      setConnection('Connected');
-      console.log('w');
-    },
-    sessionDisconnected: () => {
-      setConnection('Disconnected');
-    },
-    sessionReconnected: () => {
-      setConnection('Reconnected');
-    },
-    sessionReconnecting: () => {
-      setConnection('Reconnecting');
-    },
-  };
+  // const sessionEventHandlers = {
+  //   sessionConnected: () => {
+  //     setConnection('Connected');
+  //     console.log('w');
+  //   },
+  //   sessionDisconnected: () => {
+  //     setConnection('Disconnected');
+  //   },
+  //   sessionReconnected: () => {
+  //     setConnection('Reconnected');
+  //   },
+  //   sessionReconnecting: () => {
+  //     setConnection('Reconnecting');
+  //   },
+  // };
 
   const publisherEventHandlers = {
     accessDenied: () => {
@@ -162,6 +162,16 @@ export default ({ location }) => {
     startRecording();
   };
 
+  // const current = () => {
+  //   return {
+  //     before: 'p',
+  //     prepare: 'p',
+  //     record: 'p',
+  //     review: 'p',
+  //     break: "b",
+
+  //   };
+  // };
   const prepareScreen = startingData => {
     setInterview({
       key: 0,
@@ -260,8 +270,8 @@ export default ({ location }) => {
           <strong>Error:</strong> {error}
         </div>
       ) : null}
-      {practice && <PreInterviewTest  visible={visible} setVisible={setVisible} />}
-      <div style={{ paddingTop: '24px' }}>
+      {practice && <PreInterviewTest visible={visible} setVisible={setVisible} />}
+      <div style={{ paddingTop: '12px' }}>
         <h1> {before ? 'Whats Next' : startingData.interviewQuestions[index].question}</h1>{' '}
         {interview.helperText}
       </div>
@@ -275,15 +285,12 @@ export default ({ location }) => {
           seconds={interview.time}
         />
       )}
-      <br />
+
       {connectionDetails && (
         <OTSession
           {...connectionDetails}
-          // apiKey={apiKey}
-          // sessionId={sessionId}
-          // token={token}
           onError={onSessionError}
-          eventHandlers={sessionEventHandlers}
+          // eventHandlers={sessionEventHandlers}
         >
           <Row type="flex" justify="center">
             <Col span={15}>
@@ -304,13 +311,6 @@ export default ({ location }) => {
                 </>
               ) : (
                 <div>
-                  {/* <button id="record" onClick={archive}>
-                    Record
-        </button>
-                  <button id="stop" onClick={stopArchive}>
-                    STOP
-        </button> */}
-
                   {interview.review && (
                     <ReactPlayer
                       key={k}
@@ -342,8 +342,8 @@ export default ({ location }) => {
                     properties={{
                       fitMode: 'contains',
                       frameRate: '30',
-                      height: '45vw',
-                      width: '60vw',
+                      height: '100%',
+                      width: '100%',
                     }}
                     onPublish={onPublish}
                     onError={onPublishError}
