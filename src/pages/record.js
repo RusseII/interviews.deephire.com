@@ -17,6 +17,7 @@ import {
   stopArchive,
   storeInterviewQuestion,
   getCredentials,
+  checkVideo,
 } from '@/services/api';
 import Timer from '@/components/Timer';
 import Video from '@/components/Video';
@@ -39,7 +40,6 @@ export default ({ location }) => {
   const [before, setBefore] = useState(true);
 
   const [videoUrl, setVideoUrl] = useState(null);
-  const [k, setK] = useState(0);
   const [published, setPublished] = useState(false);
 
   const [index, setIndex] = useState(0);
@@ -250,13 +250,16 @@ export default ({ location }) => {
   const stop = async () => {
     stopRecording();
     reviewScreen();
-
+    const url = `https://s3.amazonaws.com/deephire-video-dump/${
+      connectionDetails.apiKey
+    }/${archiveId}/archive.mp4`;
     setVideoUrl(
-      `https://s3.amazonaws.com/deephire-video-dump/${
-        connectionDetails.apiKey
-      }/${archiveId}/archive.mp4`
+      await checkVideo(
+        url
+      )
+     
+      
     );
-    setK(10);
   };
 
   if (!data) return null;
@@ -270,21 +273,20 @@ export default ({ location }) => {
           <strong>Error:</strong> {error}
         </div>
       ) : null}
-      {practice && <PreInterviewTest visible={visible} setVisible={setVisible} />}
+      {/* {practice && <PreInterviewTest visible={visible} setVisible={setVisible} />} */}
       <div style={{ paddingTop: '12px' }}>
-        <h1> {before ? 'Whats Next' : startingData.interviewQuestions[index].question}</h1>{' '}
+        <h1> {startingData.interviewQuestions[index].question}</h1>
         {interview.helperText}
       </div>
-      {!before && (
-        <Timer
-          key={interview.key}
-          reset={true}
-          countDown={interview.countDown}
-          paused={interview.paused}
-          onFinish={() => changeButtonAction(action)}
-          seconds={interview.time}
-        />
-      )}
+
+      <Timer
+        key={interview.key}
+        reset={true}
+        countDown={interview.countDown}
+        paused={interview.paused}
+        onFinish={() => changeButtonAction(action)}
+        seconds={interview.time}
+      />
 
       {connectionDetails && (
         <OTSession
@@ -294,86 +296,51 @@ export default ({ location }) => {
         >
           <Row type="flex" justify="center">
             <Col span={15}>
-              {before ? (
-                <>
-                  <h3>{`You’ll be taken to a Practice Interview (one question) so you can get used to the system. After you finish the Practice Interview, there is a break and then your real interview will begin! Good luck! `}</h3>
-                  <br /> <br />
-                  <h4>Each questions follows the following format:</h4>
-                  <br />
-                  <br />
-                  <Timeline mode="alternate">
-                    <Timeline.Item>{`${startingData.prepTime} Seconds to Prepare`}</Timeline.Item>
-                    <Timeline.Item color="blue">{`${
-                      startingData.answerTime
-                    } Seconds to Record`}</Timeline.Item>
-                    <Timeline.Item color="red">Review Video Answer</Timeline.Item>
-                  </Timeline>
-                </>
-              ) : (
-                <div>
-                  {interview.review && (
-                    <ReactPlayer
-                      key={k}
-                      onError={err =>
-                        setTimeout(() => {
-                          console.log(err);
-                          if (err.type) setK(k + 1);
-                        }, 1000)
-                      }
-                      controls
-                      // className={styles.reactPlayer}
-                      playing={true}
-                      playsinline={true}
-                      url={videoUrl}
-                      width="100%"
-                      height="100%"
-                    />
-                  )}
+              <div>
+                {interview.review && (
+                  <ReactPlayer
+                    controls
+                    key={videoUrl}
+                    // className={styles.reactPlayer}
+                    playing={true}
+                    playsinline={true}
+                    url={videoUrl}
+                    width="100%"
+                    height="100%"
+                  />
+                )}
 
-                  <LoadingScreen
-                    loading={!published}
-                    bgColor="#f1f1f1"
-                    spinnerColor="#9ee5f8"
-                    textColor="#676767"
-                    text="Connecting to Camera..."
-                  />
-                  <Video
-                    screen={interview.screen}
-                    properties={{
-                      fitMode: 'contains',
-                      frameRate: '30',
-                      height: '100%',
-                      width: '100%',
-                    }}
-                    onPublish={onPublish}
-                    onError={onPublishError}
-                    eventHandlers={publisherEventHandlers}
-                  />
-                </div>
-              )}
+                <LoadingScreen
+                  loading={!published}
+                  bgColor="#f1f1f1"
+                  spinnerColor="#9ee5f8"
+                  textColor="#676767"
+                  text="Connecting to Camera..."
+                />
+                <Video
+                  screen={interview.screen}
+                  properties={{
+                    fitMode: 'contains',
+                    frameRate: '30',
+                    height: '100%',
+                    width: '100%',
+                  }}
+                  onPublish={onPublish}
+                  onError={onPublishError}
+                  eventHandlers={publisherEventHandlers}
+                />
+              </div>
             </Col>
           </Row>
         </OTSession>
       )}
-      {before ? (
-        <Button
-          className={styles.button}
-          onClick={() => {
-            setBefore(false);
 
-            setInterview({ ...interview, helperText: 'Prepare your answer', paused: false });
-          }}
-        >
-          Start Practice Interview
+      <>
+        {interview.review && <Button onClick={retake}>{`Retake (${retakes} left)`}</Button>}
+        <Button className={styles.button} onClick={() => changeButtonAction(action)}>
+          {interview.buttonText}
         </Button>
-      ) : (
-        <>
-          {interview.review && <Button onClick={retake}>{`Retake (${retakes} left)`}</Button>}
-          <Button className={styles.button} onClick={() => changeButtonAction(action)}>
-            {interview.buttonText}
-          </Button>
-        </>
-      )}
+      </>
     </div>
   );
 };
