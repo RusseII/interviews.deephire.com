@@ -55,13 +55,15 @@ export default ({ location }) => {
 
   const [startingData, setStartingData] = useState({ interviewQuestions: [{ question: 'test' }] });
 
+  const { interview_questions: interviewQ = [] } = practiceQuestions;
+  const [interviewQuestions, setInterviewQuestions] = useState(interviewQ);
+
   // for any hooks noobs, passing in [] as 2nd paramater makes useEffect work the same for componenetDidMount
   useEffect(() => {
     setup();
     setAction('start');
     getCredentials().then(session => setApi(session));
   }, []);
-
 
   const publisherEventHandlers = {
     accessDenied: () => {
@@ -100,20 +102,21 @@ export default ({ location }) => {
 
   const setup = async () => {
     var [data] = await fetchInterview(id);
-    if (practice) data = practiceQuestions;
     setData(data);
+    console.log(data)
     const {
       email: createdBy,
       interviewName,
       interview_config: { answerTime, prepTime, retakesAllowed } = {},
-      interview_questions: interviewQuestions = [],
+      interview_questions: interviewQ = [],
     } = data || {};
+
     setStartingData({
       interviewName,
       answerTime,
       prepTime,
       retakesAllowed,
-      interviewQuestions,
+      interviewQuestions: interviewQ,
       createdBy,
     });
     setRetakes(retakesAllowed);
@@ -140,6 +143,8 @@ export default ({ location }) => {
   };
 
   const start = async () => {
+    console.log(index, interviewQuestions);
+    console.log(startingData.interviewQuestions);
     setVideoUrl(null);
     recordScreen();
     startRecording();
@@ -195,17 +200,20 @@ export default ({ location }) => {
         fullName,
         email,
         startingData.interviewName,
-        startingData.interviewQuestions[index].question,
+        interviewQuestions[index].question,
         `https://s3.amazonaws.com/deephire-video-dump/${
           connectionDetails.apiKey
         }/${archiveId}/archive.mp4`
       );
     }
-    if (startingData.interviewQuestions.length === index + 1) {
-      if (practice) setPractice(null)
-      else {
-        notifyCandidate(fullName, email);
-        notifyRecruiter(id, fullName, email, startingData.interviewName, startingData.createdBy);
+    if (interviewQuestions.length === index + 1) {
+      if (practice) {
+        setPractice(null);
+        setInterviewQuestions(startingData.interviewQuestions);
+        setIndex(0);
+      } else {
+        // notifyCandidate(fullName, email);
+        // notifyRecruiter(id, fullName, email, startingData.interviewName, startingData.createdBy);
         router.push('/victory');
       }
     } else {
@@ -242,7 +250,7 @@ export default ({ location }) => {
       ) : null}
       {/* {practice && <PreInterviewTest visible={visible} setVisible={setVisible} />} */}
       <div style={{ paddingTop: '12px' }}>
-        <h1> {startingData.interviewQuestions[index].question}</h1>
+        <h1> {interviewQuestions[index].question}</h1>
         {interview.helperText}
       </div>
 
