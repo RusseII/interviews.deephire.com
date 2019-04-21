@@ -1,11 +1,9 @@
 import practiceQuestions from '@/services/practiceInterviewQuestions';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { OTSession } from 'opentok-react';
 
-import LoadingScreen from 'react-loading-screen';
-
 import ReactPlayer from 'react-player';
-import { Timeline, Button, Row, Col } from 'antd';
+import { Spin, Button, Row } from 'antd';
 import styles from './record.less';
 import qs from 'qs';
 
@@ -29,18 +27,18 @@ export default ({ location }) => {
   const id = qs.parse(location.search)['?id'];
   const fullName = qs.parse(location.search)['fullName'];
   const email = qs.parse(location.search)['email'];
-  const practice = qs.parse(location.search)['practice'];
+  const p = qs.parse(location.search)['practice'];
 
   // const [connection, setConnection] = useState('Disconnected');
   const [error, setError] = useState(null);
   const [archiveId, setArchiveId] = useState(null);
   const [connectionDetails, setApi] = useState(null);
-  const [visible, setVisible] = useState(true);
+  const [practice, setPractice] = useState(p);
 
+  // const [visible, setVisible] = useState(true);
 
   const [videoUrl, setVideoUrl] = useState(null);
   const [published, setPublished] = useState(false);
-
 
   const [index, setIndex] = useState(0);
   const [data, setData] = useState(null);
@@ -64,21 +62,6 @@ export default ({ location }) => {
     getCredentials().then(session => setApi(session));
   }, []);
 
-  // const sessionEventHandlers = {
-  //   sessionConnected: () => {
-  //     setConnection('Connected');
-  //     console.log('w');
-  //   },
-  //   sessionDisconnected: () => {
-  //     setConnection('Disconnected');
-  //   },
-  //   sessionReconnected: () => {
-  //     setConnection('Reconnected');
-  //   },
-  //   sessionReconnecting: () => {
-  //     setConnection('Reconnecting');
-  //   },
-  // };
 
   const publisherEventHandlers = {
     accessDenied: () => {
@@ -157,20 +140,11 @@ export default ({ location }) => {
   };
 
   const start = async () => {
+    setVideoUrl(null);
     recordScreen();
     startRecording();
   };
 
-  // const current = () => {
-  //   return {
-  //     before: 'p',
-  //     prepare: 'p',
-  //     record: 'p',
-  //     review: 'p',
-  //     break: "b",
-
-  //   };
-  // };
   const prepareScreen = startingData => {
     setInterview({
       key: 0,
@@ -228,7 +202,7 @@ export default ({ location }) => {
       );
     }
     if (startingData.interviewQuestions.length === index + 1) {
-      if (practice) router.push(`/real?id=${id}&fullName=${fullName}&email=${email}`);
+      if (practice) setPractice(null)
       else {
         notifyCandidate(fullName, email);
         notifyRecruiter(id, fullName, email, startingData.interviewName, startingData.createdBy);
@@ -257,7 +231,6 @@ export default ({ location }) => {
 
   if (!data) return null;
   if (!interview) return null;
-
 
   return (
     <div className={styles.wrapper}>
@@ -289,38 +262,30 @@ export default ({ location }) => {
           onError={onSessionError}
           // eventHandlers={sessionEventHandlers}
         >
-          <Row   style={{ paddingTop: "12px", height: '50%', width: '100%' }} type="flex" justify="center">
-                {interview.review && (
-                  <ReactPlayer
-                    controls
-                    key={videoUrl}
-                    className={styles.reactPlayer}
-                    playing={true}
-                    playsinline={true}
-                    url={videoUrl}
-                 
-                  />
-                )}
-
-                {/* <LoadingScreen
-                  loading={!published}
-                  bgColor="#f1f1f1"
-                  spinnerColor="#9ee5f8"
-                  textColor="#676767"
-                  text="Connecting to Camera..."
-                /> */}
-                <Video
-                  screen={interview.screen}
-                  properties={{
-                    fitMode: 'contains',
-                    frameRate: '30',
-                    height: '45vh',
-                    width: '80vw',
-                  }}
-                  onPublish={onPublish}
-                  onError={onPublishError}
-                  eventHandlers={publisherEventHandlers}
+          <Row style={{ paddingTop: '12px' }} type="flex" justify="center">
+            {interview.review && (
+              <Spin spinning={!videoUrl}>
+                <ReactPlayer
+                  controls
+                  key={videoUrl}
+                  className="OTPublisherContainer"
+                  playing={true}
+                  playsinline={true}
+                  url={videoUrl}
                 />
+              </Spin>
+            )}
+
+            <Video
+              screen={interview.screen}
+              properties={{
+                fitMode: 'contains',
+                frameRate: '30',
+              }}
+              onPublish={onPublish}
+              onError={onPublishError}
+              eventHandlers={publisherEventHandlers}
+            />
           </Row>
         </OTSession>
       )}

@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-import { Button, Row, Col } from 'antd';
+import { Button, Row } from 'antd';
 import styles from './record.less';
 
 export default () => {
@@ -17,7 +17,6 @@ export default () => {
         <div class="OTPublisherContainer" style={{overflow: "hidden"}}>
           <img style={{ margin:"0 -100%" ,verticalAlign:"middle"}}
           height="100%"
-          // width="100%"
             src="https://interview.deephire.com/static/media/trophy.81ebf3a9.gif"
             alt="Prepare to Record!"
           />
