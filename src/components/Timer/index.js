@@ -14,7 +14,7 @@ const Timer = ({ countDown, seconds, onFinish, paused }) => {
   }
 
   return (
-    <>
+    <div style={{paddingTop: "12px"}}>
       {' '}
       {countDown ? (
         <Progress
@@ -33,7 +33,7 @@ const Timer = ({ countDown, seconds, onFinish, paused }) => {
           percent={(1 - time / seconds) * 100}
         />
       )}
-    </>
+    </div>
   );
 };
 

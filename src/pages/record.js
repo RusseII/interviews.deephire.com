@@ -1,5 +1,5 @@
 import practiceQuestions from '@/services/practiceInterviewQuestions';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { OTSession } from 'opentok-react';
 
 import LoadingScreen from 'react-loading-screen';
@@ -37,10 +37,10 @@ export default ({ location }) => {
   const [connectionDetails, setApi] = useState(null);
   const [visible, setVisible] = useState(true);
 
-  const [before, setBefore] = useState(true);
 
   const [videoUrl, setVideoUrl] = useState(null);
   const [published, setPublished] = useState(false);
+
 
   const [index, setIndex] = useState(0);
   const [data, setData] = useState(null);
@@ -59,7 +59,6 @@ export default ({ location }) => {
 
   // for any hooks noobs, passing in [] as 2nd paramater makes useEffect work the same for componenetDidMount
   useEffect(() => {
-    if (!practice) setBefore(false);
     setup();
     setAction('start');
     getCredentials().then(session => setApi(session));
@@ -253,17 +252,12 @@ export default ({ location }) => {
     const url = `https://s3.amazonaws.com/deephire-video-dump/${
       connectionDetails.apiKey
     }/${archiveId}/archive.mp4`;
-    setVideoUrl(
-      await checkVideo(
-        url
-      )
-     
-      
-    );
+    setVideoUrl(await checkVideo(url));
   };
 
   if (!data) return null;
   if (!interview) return null;
+
 
   return (
     <div className={styles.wrapper}>
@@ -290,47 +284,43 @@ export default ({ location }) => {
 
       {connectionDetails && (
         <OTSession
+          style={{ height: '100%', width: '100%' }}
           {...connectionDetails}
           onError={onSessionError}
           // eventHandlers={sessionEventHandlers}
         >
-          <Row type="flex" justify="center">
-            <Col span={15}>
-              <div>
+          <Row   style={{ paddingTop: "12px", height: '50%', width: '100%' }} type="flex" justify="center">
                 {interview.review && (
                   <ReactPlayer
                     controls
                     key={videoUrl}
-                    // className={styles.reactPlayer}
+                    className={styles.reactPlayer}
                     playing={true}
                     playsinline={true}
                     url={videoUrl}
-                    width="100%"
-                    height="100%"
+                 
                   />
                 )}
 
-                <LoadingScreen
+                {/* <LoadingScreen
                   loading={!published}
                   bgColor="#f1f1f1"
                   spinnerColor="#9ee5f8"
                   textColor="#676767"
                   text="Connecting to Camera..."
-                />
+                /> */}
                 <Video
                   screen={interview.screen}
                   properties={{
                     fitMode: 'contains',
                     frameRate: '30',
-                    height: '100%',
-                    width: '100%',
+                    height: '45vh',
+                    width: '80vw',
                   }}
                   onPublish={onPublish}
                   onError={onPublishError}
                   eventHandlers={publisherEventHandlers}
                 />
-              </div>
-            </Col>
           </Row>
         </OTSession>
       )}

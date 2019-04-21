@@ -131,8 +131,8 @@ export const checkVideo = async (url, n = 100) => {
     await new Promise(resolve => setTimeout(() => resolve(), 500));
 
     if (res.status === 206) return url;
-    else if (res.status === 413) {
-      console.log('No video recorded, thro error, 413 satus code');
+    else if (res.status === 416) {
+      console.log('No video recorded, thro error, 416 satus code');
     } else if (n < 1) {
       console.log('Video not found after 10 seconds');
     } else return await checkVideo(url, n - 1);

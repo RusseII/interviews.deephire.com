@@ -32,7 +32,7 @@ const Video = props => {
       <div
         className={styles.center}
       >
-        <h1>{options.text}</h1>
+        <h2>{options.text}</h2>
       </div>
     </>
   );
