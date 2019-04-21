@@ -119,7 +119,8 @@ export const getCredentials = () => {
   return fetch(`${openTokApi}/room/${uid}`).then(r => r.json());
 };
 
-export const checkVideo = async (url, n = 100) => {
+//runs for 20 * 500 = 10000 = 10 seconds
+export const checkVideo = async (url, n = 20) => {
   const options = {
     headers: {
       Range: 'bytes=0-1',
