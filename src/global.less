@@ -2,5 +2,34 @@
 @import '~antd/lib/style/index.css';
 
 h1 {
-    color: @heading-color;
+  color: @heading-color;
+}
+
+.OTPublisherContainer {
+  //   padding-top: 500px !important;
+
+  height: 40vh !important;
+  width: 53.333333333333333vh !important;
+  max-width: 80vw !important;
+  border: solid 1px #ced7db;
+  // border-radius: 80px;
+  background: #fff;
+
+  box-shadow: 0 4px 8px 5px rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  //   border-bottom-widt   h: 100px;
+}
+
+@media screen and (max-width: @screen-xs) {
+  .OTPublisherContainer {
+    //   padding-top: 500px !important;
+    height: 45vh !important;
+    width: 33.75vh !important;
+    max-width: 80vw !important;
+    border: solid 1px #ced7db;
+
+    // border-radius: 80px;
+    background: #fff;
+    box-shadow: 0 4px 8px 5px rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    //   border-bottom-widt   h: 100px;
+  }
 }
