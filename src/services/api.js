@@ -108,10 +108,22 @@ export const stopArchive = archiveId => {
   });
 };
 
-export const startArchive = archiveId => {
-  return fetch(`${openTokApi}/archive/start/${archiveId}`, {
+export const startArchive = async sessionId => {
+  const res = await fetch(`${openTokApi}/archive/start/${sessionId}`, {
     method: 'POST',
   });
+  if (res.status === 200) {
+    const data = await res.json()
+    const {id: archiveId} = data
+    localStorage.setItem("archiveId", archiveId)
+    return data
+  }
+  // already an archive for the session
+  if (res.status === 500) {
+    stopArchive(localStorage.getItem('archiveId'));
+    return startArchive(sessionId);
+  }
+  return res.json()
 };
 
 export const getCredentials = () => {

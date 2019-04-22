@@ -94,7 +94,6 @@ export default ({ location }) => {
 
   const startRecording = () => {
     startArchive(connectionDetails.sessionId)
-      .then(r => r.json())
       .then(r => console.log(setArchiveId(r.id)));
   };
 
@@ -311,12 +310,13 @@ export default ({ location }) => {
           {interview.buttonText}
         </Button>
         <Modal
+        title="Practice Completed."
           visible={realInterviewModal}
           onOk={startRealInterview}
           onCancel={() => setRealInterviewModal(false)}
           okText="Start Your Real Interview!"
           cancelText="Not Yet"
-        />
+        >You're all set for the real interview! Good Luck!</Modal>
         ;
       </>
     </div>
