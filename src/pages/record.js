@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { OTSession } from 'opentok-react';
 
 import ReactPlayer from 'react-player';
-import { Spin, Button, Row } from 'antd';
+import { Modal, Spin, Button, Row } from 'antd';
 import styles from './record.less';
 import qs from 'qs';
 
@@ -34,6 +34,8 @@ export default ({ location }) => {
   const [archiveId, setArchiveId] = useState(null);
   const [connectionDetails, setApi] = useState(null);
   const [practice, setPractice] = useState(p);
+
+  const [realInterviewModal, setRealInterviewModal] = useState(false);
 
   // const [visible, setVisible] = useState(true);
 
@@ -100,10 +102,18 @@ export default ({ location }) => {
     stopArchive(archiveId);
   };
 
+  const startRealInterview = () => {
+    setPractice(null);
+    setInterviewQuestions(startingData.interviewQuestions);
+    setIndex(0);
+    setRetakes(startingData.retakesAllowed);
+    setRealInterviewModal(false)
+    prepareScreen(startingData);
+  };
   const setup = async () => {
     var [data] = await fetchInterview(id);
     setData(data);
-    console.log(data)
+    console.log(data);
     const {
       email: createdBy,
       interviewName,
@@ -191,8 +201,6 @@ export default ({ location }) => {
   };
 
   const nextQuestion = () => {
-    prepareScreen(startingData);
-
     if (!practice) {
       storeInterviewQuestion(
         id,
@@ -208,9 +216,7 @@ export default ({ location }) => {
     }
     if (interviewQuestions.length === index + 1) {
       if (practice) {
-        setPractice(null);
-        setInterviewQuestions(startingData.interviewQuestions);
-        setIndex(0);
+        setRealInterviewModal(true);
       } else {
         // notifyCandidate(fullName, email);
         // notifyRecruiter(id, fullName, email, startingData.interviewName, startingData.createdBy);
@@ -218,6 +224,7 @@ export default ({ location }) => {
       }
     } else {
       setIndex(index + 1);
+      prepareScreen(startingData);
     }
   };
 
@@ -303,6 +310,14 @@ export default ({ location }) => {
         <Button className={styles.button} onClick={() => changeButtonAction(action)}>
           {interview.buttonText}
         </Button>
+        <Modal
+          visible={realInterviewModal}
+          onOk={startRealInterview}
+          onCancel={() => setRealInterviewModal(false)}
+          okText="Start Your Real Interview!"
+          cancelText="Not Yet"
+        />
+        ;
       </>
     </div>
   );
