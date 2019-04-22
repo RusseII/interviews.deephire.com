@@ -239,6 +239,7 @@ const PreInterviewTest = ({ visible, setVisible }) => {
         <Spin spinning={progress < 100}>
           <Results testResults={testResults} />
         </Spin>
+        Once you start, you will be given 1 practice interview question, after that your real interview will start.
       </Modal>
     </div>
   );

@@ -37,7 +37,7 @@ export default ({ location }) => {
 
   const [realInterviewModal, setRealInterviewModal] = useState(false);
 
-  // const [visible, setVisible] = useState(true);
+  const [visible, setVisible] = useState(true);
 
   const [videoUrl, setVideoUrl] = useState(null);
   const [published, setPublished] = useState(false);
@@ -93,8 +93,7 @@ export default ({ location }) => {
   };
 
   const startRecording = () => {
-    startArchive(connectionDetails.sessionId)
-      .then(r => console.log(setArchiveId(r.id)));
+    startArchive(connectionDetails.sessionId).then(r => console.log(setArchiveId(r.id)));
   };
 
   const stopRecording = () => {
@@ -106,7 +105,7 @@ export default ({ location }) => {
     setInterviewQuestions(startingData.interviewQuestions);
     setIndex(0);
     setRetakes(startingData.retakesAllowed);
-    setRealInterviewModal(false)
+    setRealInterviewModal(false);
     prepareScreen(startingData);
   };
   const setup = async () => {
@@ -217,8 +216,8 @@ export default ({ location }) => {
       if (practice) {
         setRealInterviewModal(true);
       } else {
-        // notifyCandidate(fullName, email);
-        // notifyRecruiter(id, fullName, email, startingData.interviewName, startingData.createdBy);
+        notifyCandidate(fullName, email);
+        notifyRecruiter(id, fullName, email, startingData.interviewName, startingData.createdBy);
         router.push('/victory');
       }
     } else {
@@ -248,13 +247,13 @@ export default ({ location }) => {
 
   return (
     <div className={styles.wrapper}>
-      {/* <div id="sessionStatus">Session Status: {connection}</div> */}
+      <div id="sessionStatus">Publish Status: {published? "Y": "N"}</div>
       {error ? (
         <div className="error">
           <strong>Error:</strong> {error}
         </div>
       ) : null}
-      {/* {practice && <PreInterviewTest visible={visible} setVisible={setVisible} />} */}
+      {practice && <PreInterviewTest visible={visible} setVisible={setVisible} />}
       <div style={{ paddingTop: '12px' }}>
         <h1> {interviewQuestions[index].question}</h1>
         {interview.helperText}
@@ -310,13 +309,15 @@ export default ({ location }) => {
           {interview.buttonText}
         </Button>
         <Modal
-        title="Practice Completed."
+          title="Practice Completed."
           visible={realInterviewModal}
           onOk={startRealInterview}
           onCancel={() => setRealInterviewModal(false)}
           okText="Start Your Real Interview!"
           cancelText="Not Yet"
-        >You're all set for the real interview! Good Luck!</Modal>
+        >
+          You're all set for the real interview! Good Luck!
+        </Modal>
         ;
       </>
     </div>
