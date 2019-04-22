@@ -242,18 +242,24 @@ export default ({ location }) => {
     setVideoUrl(await checkVideo(url));
   };
 
+
   if (!data) return null;
   if (!interview) return null;
 
   return (
     <div className={styles.wrapper}>
-      <div id="sessionStatus">Publish Status: {published? "Y": "N"}</div>
+      <div id="sessionStatus">Publish Status: {published ? 'Y' : 'N'}</div>
       {error ? (
         <div className="error">
           <strong>Error:</strong> {error}
         </div>
       ) : null}
-      {practice && <PreInterviewTest visible={visible} setVisible={setVisible} />}
+      {practice && (
+        <PreInterviewTest
+          visible={visible}
+          setVisible={setVisible}
+        />
+      )}
       <div style={{ paddingTop: '12px' }}>
         <h1> {interviewQuestions[index].question}</h1>
         {interview.helperText}

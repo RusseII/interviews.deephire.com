@@ -55,7 +55,14 @@ const Results = ({ testResults: { camera, connection, audio } }) => {
             showIcon
           />
         )}
-
+        {connection === 'failure' && (
+          <Alert
+            message="Connection Error"
+            description="There was a problem uploading from your device"
+            type="error"
+            showIcon
+          />
+        )}
         {connection === 'success' && audio === 'failure' && camera === 'success' && (
           <Alert
             message="Audio Error"
@@ -165,7 +172,6 @@ const PreInterviewTest = ({ visible, setVisible }) => {
         connection: network ? 'success' : 'failure',
       };
     }
-
     setTestResults(result);
     setProgress(100);
 
@@ -233,7 +239,6 @@ const PreInterviewTest = ({ visible, setVisible }) => {
       Take Interview
     </Button>,
   ];
-
   const whichFooter = testResults => {
     const { audio, camera, connection } = testResults;
     if (camera === undefined || connection === undefined || audio === undefined) return null;
