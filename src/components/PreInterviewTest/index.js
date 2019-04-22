@@ -1,7 +1,7 @@
 import NetworkTest, { ErrorNames } from 'opentok-network-test-js';
 import React, { useState, useEffect } from 'react';
 import { getCredentials } from '@/services/api';
-import { Spin, Modal, Progress, Icon, Row, Col, Button } from 'antd';
+import { Alert, Spin, Modal, Progress, Icon, Row, Col, Button } from 'antd';
 
 // import styles from './index.less';
 
@@ -45,23 +45,42 @@ const Results = ({ testResults: { camera, connection, audio } }) => {
           <Status type="audio" color={color[audio]} text="Audio" />
         </Col>
       </Row>
-      {connection === 'warning' && (
-        <div style={{ paddingTop: '24px' }}>
-          Network Speed determined to be slow, if you record your video may be of lower quality -
-          you can still take the interview now, or find a better connection then take it.
-        </div>
-      )}
-      {/* {connection === 'success' && audio === 'success' && camera === 'success' && (
-        <div style={{ paddingTop: '24px' }}>All checks passed! Enjoy your interview!</div>
-      )} */}
-      {connection === 'success' && audio === 'failure' && camera === 'success' && (
-        <div style={{ paddingTop: '24px' }}>
-          There was a problem connecting to your audio device
-        </div>
-      )}
-      {connection === 'success' && audio === 'success' && camera === 'failure' && (
-        <div style={{ paddingTop: '24px' }}>There was a problem connecting to your camera</div>
-      )}
+      <div style={{ paddingTop: '24px' }}>
+        {connection === 'warning' && (
+          <Alert
+            message="Slow Network"
+            description="Network Speed determined to be slow, if you record your video may be of lower quality -
+          you can still take the interview now, or find a better connection then take it."
+            type="warning"
+            showIcon
+          />
+        )}
+
+        {connection === 'success' && audio === 'failure' && camera === 'success' && (
+          <Alert
+            message="Camera Error"
+            description="There was a problem connecting to your audio device"
+            type="error"
+            showIcon
+          />
+        )}
+        {connection === 'success' && audio === 'success' && camera === 'failure' && (
+          <Alert
+            message="Camera Error"
+            description="There was a problem connecting to your camera"
+            type="error"
+            showIcon
+          />
+        )}
+        {connection === 'success' && audio === 'success' && camera === 'success' && (
+          <Alert
+            message="Success!"
+            description="All tests completed succesfully, good luck!"
+            type="success"
+            showIcon
+          />
+        )}
+      </div>
     </>
   );
 };
@@ -202,7 +221,7 @@ const PreInterviewTest = ({ visible, setVisible }) => {
       Retake
     </Button>,
     <Button key="Take Interview" type="danger" onClick={handleError}>
-      Error: Contact Support
+      Contact Support
     </Button>,
   ];
 
@@ -239,7 +258,10 @@ const PreInterviewTest = ({ visible, setVisible }) => {
         <Spin spinning={progress < 100}>
           <Results testResults={testResults} />
         </Spin>
-        Once you start, you will be given 1 practice interview question, after that your real interview will start.
+        <div style={{ paddingTop: '24px' }}>
+          Once you start, you will be given 1 practice interview question, after that your real
+          interview will start.
+        </div>
       </Modal>
     </div>
   );
