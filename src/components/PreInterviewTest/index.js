@@ -58,7 +58,7 @@ const Results = ({ testResults: { camera, connection, audio } }) => {
 
         {connection === 'success' && audio === 'failure' && camera === 'success' && (
           <Alert
-            message="Camera Error"
+            message="Audio Error"
             description="There was a problem connecting to your audio device"
             type="error"
             showIcon
