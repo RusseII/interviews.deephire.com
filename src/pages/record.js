@@ -62,16 +62,24 @@ export default ({ location }) => {
   const { interview_questions: interviewQ = [] } = practiceQuestions;
   const [interviewQuestions, setInterviewQuestions] = useState(interviewQ);
 
-  const setCrispEmail = () => {
-    window.setEmail(email);
+  const setCrispDetails = (email, nickname, recruiter, interviewName) => {
+    window.setDetails(email, nickname);
+    window.setCompany(recruiter, interviewName);
   };
   // for any hooks noobs, passing in [] as 2nd paramater makes useEffect work the same for componenetDidMount
   useEffect(() => {
+    console.log(email, fullName);
     setup();
 
     setAction('start');
     getCredentials().then(session => setApi(session));
   }, []);
+
+  useEffect(() => {
+    if (startingData.interviewName) {
+      setCrispDetails(email, fullName, startingData.createdBy, startingData.interviewName);
+    }
+  }, [startingData]);
 
   const publisherEventHandlers = {
     accessDenied: () => {

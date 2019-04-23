@@ -27,8 +27,8 @@
       $crisp.push(["set", "user:email", email]);
       $crisp.push(["set", "user:nickname", [nickname]])
     }
-    function setCompany(company, interviewName) {
-    $crisp.push(["set", "user:company", [company, { employment: ["Job Seeker", interviewName]}]])
+    function setCompany(recruiter, interviewName) {
+    $crisp.push(["set", "user:company", [recruiter, { employment: ["Job Seeker", interviewName]}]])
     }
 
 </script>
