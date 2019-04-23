@@ -23,6 +23,10 @@ import PreInterviewTest from '@/components/PreInterviewTest';
 
 import { router } from 'umi';
 
+const showErr = () => {
+  window.showError();
+};
+
 export default ({ location }) => {
   const id = qs.parse(location.search)['?id'];
   const fullName = qs.parse(location.search)['fullName'];
@@ -76,6 +80,10 @@ export default ({ location }) => {
   }, []);
 
   useEffect(() => {
+    if (error) showErr();
+  }, [error]);
+
+  useEffect(() => {
     if (startingData.interviewName) {
       setCrispDetails(email, fullName, startingData.createdBy, startingData.interviewName);
     }
@@ -84,6 +92,7 @@ export default ({ location }) => {
   const publisherEventHandlers = {
     accessDenied: () => {
       console.log('User denied access to media source');
+      showErr();
     },
     streamCreated: () => {
       console.log('Publisher stream created');

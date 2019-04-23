@@ -31,5 +31,10 @@
     $crisp.push(["set", "user:company", [recruiter, { employment: ["Job Seeker", interviewName]}]])
     }
 
+    function showError() {
+      const name = $crisp.get("user:nickname")
+      const firstName = name.split(" ")[0]
+      $crisp.push(["do", "message:show", ["text", `Hey ${firstName}, we saw there was some type of error - Let me know if it continues!`]])
+      }
 </script>
 </html>

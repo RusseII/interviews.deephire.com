@@ -5,6 +5,10 @@ import { Alert, Spin, Modal, Progress, Icon, Row, Col, Button } from 'antd';
 
 // import styles from './index.less';
 
+const showErr = () => {
+  window.showError();
+};
+
 const Status = ({ type, color, text }) => (
   <>
     <Row type="flex" justify="center">
@@ -94,7 +98,12 @@ const Results = ({ testResults: { camera, connection, audio } }) => {
 const PreInterviewTest = ({ setPreTestCompleted, visible, setVisible }) => {
   const [progress, setProgress] = useState(0);
   const [testResults, setTestResults] = useState({});
+  const [error, setError] = useState(null);
 
+  useEffect(() => {
+    if (error) showErr();
+  }, [error]);
+  
   const runTest = () => {
     getCredentials()
       .then(testSession => {
@@ -117,6 +126,7 @@ const PreInterviewTest = ({ setPreTestCompleted, visible, setVisible }) => {
         camera: 'failure',
         connection: 'failure',
       };
+      setError(true);
       setTestResults(result);
       setProgress(100);
     } else {
@@ -134,6 +144,8 @@ const PreInterviewTest = ({ setPreTestCompleted, visible, setVisible }) => {
         }
       })
       .catch(error => {
+        setError(true);
+
         console.log(error);
         switch (error.name) {
           case ErrorNames.UNSUPPORTED_BROWSER:
@@ -158,7 +170,7 @@ const PreInterviewTest = ({ setPreTestCompleted, visible, setVisible }) => {
     console.log('OpenTok quality qualityResults', qualityResults);
 
     let result;
-    const {  audio = {}, video = {} } = qualityResults;
+    const { audio = {}, video = {} } = qualityResults;
     if (video.reason === 'Bandwidth too low.') {
       result = {
         audio: audio.supported ? 'success' : 'failure',
@@ -171,11 +183,14 @@ const PreInterviewTest = ({ setPreTestCompleted, visible, setVisible }) => {
         camera: video.supported ? 'success' : 'failure',
         connection: network ? 'success' : 'failure',
       };
+
+      if (!video.supported || !audio.supported) setError(true);
     }
+
     setTestResults(result);
     setProgress(100);
 
-    if (audio.supported) {
+    if (!audio.supported) {
       console.log('Audio not supported:', audio.reason);
     }
   };
