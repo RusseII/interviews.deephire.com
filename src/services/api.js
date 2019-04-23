@@ -108,13 +108,48 @@ export const stopArchive = archiveId => {
   });
 };
 
-export const startArchive = archiveId => {
-  return fetch(`${openTokApi}/archive/start/${archiveId}`, {
+export const startArchive = async sessionId => {
+  const res = await fetch(`${openTokApi}/archive/start/${sessionId}`, {
     method: 'POST',
   });
+  if (res.status === 200) {
+    const data = await res.json()
+    const {id: archiveId} = data
+    localStorage.setItem("archiveId", archiveId)
+    return data
+  }
+  // already an archive for the session
+  if (res.status === 500) {
+    stopArchive(localStorage.getItem('archiveId'));
+    return startArchive(sessionId);
+  }
+  return res.json()
 };
 
 export const getCredentials = () => {
-  const uid = uuidv1()
+  const uid = uuidv1();
   return fetch(`${openTokApi}/room/${uid}`).then(r => r.json());
+};
+
+//runs for 20 * 500 = 10000 = 10 seconds
+export const checkVideo = async (url, n = 20) => {
+  const options = {
+    headers: {
+      Range: 'bytes=0-1',
+    },
+  };
+  try {
+    const res = await fetch(url, options);
+    console.log(res.status);
+    await new Promise(resolve => setTimeout(() => resolve(), 500));
+
+    if (res.status === 206) return url;
+    else if (res.status === 416) {
+      console.log('No video recorded, thro error, 416 satus code');
+    } else if (n < 1) {
+      console.log('Video not found after 10 seconds');
+    } else return await checkVideo(url, n - 1);
+  } catch (err) {
+    throw err;
+  }
 };
