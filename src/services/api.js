@@ -67,7 +67,7 @@ export const notifyRecruiter = (id, candidateName, candidateEmail, interviewName
     type: 'interviewCompleted',
     id,
     candidateName,
-    recipients: [createdBy || 'noemail@deephire.com'],
+    recipients: Array.from(createdBy),
     candidateEmail,
     interviewName,
   };
