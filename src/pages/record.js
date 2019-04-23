@@ -2,10 +2,8 @@ import practiceQuestions from '@/services/practiceInterviewQuestions';
 import React, { useState, useEffect } from 'react';
 import { OTSession } from 'opentok-react';
 
-import LoadingScreen from 'react-loading-screen';
-
 import ReactPlayer from 'react-player';
-import { Timeline, Button, Row, Col } from 'antd';
+import { Modal, Spin, Button, Row } from 'antd';
 import styles from './record.less';
 import qs from 'qs';
 
@@ -17,6 +15,7 @@ import {
   stopArchive,
   storeInterviewQuestion,
   getCredentials,
+  checkVideo,
 } from '@/services/api';
 import Timer from '@/components/Timer';
 import Video from '@/components/Video';
@@ -28,18 +27,21 @@ export default ({ location }) => {
   const id = qs.parse(location.search)['?id'];
   const fullName = qs.parse(location.search)['fullName'];
   const email = qs.parse(location.search)['email'];
-  const practice = qs.parse(location.search)['practice'];
+  const p = qs.parse(location.search)['practice'];
 
-  const [connection, setConnection] = useState('Disconnected');
+  // const [connection, setConnection] = useState('Disconnected');
   const [error, setError] = useState(null);
   const [archiveId, setArchiveId] = useState(null);
   const [connectionDetails, setApi] = useState(null);
+  const [practice, setPractice] = useState(p);
+
+  const [realInterviewModal, setRealInterviewModal] = useState(false);
+
+  const [preTestCompleted, setPreTestCompleted] = useState(false);
+
   const [visible, setVisible] = useState(true);
 
-  const [before, setBefore] = useState(true);
-
   const [videoUrl, setVideoUrl] = useState(null);
-  const [k, setK] = useState(0);
   const [published, setPublished] = useState(false);
 
   const [index, setIndex] = useState(0);
@@ -57,29 +59,15 @@ export default ({ location }) => {
 
   const [startingData, setStartingData] = useState({ interviewQuestions: [{ question: 'test' }] });
 
+  const { interview_questions: interviewQ = [] } = practiceQuestions;
+  const [interviewQuestions, setInterviewQuestions] = useState(interviewQ);
+
   // for any hooks noobs, passing in [] as 2nd paramater makes useEffect work the same for componenetDidMount
   useEffect(() => {
-    if (!practice) setBefore(false);
     setup();
     setAction('start');
     getCredentials().then(session => setApi(session));
   }, []);
-
-  const sessionEventHandlers = {
-    sessionConnected: () => {
-      setConnection('Connected');
-      console.log('w');
-    },
-    sessionDisconnected: () => {
-      setConnection('Disconnected');
-    },
-    sessionReconnected: () => {
-      setConnection('Reconnected');
-    },
-    sessionReconnecting: () => {
-      setConnection('Reconnecting');
-    },
-  };
 
   const publisherEventHandlers = {
     accessDenied: () => {
@@ -107,31 +95,38 @@ export default ({ location }) => {
   };
 
   const startRecording = () => {
-    startArchive(connectionDetails.sessionId)
-      .then(r => r.json())
-      .then(r => console.log(setArchiveId(r.id)));
+    startArchive(connectionDetails.sessionId).then(r => console.log(setArchiveId(r.id)));
   };
 
   const stopRecording = () => {
     stopArchive(archiveId);
   };
 
+  const startRealInterview = () => {
+    setPractice(null);
+    setInterviewQuestions(startingData.interviewQuestions);
+    setIndex(0);
+    setRetakes(startingData.retakesAllowed);
+    setRealInterviewModal(false);
+    prepareScreen(startingData);
+  };
   const setup = async () => {
     var [data] = await fetchInterview(id);
-    if (practice) data = practiceQuestions;
     setData(data);
+    console.log(data);
     const {
       email: createdBy,
       interviewName,
       interview_config: { answerTime, prepTime, retakesAllowed } = {},
-      interview_questions: interviewQuestions = [],
+      interview_questions: interviewQ = [],
     } = data || {};
+
     setStartingData({
       interviewName,
       answerTime,
       prepTime,
       retakesAllowed,
-      interviewQuestions,
+      interviewQuestions: interviewQ,
       createdBy,
     });
     setRetakes(retakesAllowed);
@@ -158,6 +153,9 @@ export default ({ location }) => {
   };
 
   const start = async () => {
+    console.log(index, interviewQuestions);
+    console.log(startingData.interviewQuestions);
+    setVideoUrl(null);
     recordScreen();
     startRecording();
   };
@@ -203,8 +201,6 @@ export default ({ location }) => {
   };
 
   const nextQuestion = () => {
-    prepareScreen(startingData);
-
     if (!practice) {
       storeInterviewQuestion(
         id,
@@ -212,21 +208,23 @@ export default ({ location }) => {
         fullName,
         email,
         startingData.interviewName,
-        startingData.interviewQuestions[index].question,
+        interviewQuestions[index].question,
         `https://s3.amazonaws.com/deephire-video-dump/${
           connectionDetails.apiKey
         }/${archiveId}/archive.mp4`
       );
     }
-    if (startingData.interviewQuestions.length === index + 1) {
-      if (practice) router.push(`/real?id=${id}&fullName=${fullName}&email=${email}`);
-      else {
+    if (interviewQuestions.length === index + 1) {
+      if (practice) {
+        setRealInterviewModal(true);
+      } else {
         notifyCandidate(fullName, email);
         notifyRecruiter(id, fullName, email, startingData.interviewName, startingData.createdBy);
         router.push('/victory');
       }
     } else {
       setIndex(index + 1);
+      prepareScreen(startingData);
     }
   };
 
@@ -240,13 +238,10 @@ export default ({ location }) => {
   const stop = async () => {
     stopRecording();
     reviewScreen();
-
-    setVideoUrl(
-      `https://s3.amazonaws.com/deephire-video-dump/${
-        connectionDetails.apiKey
-      }/${archiveId}/archive.mp4`
-    );
-    setK(10);
+    const url = `https://s3.amazonaws.com/deephire-video-dump/${
+      connectionDetails.apiKey
+    }/${archiveId}/archive.mp4`;
+    setVideoUrl(await checkVideo(url));
   };
 
   if (!data) return null;
@@ -254,126 +249,81 @@ export default ({ location }) => {
 
   return (
     <div className={styles.wrapper}>
-      {/* <div id="sessionStatus">Session Status: {connection}</div> */}
+      {/* <div id="sessionStatus">Publish Status: {published ? 'Y' : 'N'}</div> */}
       {error ? (
         <div className="error">
           <strong>Error:</strong> {error}
         </div>
       ) : null}
-      {practice && <PreInterviewTest  visible={visible} setVisible={setVisible} />}
-      <div style={{ paddingTop: '24px' }}>
-        <h1> {before ? 'Whats Next' : startingData.interviewQuestions[index].question}</h1>{' '}
+      {practice && (
+        <PreInterviewTest setPreTestCompleted={setPreTestCompleted} visible={visible} setVisible={setVisible} />
+      )}
+      <div style={{ paddingTop: '12px' }}>
+        <h1> {interviewQuestions[index].question}</h1>
         {interview.helperText}
       </div>
-      {!before && (
-        <Timer
-          key={interview.key}
-          reset={true}
-          countDown={interview.countDown}
-          paused={interview.paused}
-          onFinish={() => changeButtonAction(action)}
-          seconds={interview.time}
-        />
-      )}
-      <br />
-      {connectionDetails && (
+
+      <Timer
+        key={interview.key}
+        reset={true}
+        countDown={interview.countDown}
+        paused={interview.paused}
+        onFinish={() => changeButtonAction(action)}
+        seconds={interview.time}
+      />
+
+      {connectionDetails && preTestCompleted && (
         <OTSession
+          style={{ height: '100%', width: '100%' }}
           {...connectionDetails}
-          // apiKey={apiKey}
-          // sessionId={sessionId}
-          // token={token}
           onError={onSessionError}
-          eventHandlers={sessionEventHandlers}
+          // eventHandlers={sessionEventHandlers}
         >
-          <Row type="flex" justify="center">
-            <Col span={15}>
-              {before ? (
-                <>
-                  <h3>{`You’ll be taken to a Practice Interview (one question) so you can get used to the system. After you finish the Practice Interview, there is a break and then your real interview will begin! Good luck! `}</h3>
-                  <br /> <br />
-                  <h4>Each questions follows the following format:</h4>
-                  <br />
-                  <br />
-                  <Timeline mode="alternate">
-                    <Timeline.Item>{`${startingData.prepTime} Seconds to Prepare`}</Timeline.Item>
-                    <Timeline.Item color="blue">{`${
-                      startingData.answerTime
-                    } Seconds to Record`}</Timeline.Item>
-                    <Timeline.Item color="red">Review Video Answer</Timeline.Item>
-                  </Timeline>
-                </>
-              ) : (
-                <div>
-                  {/* <button id="record" onClick={archive}>
-                    Record
-        </button>
-                  <button id="stop" onClick={stopArchive}>
-                    STOP
-        </button> */}
+          <Row style={{ paddingTop: '12px' }} type="flex" justify="center">
+            {interview.review && (
+              <Spin spinning={!videoUrl}>
+                <ReactPlayer
+                  controls
+                  key={videoUrl}
+                  className="OTPublisherContainer"
+                  playing={true}
+                  playsinline={true}
+                  url={videoUrl}
+                />
+              </Spin>
+            )}
 
-                  {interview.review && (
-                    <ReactPlayer
-                      key={k}
-                      onError={err =>
-                        setTimeout(() => {
-                          console.log(err);
-                          if (err.type) setK(k + 1);
-                        }, 1000)
-                      }
-                      controls
-                      // className={styles.reactPlayer}
-                      playing={true}
-                      playsinline={true}
-                      url={videoUrl}
-                      width="100%"
-                      height="100%"
-                    />
-                  )}
-
-                  <LoadingScreen
-                    loading={!published}
-                    bgColor="#f1f1f1"
-                    spinnerColor="#9ee5f8"
-                    textColor="#676767"
-                    text="Connecting to Camera..."
-                  />
-                  <Video
-                    screen={interview.screen}
-                    properties={{
-                      fitMode: 'contains',
-                      frameRate: '30',
-                      height: '33.75vw',
-                      width: '60vw',
-                    }}
-                    onPublish={onPublish}
-                    onError={onPublishError}
-                    eventHandlers={publisherEventHandlers}
-                  />
-                </div>
-              )}
-            </Col>
+            <Video
+              screen={interview.screen}
+              properties={{
+                fitMode: 'contains',
+                frameRate: '30',
+              }}
+              onPublish={onPublish}
+              onError={onPublishError}
+              eventHandlers={publisherEventHandlers}
+            />
           </Row>
         </OTSession>
       )}
-      {before ? (
-        <Button
-          className={styles.button}
-          onClick={() => {
-            setBefore(false);
 
-            setInterview({ ...interview, helperText: 'Prepare your answer', paused: false });
-          }}
-        >
-          Start Practice Interview
+      <>
+        {interview.review && <Button onClick={retake}>{`Retake (${retakes} left)`}</Button>}
+        <Button className={styles.button} onClick={() => changeButtonAction(action)}>
+          {interview.buttonText}
         </Button>
-      ) : (
-        <>
-          {interview.review && <Button onClick={retake}>{`Retake (${retakes} left)`}</Button>}
-          <Button className={styles.button} onClick={() => changeButtonAction(action)}>
-            {interview.buttonText}
-          </Button>
-        </>
-      )}
+        <Modal
+          title="Practice Completed."
+          visible={realInterviewModal}
+          onOk={startRealInterview}
+          onCancel={() => setRealInterviewModal(false)}
+          okText="Start Your Real Interview!"
+          cancelText="Not Yet"
+        >
+          You're all set for the real interview! Good Luck!
+        </Modal>
+        ;
+      </>
     </div>
   );
 };

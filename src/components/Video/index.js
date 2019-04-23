@@ -26,13 +26,13 @@ const Video = props => {
 
   return (
     <>
-      <div className={styles.video} style={{ display: options.display, opacity: options.opacity }}>
+      <div  style={{ display: options.display, opacity: options.opacity }}>
         <OTPublisher {...props}  />
       </div>
       <div
         className={styles.center}
       >
-        <h1>{options.text}</h1>
+        <h2>{options.text}</h2>
       </div>
     </>
   );
