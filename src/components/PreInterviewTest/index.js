@@ -49,8 +49,7 @@ const Results = ({ testResults: { camera, connection, audio } }) => {
         {connection === 'warning' && (
           <Alert
             message="Slow Network"
-            description="Network Speed determined to be slow, if you record your video may be of lower quality -
-          you can still take the interview now, or find a better connection then take it."
+            description="Network speed determined to be slow. If you record, your video may be of lower quality. You can still take the interview now or find a better connection before starting."
             type="warning"
             showIcon
           />
@@ -66,7 +65,7 @@ const Results = ({ testResults: { camera, connection, audio } }) => {
         {connection === 'success' && audio === 'failure' && camera === 'success' && (
           <Alert
             message="Audio Error"
-            description="There was a problem connecting to your audio device"
+            description="There was a problem connecting to your microphone"
             type="error"
             showIcon
           />
@@ -159,24 +158,25 @@ const PreInterviewTest = ({ setPreTestCompleted, visible, setVisible }) => {
     console.log('OpenTok quality qualityResults', qualityResults);
 
     let result;
-    if (qualityResults.video.reason === 'Bandwidth too low.') {
+    const {  audio = {}, video = {} } = qualityResults;
+    if (video.reason === 'Bandwidth too low.') {
       result = {
-        audio: qualityResults.audio.supported ? 'success' : 'failure',
+        audio: audio.supported ? 'success' : 'failure',
         camera: 'success',
         connection: 'warning',
       };
     } else {
       result = {
-        audio: qualityResults.audio.supported ? 'success' : 'failure',
-        camera: qualityResults.video.supported ? 'success' : 'failure',
+        audio: audio.supported ? 'success' : 'failure',
+        camera: video.supported ? 'success' : 'failure',
         connection: network ? 'success' : 'failure',
       };
     }
     setTestResults(result);
     setProgress(100);
 
-    if (!qualityResults.audio.supported) {
-      console.log('Audio not supported:', qualityResults.audio.reason);
+    if (audio.supported) {
+      console.log('Audio not supported:', audio.reason);
     }
   };
 
@@ -201,7 +201,7 @@ const PreInterviewTest = ({ setPreTestCompleted, visible, setVisible }) => {
 
     const network = await testConnection(otNetworkTest);
     await testQuality(otNetworkTest, network);
-    setPreTestCompleted(true)
+    setPreTestCompleted(true);
   };
 
   const handleOk = () => {
@@ -265,7 +265,7 @@ const PreInterviewTest = ({ setPreTestCompleted, visible, setVisible }) => {
           <Results testResults={testResults} />
         </Spin>
         <div style={{ paddingTop: '24px' }}>
-          Once you start, you will be given 1 practice interview question, after that your real
+          Once you start, you will be given one practice interview question. After that, your real
           interview will start.
         </div>
       </Modal>
