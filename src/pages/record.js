@@ -23,6 +23,10 @@ import PreInterviewTest from '@/components/PreInterviewTest';
 
 import { router } from 'umi';
 
+const showErr = () => {
+  window.showError();
+};
+
 export default ({ location }) => {
   const id = qs.parse(location.search)['?id'];
   const fullName = qs.parse(location.search)['fullName'];
@@ -62,16 +66,33 @@ export default ({ location }) => {
   const { interview_questions: interviewQ = [] } = practiceQuestions;
   const [interviewQuestions, setInterviewQuestions] = useState(interviewQ);
 
+  const setCrispDetails = (email, nickname, recruiter, interviewName) => {
+    window.setDetails(email, nickname);
+    window.setCompany(recruiter, interviewName);
+  };
   // for any hooks noobs, passing in [] as 2nd paramater makes useEffect work the same for componenetDidMount
   useEffect(() => {
+    console.log(email, fullName);
     setup();
+
     setAction('start');
     getCredentials().then(session => setApi(session));
   }, []);
 
+  useEffect(() => {
+    if (error) showErr();
+  }, [error]);
+
+  useEffect(() => {
+    if (startingData.interviewName) {
+      setCrispDetails(email, fullName, startingData.createdBy, startingData.interviewName);
+    }
+  }, [startingData]);
+
   const publisherEventHandlers = {
     accessDenied: () => {
       console.log('User denied access to media source');
+      showErr();
     },
     streamCreated: () => {
       console.log('Publisher stream created');
@@ -256,7 +277,11 @@ export default ({ location }) => {
         </div>
       ) : null}
       {practice && (
-        <PreInterviewTest setPreTestCompleted={setPreTestCompleted} visible={visible} setVisible={setVisible} />
+        <PreInterviewTest
+          setPreTestCompleted={setPreTestCompleted}
+          visible={visible}
+          setVisible={setVisible}
+        />
       )}
       <div style={{ paddingTop: '12px' }}>
         <h1> {interviewQuestions[index].question}</h1>
@@ -322,7 +347,6 @@ export default ({ location }) => {
         >
           You're all set for the real interview! Good Luck!
         </Modal>
-        ;
       </>
     </div>
   );

@@ -113,17 +113,17 @@ export const startArchive = async sessionId => {
     method: 'POST',
   });
   if (res.status === 200) {
-    const data = await res.json()
-    const {id: archiveId} = data
-    localStorage.setItem("archiveId", archiveId)
-    return data
+    const data = await res.json();
+    const { id: archiveId } = data;
+    localStorage.setItem('archiveId', archiveId);
+    return data;
   }
   // already an archive for the session
   if (res.status === 500) {
     stopArchive(localStorage.getItem('archiveId'));
     return startArchive(sessionId);
   }
-  return res.json()
+  return res.json();
 };
 
 export const getCredentials = () => {
@@ -133,6 +133,9 @@ export const getCredentials = () => {
 
 //runs for 20 * 500 = 10000 = 10 seconds
 export const checkVideo = async (url, n = 20) => {
+  const showErr = () => {
+    window.showError();
+  };
   const options = {
     headers: {
       Range: 'bytes=0-1',
@@ -145,8 +148,10 @@ export const checkVideo = async (url, n = 20) => {
 
     if (res.status === 206) return url;
     else if (res.status === 416) {
+      showErr();
       console.log('No video recorded, thro error, 416 satus code');
     } else if (n < 1) {
+      showErr()
       console.log('Video not found after 10 seconds');
     } else return await checkVideo(url, n - 1);
   } catch (err) {

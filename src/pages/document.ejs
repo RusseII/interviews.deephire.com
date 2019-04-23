@@ -22,5 +22,19 @@
   function openChat() {
     $crisp.push(["do", "chat:open"])
   }
+
+   function setDetails(email, nickname) {
+      $crisp.push(["set", "user:email", email]);
+      $crisp.push(["set", "user:nickname", [nickname]])
+    }
+    function setCompany(recruiter, interviewName) {
+    $crisp.push(["set", "user:company", [recruiter, { employment: ["Job Seeker", interviewName]}]])
+    }
+
+    function showError() {
+      const name = $crisp.get("user:nickname")
+      const firstName = name.split(" ")[0]
+      $crisp.push(["do", "message:show", ["text", `Hey ${firstName}, we saw there was some type of error - Let me know if it continues!`]])
+      }
 </script>
 </html>
