@@ -92,7 +92,7 @@ const Results = ({ testResults: { camera, connection, audio } }) => {
   );
 };
 
-const PreInterviewTest = ({ visible, setVisible }) => {
+const PreInterviewTest = ({ setPreTestCompleted, visible, setVisible }) => {
   const [progress, setProgress] = useState(0);
   const [testResults, setTestResults] = useState({});
 
@@ -201,6 +201,7 @@ const PreInterviewTest = ({ visible, setVisible }) => {
 
     const network = await testConnection(otNetworkTest);
     await testQuality(otNetworkTest, network);
+    setPreTestCompleted(true)
   };
 
   const handleOk = () => {

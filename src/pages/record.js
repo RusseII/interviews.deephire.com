@@ -37,6 +37,8 @@ export default ({ location }) => {
 
   const [realInterviewModal, setRealInterviewModal] = useState(false);
 
+  const [preTestCompleted, setPreTestCompleted] = useState(false);
+
   const [visible, setVisible] = useState(true);
 
   const [videoUrl, setVideoUrl] = useState(null);
@@ -242,7 +244,6 @@ export default ({ location }) => {
     setVideoUrl(await checkVideo(url));
   };
 
-
   if (!data) return null;
   if (!interview) return null;
 
@@ -255,10 +256,7 @@ export default ({ location }) => {
         </div>
       ) : null}
       {practice && (
-        <PreInterviewTest
-          visible={visible}
-          setVisible={setVisible}
-        />
+        <PreInterviewTest setPreTestCompleted={setPreTestCompleted} visible={visible} setVisible={setVisible} />
       )}
       <div style={{ paddingTop: '12px' }}>
         <h1> {interviewQuestions[index].question}</h1>
@@ -274,7 +272,7 @@ export default ({ location }) => {
         seconds={interview.time}
       />
 
-      {connectionDetails && (
+      {connectionDetails && preTestCompleted && (
         <OTSession
           style={{ height: '100%', width: '100%' }}
           {...connectionDetails}
