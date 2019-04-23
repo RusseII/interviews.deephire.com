@@ -62,9 +62,13 @@ export default ({ location }) => {
   const { interview_questions: interviewQ = [] } = practiceQuestions;
   const [interviewQuestions, setInterviewQuestions] = useState(interviewQ);
 
+  const setCrispEmail = () => {
+    window.setEmail(email);
+  };
   // for any hooks noobs, passing in [] as 2nd paramater makes useEffect work the same for componenetDidMount
   useEffect(() => {
     setup();
+
     setAction('start');
     getCredentials().then(session => setApi(session));
   }, []);
@@ -256,7 +260,11 @@ export default ({ location }) => {
         </div>
       ) : null}
       {practice && (
-        <PreInterviewTest setPreTestCompleted={setPreTestCompleted} visible={visible} setVisible={setVisible} />
+        <PreInterviewTest
+          setPreTestCompleted={setPreTestCompleted}
+          visible={visible}
+          setVisible={setVisible}
+        />
       )}
       <div style={{ paddingTop: '12px' }}>
         <h1> {interviewQuestions[index].question}</h1>
@@ -322,7 +330,6 @@ export default ({ location }) => {
         >
           You're all set for the real interview! Good Luck!
         </Modal>
-        ;
       </>
     </div>
   );
