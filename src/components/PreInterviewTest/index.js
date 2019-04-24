@@ -5,8 +5,9 @@ import { Alert, Spin, Modal, Progress, Icon, Row, Col, Button } from 'antd';
 
 // import styles from './index.less';
 
-const showErr = () => {
+const showErr = event => {
   window.showError();
+  window.setEvent(event);
 };
 
 const Status = ({ type, color, text }) => (
@@ -101,9 +102,9 @@ const PreInterviewTest = ({ setPreTestCompleted, visible, setVisible }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (error) showErr();
+    if (error) showErr(error);
   }, [error]);
-  
+
   const runTest = () => {
     getCredentials()
       .then(testSession => {
@@ -126,7 +127,7 @@ const PreInterviewTest = ({ setPreTestCompleted, visible, setVisible }) => {
         camera: 'failure',
         connection: 'failure',
       };
-      setError(true);
+      setError({ connectionResults: JSON.stringify(connectionResults, null, 2) });
       setTestResults(result);
       setProgress(100);
     } else {
@@ -144,8 +145,7 @@ const PreInterviewTest = ({ setPreTestCompleted, visible, setVisible }) => {
         }
       })
       .catch(error => {
-        setError(true);
-
+        setError({ error: JSON.stringify(error, null, 2) });
         console.log(error);
         switch (error.name) {
           case ErrorNames.UNSUPPORTED_BROWSER:
@@ -183,8 +183,10 @@ const PreInterviewTest = ({ setPreTestCompleted, visible, setVisible }) => {
         camera: video.supported ? 'success' : 'failure',
         connection: network ? 'success' : 'failure',
       };
+      console.log(qualityResults);
 
-      if (!video.supported || !audio.supported) setError(true);
+      if (!video.supported || !audio.supported)
+        setError({ qualityResults: JSON.stringify(qualityResults, null, 2) });
     }
 
     setTestResults(result);

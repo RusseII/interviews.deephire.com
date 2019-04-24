@@ -30,11 +30,19 @@
     function setCompany(recruiter, interviewName) {
     $crisp.push(["set", "user:company", [recruiter, { employment: ["Job Seeker", interviewName]}]])
     }
-
-    function showError() {
+    async function showError(msg="we saw there was some type of error - let me know if it continues!") {
       const name = $crisp.get("user:nickname")
       const firstName = name.split(" ")[0]
-      $crisp.push(["do", "message:show", ["text", `Hey ${firstName}, we saw there was some type of error - Let me know if it continues!`]])
+      const firstNameCapital = firstName.charAt(0).toUpperCase() + firstName.slice(1);
+      await new Promise(resolve => setTimeout(() => {
+        resolve("Added Delay")
+      }, 1500))
+      $crisp.push(["do", "message:show", ["text", `Hey ${firstName}, ${msg}`]])
       }
+      function setEvent(event) {
+        //event is obj
+        $crisp.push(["set", "session:event", [[["error", event, "red"]]]])
+      }
+
 </script>
 </html>
