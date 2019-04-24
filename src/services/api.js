@@ -133,8 +133,8 @@ export const getCredentials = () => {
 
 //runs for 20 * 500 = 10000 = 10 seconds
 export const checkVideo = async (url, n = 20) => {
-  const showErr = () => {
-    window.showError();
+  const showErr = msg => {
+    window.showError(msg);
   };
   const options = {
     headers: {
@@ -148,10 +148,14 @@ export const checkVideo = async (url, n = 20) => {
 
     if (res.status === 206) return url;
     else if (res.status === 416) {
-      showErr();
+      showErr(
+        'we noticed there was problem with the video playback on your video - try clicking retake and recoding again - let me know if you need help!'
+      );
       console.log('No video recorded, thro error, 416 satus code');
     } else if (n < 1) {
-      showErr()
+      showErr(
+        'We noticed there was an error uploaing your video :( try clicking "retake" and recording again '
+      );
       console.log('Video not found after 10 seconds');
     } else return await checkVideo(url, n - 1);
   } catch (err) {
