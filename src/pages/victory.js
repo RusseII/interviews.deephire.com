@@ -1,7 +1,7 @@
-import React from 'react';
-
 import { Button, Row } from 'antd';
-import styles from './record.less';
+import React from 'react';
+import styles from './victory.less';
+
 
 export default () => {
   return (

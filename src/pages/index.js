@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import styles from './index.less';
-import ReactPlayer from 'react-player';
-import { Upload, Steps, Row, Col } from 'antd';
 import SignIn from '@/components/SignIn';
+import { fetchCompanyInfo, fetchInterview } from '@/services/api';
+import { Col, Row, Upload } from 'antd';
 import qs from 'qs';
-import { fetchInterview, fetchCompanyInfo } from '@/services/api';
+import React, { useEffect, useState } from 'react';
+import ReactPlayer from 'react-player';
+import styles from './index.less';
 
 const props = {
   action: '//jsonplaceholder.typicode.com/posts/',
@@ -80,7 +80,7 @@ const Index = ({ location }) => {
         </Col>
       </Row>
       <Row type="flex" justify="center">
-        {id == '5c93849154b7ba00088dde51' && <Upload {...props} />}
+        {id === '5c93849154b7ba00088dde51' && <Upload {...props} />}
       </Row>
 
       <SignIn location={location} />
