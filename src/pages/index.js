@@ -1,30 +1,11 @@
 import SignIn from '@/components/SignIn';
 import { fetchCompanyInfo, fetchInterview } from '@/services/api';
+import conditionalLogicForOneClient from '@/technicalDebt/conditionalLogic';
 import { Col, Row, Upload } from 'antd';
 import qs from 'qs';
 import React, { useEffect, useState } from 'react';
 import ReactPlayer from 'react-player';
 import styles from './index.less';
-
-const props = {
-  action: '//jsonplaceholder.typicode.com/posts/',
-  onChange({ file, fileList }) {
-    if (file.status !== 'uploading') {
-    }
-  },
-  defaultFileList: [
-    {
-      uid: '1',
-      name: 'HR Director.docx',
-      url: 'https://s3.amazonaws.com/deephire/logos/HR+Director.docx',
-    },
-    {
-      uid: '2',
-      name: 'Electrocraft Overview.pdf',
-      url: 'https://s3.amazonaws.com/deephire/logos/Electrocraft+overview.pdf',
-    },
-  ],
-};
 
 const Index = ({ location }) => {
   const id = qs.parse(location.search)['?id'];
@@ -50,10 +31,7 @@ const Index = ({ location }) => {
 
   return (
     <div className={styles.normal}>
-      <div style={{ paddingTop: '24px' }}>
-        <h1>Welcome to your Video Interview!</h1>{' '}
-      </div>
-
+      <h1 style={{ paddingTop: '24px' }}>Welcome to your Video Interview!</h1>{' '}
       <Row type="flex" justify="center">
         <Col span={15} xxl={11} xl={12}>
           <div className={styles.playerWrapper}>
@@ -69,9 +47,10 @@ const Index = ({ location }) => {
         </Col>
       </Row>
       <Row type="flex" justify="center">
-        {id === '5c93849154b7ba00088dde51' && <Upload {...props} />}
+        {/* YUCK - Conditional logic for 1 client (below) */}
+        {id === '5c93849154b7ba00088dde51' && <Upload {...conditionalLogicForOneClient} />}
+        {/* YUCK - Conditional logic for 1 client (above) */}
       </Row>
-
       <SignIn location={location} />
     </div>
   );
