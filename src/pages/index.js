@@ -1,45 +1,78 @@
-import SignIn from '@/components/SignIn';
-import { fetchCompanyInfo, fetchInterview } from '@/services/api';
-import conditionalLogicForOneClient from '@/technicalDebt/conditionalLogic';
-import { Col, Row, Upload } from 'antd';
-import qs from 'qs';
-import React, { useEffect, useState } from 'react';
-import ReactPlayer from 'react-player';
+import React, { useState, useEffect } from 'react';
 import styles from './index.less';
+import ReactPlayer from 'react-player';
+import { Upload, Steps, Row, Col } from 'antd';
+import SignIn from '@/components/SignIn';
+import qs from 'qs';
+import { fetchInterview, fetchCompanyInfo } from '@/services/api';
+
+const props = {
+  action: '//jsonplaceholder.typicode.com/posts/',
+  onChange({ file, fileList }) {
+    if (file.status !== 'uploading') {
+      console.log(file, fileList);
+    }
+  },
+  defaultFileList: [
+    {
+      uid: '1',
+      name: 'HR Director.docx',
+      url: 'https://s3.amazonaws.com/deephire/logos/HR+Director.docx',
+    },
+    {
+      uid: '2',
+      name: 'Electrocraft Overview.pdf',
+      url: 'https://s3.amazonaws.com/deephire/logos/Electrocraft+overview.pdf',
+    },
+  ],
+};
 
 const Index = ({ location }) => {
   const id = qs.parse(location.search)['?id'];
-  const [url, setUrl] = useState(null);
 
-  const getData = async () => {
-    const defaultIntroVideo = 'https://vimeo.com/296044829/74bfec15d8';
-    const r = await fetchInterview(id);
-    const interview = r[0] || null;
-    if (interview) {
-      const { email: createdBy } = interview;
-      const url = await fetchCompanyInfo(createdBy);
-      const { introVideo: companyIntro } = url || {};
-      setUrl(companyIntro ? companyIntro : defaultIntroVideo);
-    } else {
-      setUrl(defaultIntroVideo);
-    }
-  };
+
+  const [companyInfo, setCompanyInfo] = useState({
+    companyName: 'Loading...',
+    logo:
+      'http://atelier.swiftideas.com/union-demo/wp-content/uploads/sites/5/2014/05/unionproducts-img-blank.png',
+    introVideo: '',
+  });
 
   useEffect(() => {
-    getData();
+    fetchInterview(id).then(r => {
+      if (r[0]) {
+        const { email: createdBy } = r[0];
+        fetchCompanyInfo(createdBy).then(r =>{
+          if (r) {
+            (r.introVideo) ? console.log("companyVideo exists") : (r.introVideo = "https://vimeo.com/296044829/74bfec15d8")
+            setCompanyInfo(r)
+          }
+      
+          });
+      }
+      else {
+        setCompanyInfo({ companyName: "Not Found", introVideo: 'https://vimeo.com/296044829/74bfec15d8' }
+        )
+      }
+    });
+    console.log(companyInfo);
   }, []);
-
   return (
     <div className={styles.normal}>
-      <h1 style={{ paddingTop: '24px' }}>Welcome to your Video Interview!</h1>{' '}
+      
+      <div style={{ paddingTop: '24px' }}>
+        <h1>Welcome to your Video Interview!</h1>{' '}
+      </div>
+
       <Row type="flex" justify="center">
         <Col span={15} xxl={11} xl={12}>
           <div className={styles.playerWrapper}>
             <ReactPlayer
               controls
-              key={url}
+
+              key={companyInfo.introVideo}
               className={styles.reactPlayer}
-              url={url}
+              url={companyInfo.introVideo}
               width="100%"
               height="100%"
             />
@@ -47,10 +80,9 @@ const Index = ({ location }) => {
         </Col>
       </Row>
       <Row type="flex" justify="center">
-        {/* YUCK - Conditional logic for 1 client (below) */}
-        {id === '5c93849154b7ba00088dde51' && <Upload {...conditionalLogicForOneClient} />}
-        {/* YUCK - Conditional logic for 1 client (above) */}
+        {id == '5c93849154b7ba00088dde51' && <Upload {...props} />}
       </Row>
+
       <SignIn location={location} />
     </div>
   );
