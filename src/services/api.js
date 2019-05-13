@@ -2,14 +2,18 @@ import fetch from 'isomorphic-fetch';
 const uuidv1 = require('uuid/v1');
 
 const apiUrl = 'https://a.deephire.com/v1/';
+// const apiUrl = 'https://dev-a.deephire.com/v1/';
+
 // const apiUrl = 'http://localhost:3000/v1/';
 // const openTokApi = 'http://localhost:8081';
 const openTokApi = 'https://tokbox.deephire.com';
 
-export const fetchInterview = id => {
-  return fetch(`${apiUrl}interviews/${id}`)
-    .then(response => response.json())
-    .then(data => data);
+export const fetchInterview = async id => {
+  const resp = await fetch(`${apiUrl}interviews/${id}`);
+  if (resp.ok) {
+    return await resp.json();
+  }
+  return null;
 };
 
 export const fetchCompanyInfo = id => {

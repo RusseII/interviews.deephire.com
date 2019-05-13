@@ -5,6 +5,7 @@ import { Col, Row, Upload } from 'antd';
 import qs from 'qs';
 import React, { useEffect, useState } from 'react';
 import ReactPlayer from 'react-player';
+import { router } from 'umi';
 import styles from './index.less';
 
 const Index = ({ location }) => {
@@ -13,14 +14,14 @@ const Index = ({ location }) => {
 
   const getData = async () => {
     const defaultIntroVideo = 'https://vimeo.com/296044829/74bfec15d8';
-    const r = await fetchInterview(id);
-    const interview = r[0] || null;
+    const interview = await fetchInterview(id);
     if (interview) {
       const { email: createdBy } = interview;
       const url = await fetchCompanyInfo(createdBy);
       const { introVideo: companyIntro } = url || {};
       setUrl(companyIntro ? companyIntro : defaultIntroVideo);
     } else {
+      router.push('/404');
       setUrl(defaultIntroVideo);
     }
   };
