@@ -1,11 +1,19 @@
-import React, { useState } from 'react';
 import { Progress } from 'antd';
+import React, { FC, useState } from 'react';
 
-const Timer = ({ countDown, seconds, onFinish, paused }) => {
+type timerProps = {
+  countDown: boolean;
+  seconds: number;
+  onFinish: () => null;
+  paused: boolean;
+};
+
+const Timer: FC<timerProps> = ({ countDown, seconds, onFinish, paused }) => {
   const [time, setTime] = useState(seconds);
 
-  const timer = setTimeout(function() {
-    if (!paused) setTime(time - 1);
+  const timer = setTimeout(() => {
+    // if (!paused) setTime(time - 1);
+    if (!paused) setTime(prevTime => prevTime - 1);
   }, 1000);
 
   if (time === 0) {
@@ -14,7 +22,7 @@ const Timer = ({ countDown, seconds, onFinish, paused }) => {
   }
 
   return (
-    <div style={{paddingTop: "12px"}}>
+    <div style={{ paddingTop: '12px' }}>
       {' '}
       {countDown ? (
         <Progress
