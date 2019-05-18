@@ -1,7 +1,7 @@
-import NetworkTest, { ErrorNames } from 'opentok-network-test-js';
-import React, { useState, useEffect } from 'react';
 import { getCredentials } from '@/services/api';
-import { Alert, Spin, Modal, Progress, Icon, Row, Col, Button } from 'antd';
+import { Alert, Button, Col, Icon, Modal, Progress, Row, Spin } from 'antd';
+import NetworkTest, { ErrorNames } from 'opentok-network-test-js';
+import React, { useEffect, useState } from 'react';
 
 // import styles from './index.less';
 
@@ -96,7 +96,7 @@ const Results = ({ testResults: { camera, connection, audio } }) => {
   );
 };
 
-const PreInterviewTest = ({ setPreTestCompleted, visible, setVisible }) => {
+const PreInterviewTest = ({ setSupported, setPreTestCompleted, visible, setVisible }) => {
   const [progress, setProgress] = useState(0);
   const [testResults, setTestResults] = useState({});
   const [error, setError] = useState(null);
@@ -149,6 +149,7 @@ const PreInterviewTest = ({ setPreTestCompleted, visible, setVisible }) => {
         console.log(error);
         switch (error.name) {
           case ErrorNames.UNSUPPORTED_BROWSER:
+            setSupported(false)
             // Display UI message about unsupported browser
             break;
           case ErrorNames.CONNECT_TO_SESSION_NETWORK_ERROR:
