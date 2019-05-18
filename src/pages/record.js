@@ -23,6 +23,8 @@ export default ({ location }) => {
 
   // const [connection, setConnection] = useState('Disconnected');
   const [error, setError] = useState(null);
+  const [nextDisabled, setNextDisabled] = useState(false);
+
   const [archiveId, setArchiveId] = useState(null);
   const [connectionDetails, setApi] = useState(null);
   const [practice, setPractice] = useState(p);
@@ -128,9 +130,9 @@ export default ({ location }) => {
 
   const startRecording = () => {
     startArchive(connectionDetails.sessionId).then(r => {
-      setArchiveId(r.id)
+      setArchiveId(r.id);
       recordScreen();
-      });
+    });
   };
 
   const stopRecording = () => {
@@ -191,7 +193,7 @@ export default ({ location }) => {
     console.log(index, interviewQuestions);
     console.log(startingData.interviewQuestions);
     setVideoUrl(null);
-    startRecording();
+    await startRecording();
   };
 
   const prepareScreen = startingData => {
@@ -208,6 +210,8 @@ export default ({ location }) => {
   };
 
   const recordScreen = () => {
+    setNextDisabled(true);
+    setTimeout(() => setNextDisabled(false), 5000);
     setInterview({
       key: 1,
       time: startingData.answerTime,
@@ -290,7 +294,7 @@ export default ({ location }) => {
           <strong>Error:</strong> {error}
         </div>
       ) : null}
-      {practice && supported===1 && (
+      {practice && supported === 1 && (
         <PreInterviewTest
           setSupported={setSupported}
           setPreTestCompleted={setPreTestCompleted}
@@ -349,7 +353,12 @@ export default ({ location }) => {
 
       <>
         {interview.review && <Button onClick={retake}>{`Retake (${retakes} left)`}</Button>}
-        <Button className={styles.button} onClick={() => changeButtonAction(action)}>
+        <Button
+          key={nextDisabled}
+          className={styles.button}
+          disabled={nextDisabled}
+          onClick={() => changeButtonAction(action)}
+        >
           {interview.buttonText}
         </Button>
         <Modal
