@@ -11,334 +11,358 @@ import ReactPlayer from 'react-player';
 import { router } from 'umi';
 import styles from './victory.less';
 
+const showErr = () => {
+  window.showError();
+};
 
+export default ({ location }) => {
+  const id = qs.parse(location.search)['?id'];
+  const fullName = qs.parse(location.search)['fullName'];
+  const email = qs.parse(location.search)['email'];
+  const p = qs.parse(location.search)['practice'];
 
+  // const [connection, setConnection] = useState('Disconnected');
+  const [error, setError] = useState(null);
+  const [archiveId, setArchiveId] = useState(null);
+  const [connectionDetails, setApi] = useState(null);
+  const [practice, setPractice] = useState(p);
+  const [supported, setSupported] = useState(0);
+  const [realInterviewModal, setRealInterviewModal] = useState(false);
 
-  const showErr = () => {	
-  window.showError();	
-};	
+  const [preTestCompleted, setPreTestCompleted] = useState(false);
 
-  export default ({ location }) => {	
-  const id = qs.parse(location.search)['?id'];	
-  const fullName = qs.parse(location.search)['fullName'];	
-  const email = qs.parse(location.search)['email'];	
-  const p = qs.parse(location.search)['practice'];	
+  const [visible, setVisible] = useState(true);
 
-    // const [connection, setConnection] = useState('Disconnected');	
-  const [error, setError] = useState(null);	
-  const [archiveId, setArchiveId] = useState(null);	
-  const [connectionDetails, setApi] = useState(null);	
-  const [practice, setPractice] = useState(p);	
+  const [videoUrl, setVideoUrl] = useState(null);
+  const [published, setPublished] = useState(false);
 
-    const [realInterviewModal, setRealInterviewModal] = useState(false);	
+  const [index, setIndex] = useState(0);
+  const [data, setData] = useState(null);
+  const [retakes, setRetakes] = useState(null);
+  const [interview, setInterview] = useState({
+    key: 0,
+    paused: true,
+    time: 45,
+    countDown: true,
+    buttonText: 'Start Recording',
+    screen: 'prepare',
+  });
+  const [action, setAction] = useState('start');
 
-    const [preTestCompleted, setPreTestCompleted] = useState(false);	
+  const [startingData, setStartingData] = useState({ interviewQuestions: [{ question: 'test' }] });
 
-    const [visible, setVisible] = useState(true);	
+  const { interview_questions: interviewQ = [] } = practiceQuestions;
+  const [interviewQuestions, setInterviewQuestions] = useState(interviewQ);
 
-    const [videoUrl, setVideoUrl] = useState(null);	
-  const [published, setPublished] = useState(false);	
+  const setCrispDetails = (email, nickname, recruiter, interviewName) => {
+    window.setDetails(email, nickname);
+    window.setCompany(recruiter, interviewName);
+  };
+  // for any hooks noobs, passing in [] as 2nd paramater makes useEffect work the same for componenetDidMount
+  useEffect(() => {
+    setup();
+    // eslint-disable-next-line
+    const supported = OT.checkSystemRequirements();
+    setSupported(supported);
 
-    const [index, setIndex] = useState(0);	
-  const [data, setData] = useState(null);	
-  const [retakes, setRetakes] = useState(null);	
-  const [interview, setInterview] = useState({	
-    key: 0,	
-    paused: true,	
-    time: 45,	
-    countDown: true,	
-    buttonText: 'Start Recording',	
-    screen: 'prepare',	
-  });	
-  const [action, setAction] = useState('start');	
+    setAction('start');
+    getCredentials().then(session => setApi(session));
+  }, []);
 
-    const [startingData, setStartingData] = useState({ interviewQuestions: [{ question: 'test' }] });	
+  useEffect(() => {
+    if (error) showErr();
+  }, [error]);
 
-    const { interview_questions: interviewQ = [] } = practiceQuestions;	
-  const [interviewQuestions, setInterviewQuestions] = useState(interviewQ);	
+  useEffect(() => {
+    if (startingData.interviewName) {
+      setCrispDetails(email, fullName, startingData.createdBy, startingData.interviewName);
+    }
+  }, [startingData]);
 
-    const setCrispDetails = (email, nickname, recruiter, interviewName) => {	
-    window.setDetails(email, nickname);	
-    window.setCompany(recruiter, interviewName);	
-  };	
-  // for any hooks noobs, passing in [] as 2nd paramater makes useEffect work the same for componenetDidMount	
-  useEffect(() => {	
-    console.log(email, fullName);	
-    setup();	
+  const publisherEventHandlers = {
+    accessDenied: () => {
+      console.log('User denied access to media source');
+      showErr();
+    },
+    streamCreated: () => {
+      console.log('Publisher stream created');
+    },
+    streamDestroyed: ({ reason }) => {
+      console.log(`Publisher stream destroyed because: ${reason}`);
+    },
+  };
 
-      setAction('start');	
-    getCredentials().then(session => setApi(session));	
-  }, []);	
+  const supportedBrowsers = () => {
+    const getHelp = () =>
+      window.candidateSendMessage(" I'm having trouble with an unsupported browser");
+    return (
+      <Modal
+        closable={false}
+        title="Browser is not Supported"
+        visible={!supported}
+        footer={[
+          <Button key="Get Help" type="primary" onClick={getHelp}>
+            Get Help{' '}
+          </Button>,
+        ]}
+      >
+        {`See all supported browsers here: `}
+        <a href="https://help.deephire.com/en/article/supported-browser-list-agyz4m/">
+          Supported Browsers
+        </a>
+      </Modal>
+    );
+  };
+  const onSessionError = error => {
+    setError(JSON.stringify(error));
+  };
 
-    useEffect(() => {	
-    if (error) showErr();	
-  }, [error]);	
+  const onPublish = () => {
+    setPublished(true);
+    console.log('Publish Success');
+  };
 
-    useEffect(() => {	
-    if (startingData.interviewName) {	
-      setCrispDetails(email, fullName, startingData.createdBy, startingData.interviewName);	
-    }	
-  }, [startingData]);	
+  const onPublishError = error => {
+    setError(JSON.stringify(error));
+  };
 
-    const publisherEventHandlers = {	
-    accessDenied: () => {	
-      console.log('User denied access to media source');	
-      showErr();	
-    },	
-    streamCreated: () => {	
-      console.log('Publisher stream created');	
-    },	
-    streamDestroyed: ({ reason }) => {	
-      console.log(`Publisher stream destroyed because: ${reason}`);	
-    },	
-  };	
+  const startRecording = () => {
+    startArchive(connectionDetails.sessionId).then(r => {
+      setArchiveId(r.id)
+      recordScreen();
+      });
+  };
 
-    const onSessionError = error => {	
-    setError(JSON.stringify(error));	
-  };	
+  const stopRecording = () => {
+    stopArchive(archiveId);
+  };
 
-    const onPublish = () => {	
-    setPublished(true);	
-    console.log('Publish Success');	
-  };	
+  const startRealInterview = () => {
+    setPractice(null);
+    setInterviewQuestions(startingData.interviewQuestions);
+    setIndex(0);
+    setRetakes(startingData.retakesAllowed);
+    setRealInterviewModal(false);
+    prepareScreen(startingData);
+  };
+  const setup = async () => {
+    var [data] = await fetchInterview(id);
+    setData(data);
+    console.log(data);
+    const {
+      email: createdBy,
+      interviewName,
+      interview_config: { answerTime, prepTime, retakesAllowed } = {},
+      interview_questions: interviewQ = [],
+    } = data || {};
 
-    const onPublishError = error => {	
-    setError(JSON.stringify(error));	
-  };	
+    setStartingData({
+      interviewName,
+      answerTime,
+      prepTime,
+      retakesAllowed,
+      interviewQuestions: interviewQ,
+      createdBy,
+    });
+    setRetakes(retakesAllowed);
+    setInterview({
+      ...interview,
+      time: prepTime,
+    });
+  };
 
-    const startRecording = () => {	
-    startArchive(connectionDetails.sessionId).then(r => console.log(setArchiveId(r.id)));	
-  };	
+  const changeButtonAction = action => {
+    switch (action) {
+      case 'start':
+        return start();
 
-    const stopRecording = () => {	
-    stopArchive(archiveId);	
-  };	
+      case 'stop':
+        return stop();
 
-    const startRealInterview = () => {	
-    setPractice(null);	
-    setInterviewQuestions(startingData.interviewQuestions);	
-    setIndex(0);	
-    setRetakes(startingData.retakesAllowed);	
-    setRealInterviewModal(false);	
-    prepareScreen(startingData);	
-  };	
-  const setup = async () => {	
-    var [data] = await fetchInterview(id);	
-    setData(data);	
-    console.log(data);	
-    const {	
-      email: createdBy,	
-      interviewName,	
-      interview_config: { answerTime, prepTime, retakesAllowed } = {},	
-      interview_questions: interviewQ = [],	
-    } = data || {};	
+      case 'nextQuestion':
+        return nextQuestion();
 
-      setStartingData({	
-      interviewName,	
-      answerTime,	
-      prepTime,	
-      retakesAllowed,	
-      interviewQuestions: interviewQ,	
-      createdBy,	
-    });	
-    setRetakes(retakesAllowed);	
-    setInterview({	
-      ...interview,	
-      time: prepTime,	
-    });	
-  };	
+      default:
+        return console.log('uh oh case returned default');
+    }
+  };
 
-    const changeButtonAction = action => {	
-    switch (action) {	
-      case 'start':	
-        return start();	
+  const start = async () => {
+    console.log(index, interviewQuestions);
+    console.log(startingData.interviewQuestions);
+    setVideoUrl(null);
+    startRecording();
+  };
 
-        case 'stop':	
-        return stop();	
+  const prepareScreen = startingData => {
+    setInterview({
+      key: 0,
+      paused: false,
+      time: startingData.prepTime,
+      countDown: true,
+      buttonText: 'Start Recording',
+      helperText: 'Prepare your answer',
+      screen: 'prepare',
+    });
+    setAction('start');
+  };
 
-        case 'nextQuestion':	
-        return nextQuestion();	
+  const recordScreen = () => {
+    setInterview({
+      key: 1,
+      time: startingData.answerTime,
+      paused: false,
+      countDown: false,
+      buttonText: 'Stop Recording',
+      helperText: 'Recording...',
+      screen: 'record',
+    });
+    setAction('stop');
+  };
 
-        default:	
-        return console.log('uh oh case returned default');	
-    }	
-  };	
+  const reviewScreen = () => {
+    setInterview({
+      key: 2,
+      time: startingData.prepTime,
+      paused: true,
+      countDown: true,
+      buttonText: 'Next Question',
+      review: true,
+      helperText: 'Review your video',
+      screen: 'review',
+    });
+    setAction('nextQuestion');
+  };
 
-    const start = async () => {	
-    console.log(index, interviewQuestions);	
-    console.log(startingData.interviewQuestions);	
-    setVideoUrl(null);	
-    recordScreen();	
-    startRecording();	
-  };	
+  const nextQuestion = () => {
+    if (!practice) {
+      storeInterviewQuestion(
+        id,
+        email,
+        fullName,
+        email,
+        startingData.interviewName,
+        interviewQuestions[index].question,
+        `https://s3.amazonaws.com/deephire-video-dump/${
+          connectionDetails.apiKey
+        }/${archiveId}/archive.mp4`
+      );
+    }
+    if (interviewQuestions.length === index + 1) {
+      if (practice) {
+        setRealInterviewModal(true);
+      } else {
+        notifyCandidate(fullName, email);
+        notifyRecruiter(id, fullName, email, startingData.interviewName, startingData.createdBy);
+        router.push('/victory');
+      }
+    } else {
+      setIndex(index + 1);
+      prepareScreen(startingData);
+    }
+  };
 
-    const prepareScreen = startingData => {	
-    setInterview({	
-      key: 0,	
-      paused: false,	
-      time: startingData.prepTime,	
-      countDown: true,	
-      buttonText: 'Start Recording',	
-      helperText: 'Prepare your answer',	
-      screen: 'prepare',	
-    });	
-    setAction('start');	
-  };	
+  const retake = () => {
+    if (retakes > 0) {
+      setRetakes(retakes - 1);
+      prepareScreen(startingData);
+    }
+  };
 
-    const recordScreen = () => {	
-    setInterview({	
-      key: 1,	
-      time: startingData.answerTime,	
-      paused: false,	
-      countDown: false,	
-      buttonText: 'Stop Recording',	
-      helperText: 'Recording...',	
-      screen: 'record',	
-    });	
-    setAction('stop');	
-  };	
+  const stop = async () => {
+    stopRecording();
+    reviewScreen();
+    const url = `https://s3.amazonaws.com/deephire-video-dump/${
+      connectionDetails.apiKey
+    }/${archiveId}/archive.mp4`;
+    setVideoUrl(await checkVideo(url));
+  };
 
-    const reviewScreen = () => {	
-    setInterview({	
-      key: 2,	
-      time: startingData.prepTime,	
-      paused: true,	
-      countDown: true,	
-      buttonText: 'Next Question',	
-      review: true,	
-      helperText: 'Review your video',	
-      screen: 'review',	
-    });	
-    setAction('nextQuestion');	
-  };	
+  if (!data) return null;
+  if (!interview) return null;
 
-    const nextQuestion = () => {	
-    if (!practice) {	
-      storeInterviewQuestion(	
-        id,	
-        email,	
-        fullName,	
-        email,	
-        startingData.interviewName,	
-        interviewQuestions[index].question,	
-        `https://s3.amazonaws.com/deephire-video-dump/${	
-          connectionDetails.apiKey	
-        }/${archiveId}/archive.mp4`	
-      );	
-    }	
-    if (interviewQuestions.length === index + 1) {	
-      if (practice) {	
-        setRealInterviewModal(true);	
-      } else {	
-        notifyCandidate(fullName, email);	
-        notifyRecruiter(id, fullName, email, startingData.interviewName, startingData.createdBy);	
-        router.push('/victory');	
-      }	
-    } else {	
-      setIndex(index + 1);	
-      prepareScreen(startingData);	
-    }	
-  };	
+  return (
+    <div className={styles.wrapper}>
+      {supportedBrowsers()}
+      {/* <div id="sessionStatus">Publish Status: {published ? 'Y' : 'N'}</div> */}
+      {error ? (
+        <div className="error">
+          <strong>Error:</strong> {error}
+        </div>
+      ) : null}
+      {practice && supported===1 && (
+        <PreInterviewTest
+          setSupported={setSupported}
+          setPreTestCompleted={setPreTestCompleted}
+          visible={visible}
+          setVisible={setVisible}
+        />
+      )}
+      <div style={{ paddingTop: '12px' }}>
+        <h1> {interviewQuestions[index].question}</h1>
+        {interview.helperText}
+      </div>
 
-    const retake = () => {	
-    if (retakes > 0) {	
-      setRetakes(retakes - 1);	
-      prepareScreen(startingData);	
-    }	
-  };	
+      <Timer
+        key={interview.key}
+        reset={true}
+        countDown={interview.countDown}
+        paused={interview.paused}
+        onFinish={() => changeButtonAction(action)}
+        seconds={interview.time}
+      />
 
-    const stop = async () => {	
-    stopRecording();	
-    reviewScreen();	
-    const url = `https://s3.amazonaws.com/deephire-video-dump/${	
-      connectionDetails.apiKey	
-    }/${archiveId}/archive.mp4`;	
-    setVideoUrl(await checkVideo(url));	
-  };	
+      {connectionDetails && preTestCompleted && (
+        <OTSession
+          style={{ height: '100%', width: '100%' }}
+          {...connectionDetails}
+          onError={onSessionError}
+          // eventHandlers={sessionEventHandlers}
+        >
+          <Row style={{ paddingTop: '12px' }} type="flex" justify="center">
+            {interview.review && (
+              <Spin spinning={!videoUrl}>
+                <ReactPlayer
+                  controls
+                  key={videoUrl}
+                  className="OTPublisherContainer"
+                  playing={true}
+                  playsinline={true}
+                  url={videoUrl}
+                />
+              </Spin>
+            )}
 
-    if (!data) return null;	
-  if (!interview) return null;	
+            <Video
+              screen={interview.screen}
+              properties={{
+                fitMode: 'contains',
+                frameRate: '30',
+              }}
+              onPublish={onPublish}
+              onError={onPublishError}
+              eventHandlers={publisherEventHandlers}
+            />
+          </Row>
+        </OTSession>
+      )}
 
-    return (	
-    <div className={styles.wrapper}>	
-      {/* <div id="sessionStatus">Publish Status: {published ? 'Y' : 'N'}</div> */}	
-      {error ? (	
-        <div className="error">	
-          <strong>Error:</strong> {error}	
-        </div>	
-      ) : null}	
-      {practice && (	
-        <PreInterviewTest	
-          setPreTestCompleted={setPreTestCompleted}	
-          visible={visible}	
-          setVisible={setVisible}	
-        />	
-      )}	
-      <div style={{ paddingTop: '12px' }}>	
-        <h1> {interviewQuestions[index].question}</h1>	
-        {interview.helperText}	
-      </div>	
-
-        <Timer	
-        key={interview.key}	
-        reset={true}	
-        countDown={interview.countDown}	
-        paused={interview.paused}	
-        onFinish={() => changeButtonAction(action)}	
-        seconds={interview.time}	
-      />	
-
-        {connectionDetails && preTestCompleted && (	
-        <OTSession	
-          style={{ height: '100%', width: '100%' }}	
-          {...connectionDetails}	
-          onError={onSessionError}	
-          // eventHandlers={sessionEventHandlers}	
-        >	
-          <Row style={{ paddingTop: '12px' }} type="flex" justify="center">	
-            {interview.review && (	
-              <Spin spinning={!videoUrl}>	
-                <ReactPlayer	
-                  controls	
-                  key={videoUrl}	
-                  className="OTPublisherContainer"	
-                  playing={true}	
-                  playsinline={true}	
-                  url={videoUrl}	
-                />	
-              </Spin>	
-            )}	
-
-              <Video	
-              screen={interview.screen}	
-              properties={{	
-                fitMode: 'contains',	
-                frameRate: '30',	
-              }}	
-              onPublish={onPublish}	
-              onError={onPublishError}	
-              eventHandlers={publisherEventHandlers}	
-            />	
-          </Row>	
-        </OTSession>	
-      )}	
-
-        <>	
-        {interview.review && <Button onClick={retake}>{`Retake (${retakes} left)`}</Button>}	
-        <Button className={styles.button} onClick={() => changeButtonAction(action)}>	
-          {interview.buttonText}	
-        </Button>	
-        <Modal	
-          title="Practice Completed."	
-          visible={realInterviewModal}	
-          onOk={startRealInterview}	
-          onCancel={() => setRealInterviewModal(false)}	
-          okText="Start Your Real Interview!"	
-          cancelText="Not Yet"	
-        >	
-          You're all set for the real interview! Good Luck!	
-        </Modal>	
-      </>	
-    </div>	
-  );	
+      <>
+        {interview.review && <Button onClick={retake}>{`Retake (${retakes} left)`}</Button>}
+        <Button className={styles.button} onClick={() => changeButtonAction(action)}>
+          {interview.buttonText}
+        </Button>
+        <Modal
+          title="Practice Completed."
+          visible={realInterviewModal}
+          onOk={startRealInterview}
+          onCancel={() => setRealInterviewModal(false)}
+          okText="Start Your Real Interview!"
+          cancelText="Not Yet"
+        >
+          You're all set for the real interview! Good Luck!
+        </Modal>
+      </>
+    </div>
+  );
 };
