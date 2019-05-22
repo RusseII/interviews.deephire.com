@@ -13,15 +13,15 @@ const Index = ({ location }) => {
   const [url, setUrl] = useState(null);
 
   const getData = async () => {
-    const defaultIntroVideo = 'https://vimeo.com/296044829/74bfec15d8';
+    const defaultIntroVideo = 'https://vimeo.com/337638606/0468e0b64d';
     let interview = await fetchInterview(id);
-    
+
     if (interview) {
-      interview = interview[0] || interview
+      interview = interview[0] || interview;
       const { email: createdBy } = interview;
       const url = await fetchCompanyInfo(createdBy);
       const { introVideo: companyIntro } = url || {};
-      console.log(companyIntro)
+      console.log(companyIntro);
       setUrl(companyIntro ? companyIntro : defaultIntroVideo);
     } else {
       router.push('/404');
