@@ -1,13 +1,13 @@
+import { showError } from '@/services/crisp';
 import React, { useEffect } from 'react';
 import styles from './404.less';
 
 export default function NotFound() {
-  const showErr = () => {
-    window.showError("it looks like the link you clicked on is invalid. Which company are you interviewing for?");
-  };
 
   useEffect(() => {
-    showErr();
+    showError(
+      'it looks like the link you clicked on is invalid. Which company are you interviewing for?'
+    );
   }, []);
   return (
     <div className={styles.notFound}>

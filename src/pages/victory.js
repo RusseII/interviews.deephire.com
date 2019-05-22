@@ -1,7 +1,7 @@
+import { openChat } from '@/services/crisp';
 import { Button, Row } from 'antd';
 import React from 'react';
 import styles from './victory.less';
-
 
 export default () => {
   return (
@@ -14,15 +14,16 @@ export default () => {
       <br />
 
       <Row type="flex" justify="center">
-        <div class="OTPublisherContainer" style={{overflow: "hidden"}}>
-          <img style={{ margin:"0 -100%" ,verticalAlign:"middle"}}
-          height="100%"
+        <div class="OTPublisherContainer" style={{ overflow: 'hidden' }}>
+          <img
+            style={{ margin: '0 -100%', verticalAlign: 'middle' }}
+            height="100%"
             src="https://interview.deephire.com/static/media/trophy.81ebf3a9.gif"
             alt="Prepare to Record!"
           />
         </div>
       </Row>
-      <Button type="primary" onClick={window.openChat} className={styles.button}>
+      <Button type="primary" onClick={openChat} className={styles.button}>
         Leave Feedback
       </Button>
     </div>

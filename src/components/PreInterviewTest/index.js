@@ -1,4 +1,5 @@
 import { getCredentials } from '@/services/api';
+import { openChat, setEvent, showError } from '@/services/crisp';
 import { Alert, Button, Col, Icon, Modal, Progress, Row, Spin } from 'antd';
 import NetworkTest, { ErrorNames } from 'opentok-network-test-js';
 import React, { useEffect, useState } from 'react';
@@ -6,8 +7,8 @@ import React, { useEffect, useState } from 'react';
 // import styles from './index.less';
 
 const showErr = event => {
-  window.showError();
-  window.setEvent(event);
+  showError();
+  setEvent(event);
 };
 
 const Status = ({ type, color, text }) => (
@@ -149,7 +150,7 @@ const PreInterviewTest = ({ setSupported, setPreTestCompleted, visible, setVisib
         console.log(error);
         switch (error.name) {
           case ErrorNames.UNSUPPORTED_BROWSER:
-            setSupported(false)
+            setSupported(false);
             // Display UI message about unsupported browser
             break;
           case ErrorNames.CONNECT_TO_SESSION_NETWORK_ERROR:
@@ -228,7 +229,7 @@ const PreInterviewTest = ({ setSupported, setPreTestCompleted, visible, setVisib
 
   const handleError = () => {
     console.log('call openchat');
-    window.openChat();
+    openChat();
   };
 
   const successFooter = [
