@@ -1,7 +1,9 @@
+/* global OT */
 import PreInterviewTest from '@/components/PreInterviewTest';
 import Timer from '@/components/Timer';
 import Video from '@/components/Video';
 import { checkVideo, fetchInterview, getCredentials, notifyCandidate, notifyRecruiter, startArchive, stopArchive, storeInterviewQuestion } from '@/services/api';
+import { candidateSendMessage, setCompany, setDetails, showError } from '@/services/crisp';
 import practiceQuestions from '@/services/practiceInterviewQuestions';
 import { Button, Modal, Row, Spin } from 'antd';
 import { OTSession } from 'opentok-react';
@@ -10,9 +12,8 @@ import React, { useEffect, useState } from 'react';
 import ReactPlayer from 'react-player';
 import { router } from 'umi';
 import styles from './victory.less';
-
 const showErr = () => {
-  window.showError();
+  showError();
 };
 
 export default ({ location }) => {
@@ -57,13 +58,12 @@ export default ({ location }) => {
   const [interviewQuestions, setInterviewQuestions] = useState(interviewQ);
 
   const setCrispDetails = (email, nickname, recruiter, interviewName) => {
-    window.setDetails(email, nickname);
-    window.setCompany(recruiter, interviewName);
+    setDetails(email, nickname);
+    setCompany(recruiter, interviewName);
   };
   // for any hooks noobs, passing in [] as 2nd paramater makes useEffect work the same for componenetDidMount
   useEffect(() => {
     setup();
-    // eslint-disable-next-line
     const supported = OT.checkSystemRequirements();
     setSupported(supported);
 
@@ -95,8 +95,9 @@ export default ({ location }) => {
   };
 
   const supportedBrowsers = () => {
-    const getHelp = () =>
-      window.candidateSendMessage(" I'm having trouble with an unsupported browser");
+    const getHelp = () => {
+      candidateSendMessage(" I'm having trouble with an unsupported browser");
+    };
     return (
       <Modal
         closable={false}

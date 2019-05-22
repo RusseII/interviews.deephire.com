@@ -1,4 +1,6 @@
+import { showError } from '@/services/crisp';
 import fetch from 'isomorphic-fetch';
+
 const uuidv1 = require('uuid/v1');
 
 const apiUrl = 'https://a.deephire.com/v1/';
@@ -137,9 +139,7 @@ export const getCredentials = () => {
 
 //runs for 20 * 500 = 10000 = 10 seconds
 export const checkVideo = async (url, n = 20) => {
-  const showErr = msg => {
-    window.showError(msg);
-  };
+
   const options = {
     headers: {
       Range: 'bytes=0-1',
@@ -152,12 +152,12 @@ export const checkVideo = async (url, n = 20) => {
 
     if (res.status === 206) return url;
     else if (res.status === 416) {
-      showErr(
+      showError(
         'we noticed there was problem with the video playback on your video - try clicking retake and recoding again - let me know if you need help!'
       );
       console.log('No video recorded, thro error, 416 satus code');
     } else if (n < 1) {
-      showErr(
+      showError(
         'We noticed there was an error uploaing your video :( try clicking "retake" and recording again '
       );
       console.log('Video not found after 10 seconds');
