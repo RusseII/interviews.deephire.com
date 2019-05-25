@@ -1,8 +1,17 @@
 /* global OT */
-import PreInterviewTest from '@/components/PreInterviewTest';
+import HandleBrowsers from '@/components/HandleBrowsers';
 import Timer from '@/components/Timer';
 import Video from '@/components/Video';
-import { checkVideo, fetchInterview, getCredentials, notifyCandidate, notifyRecruiter, startArchive, stopArchive, storeInterviewQuestion } from '@/services/api';
+import {
+  checkVideo,
+  fetchInterview,
+  getCredentials,
+  notifyCandidate,
+  notifyRecruiter,
+  startArchive,
+  stopArchive,
+  storeInterviewQuestion,
+} from '@/services/api';
 import { candidateSendMessage, setCompany, setDetails, showError } from '@/services/crisp';
 import practiceQuestions from '@/services/practiceInterviewQuestions';
 import { Button, Modal, Row, Spin } from 'antd';
@@ -37,7 +46,7 @@ export default ({ location }) => {
   const [visible, setVisible] = useState(true);
 
   const [videoUrl, setVideoUrl] = useState(null);
-  const [published, setPublished] = useState(false);
+  // const [published, setPublished] = useState(false);
 
   const [index, setIndex] = useState(0);
   const [data, setData] = useState(null);
@@ -121,7 +130,7 @@ export default ({ location }) => {
   };
 
   const onPublish = () => {
-    setPublished(true);
+    // setPublished(true);
     console.log('Publish Success');
   };
 
@@ -295,14 +304,7 @@ export default ({ location }) => {
           <strong>Error:</strong> {error}
         </div>
       ) : null}
-      {practice && supported === 1 && (
-        <PreInterviewTest
-          setSupported={setSupported}
-          setPreTestCompleted={setPreTestCompleted}
-          visible={visible}
-          setVisible={setVisible}
-        />
-      )}
+
       <div style={{ paddingTop: '12px' }}>
         <h1> {interviewQuestions[index].question}</h1>
         {interview.helperText}
@@ -373,6 +375,14 @@ export default ({ location }) => {
           You're all set for the real interview! Good Luck!
         </Modal>
       </>
+      {practice && supported === 1 && (
+        <HandleBrowsers
+          setSupported={setSupported}
+          setPreTestCompleted={setPreTestCompleted}
+          visible={visible}
+          setVisible={setVisible}
+        />
+      )}
     </div>
   );
 };

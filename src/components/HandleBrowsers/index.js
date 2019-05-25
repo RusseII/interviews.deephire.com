@@ -1,19 +1,18 @@
 import PreInterviewTest from '../PreInterviewTest';
 import SafariWebview from '../SafariWebview';
-const { detect } = require('detect-browser');
 var DetectRTC = require('detectrtc');
 
 export default props => {
-  const browser = detect();
-  // eslint-disable-next-line
-  //   alert(JSON.stringify(browser));
-  switch (browser && browser.name) {
-    case 'ios':
-      if (DetectRTC.hasWebcam === false) {
-        return <SafariWebview />;
+  const { browser } = DetectRTC;
+
+  switch (DetectRTC && DetectRTC.osName) {
+    case 'iOS':
+      if (browser.name === 'Safari') {
+        if (!DetectRTC.isGetUserMediaSupported) return <SafariWebview />;
       }
-      return <PreInterviewTest {...props} />;
+      break
     default:
       return <PreInterviewTest {...props} />;
   }
+  return <PreInterviewTest {...props} />;
 };
