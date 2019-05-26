@@ -10,6 +10,9 @@ export default props => {
       if (browser.name === 'Safari') {
         if (!DetectRTC.isGetUserMediaSupported) return <SafariWebview />;
       }
+      else {
+        alert("This Interview will only work in the Safari Browser, please reopen in Safari")
+      }
       break
     default:
       return <PreInterviewTest {...props} />;
