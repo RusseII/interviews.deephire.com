@@ -1,5 +1,6 @@
 import { showError } from '@/services/crisp';
 import fetch from 'isomorphic-fetch';
+const DetectRTC = require('detectrtc');
 
 const uuidv1 = require('uuid/v1');
 
@@ -64,6 +65,7 @@ export const storeInterviewQuestion = (
         question,
         response,
       },
+      DetectRTC,
     }),
   });
 };
@@ -139,7 +141,6 @@ export const getCredentials = () => {
 
 //runs for 20 * 500 = 10000 = 10 seconds
 export const checkVideo = async (url, n = 20) => {
-
   const options = {
     headers: {
       Range: 'bytes=0-1',

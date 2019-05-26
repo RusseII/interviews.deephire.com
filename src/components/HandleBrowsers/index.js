@@ -1,6 +1,6 @@
 import PreInterviewTest from '../PreInterviewTest';
 import SafariWebview from '../SafariWebview';
-var DetectRTC = require('detectrtc');
+const DetectRTC = require('detectrtc');
 
 export default props => {
   const { browser } = DetectRTC;
