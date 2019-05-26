@@ -78,6 +78,7 @@ async function showError(
 function setEvent(event) {
   $crisp.push(['set', 'session:event', [[['error', event, 'red']]]]);
 }
-
-export { openChat, setDetails, setCompany, candidateSendMessage, showError, setEvent };
-
+function hideChat() {
+  $crisp.push(['do', 'chat:hide']);
+}
+export { openChat, setDetails, setCompany, candidateSendMessage, showError, setEvent, hideChat };
