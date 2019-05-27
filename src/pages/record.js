@@ -63,7 +63,7 @@ export default ({ location }) => {
 
   const [startingData, setStartingData] = useState({ interviewQuestions: [{ question: 'test' }] });
 
-  const { interview_questions: interviewQ = [] } = practiceQuestions;
+  const { interviewQuestions: interviewQ = [] } = practiceQuestions;
   const [interviewQuestions, setInterviewQuestions] = useState(interviewQ);
 
   const setCrispDetails = (email, nickname, recruiter, interviewName) => {
@@ -164,8 +164,8 @@ export default ({ location }) => {
     const {
       email: createdBy,
       interviewName,
-      interview_config: { answerTime, prepTime, retakesAllowed } = {},
-      interview_questions: interviewQ = [],
+      interviewConfig: { answerTime, prepTime, retakesAllowed } = {},
+      interviewQuestions: interviewQ = [],
     } = data || {};
 
     setStartingData({
