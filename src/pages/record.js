@@ -162,7 +162,7 @@ export default ({ location }) => {
     setData(data);
     console.log(data);
     const {
-      email: createdBy,
+      createdBy,
       interviewName,
       interviewConfig: { answerTime, prepTime, retakesAllowed } = {},
       interviewQuestions: interviewQ = [],

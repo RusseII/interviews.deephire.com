@@ -18,7 +18,7 @@ const Index = ({ location }) => {
 
     if (interview) {
       interview = interview[0] || interview;
-      const { email: createdBy } = interview;
+      const { createdBy } = interview;
       const url = await fetchCompanyInfo(createdBy);
       const { introVideo: companyIntro } = url || {};
       console.log(companyIntro);
