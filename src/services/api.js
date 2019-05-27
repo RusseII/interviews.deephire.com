@@ -4,7 +4,7 @@ const DetectRTC = require('detectrtc');
 
 const uuidv1 = require('uuid/v1');
 
-const apiUrl = 'https://a.deephire.com/v1/';
+const apiUrl = 'https://a.deephire.com/v1';
 // const apiUrl = 'https://dev-a.deephire.com/v1/';
 
 // const apiUrl = 'http://localhost:3000/v1/';
@@ -12,7 +12,7 @@ const apiUrl = 'https://a.deephire.com/v1/';
 const openTokApi = 'https://tokbox.deephire.com';
 
 export const fetchInterview = async id => {
-  const resp = await fetch(`${apiUrl}interviews/${id}`);
+  const resp = await fetch(`${apiUrl}/interviews/${id}`);
   if (resp.ok) {
     return await resp.json();
   }
@@ -20,7 +20,7 @@ export const fetchInterview = async id => {
 };
 
 export const fetchCompanyInfo = id => {
-  return fetch(`${apiUrl}companies/${id}`)
+  return fetch(`${apiUrl}/companies/${id}`)
     .then(response => {
       if (response.ok) return response.json();
     })
@@ -49,7 +49,7 @@ export const storeInterviewQuestion = (
   question,
   response
 ) => {
-  fetch(`${apiUrl}videos`, {
+  fetch(`${apiUrl}/videos`, {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -79,9 +79,8 @@ export const notifyRecruiter = (id, candidateName, candidateEmail, interviewName
     candidateEmail,
     interviewName,
   };
-  // console.log(data)
 
-  fetch('https://dev-a.deephire.com/v1/emails', {
+  fetch(`${apiUrl}/emails`, {
     method: 'POST',
     headers: {
       Accept: 'application/json',
