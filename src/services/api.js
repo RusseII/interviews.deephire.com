@@ -40,7 +40,7 @@ export const sendEmail = data => {
     .then(data => data);
 };
 
-export const storeInterviewQuestion = (
+export const storeInterviewQuestion = async (
   interviewId,
   userId,
   userName,
@@ -49,7 +49,7 @@ export const storeInterviewQuestion = (
   question,
   response
 ) => {
-  fetch(`${apiUrl}/videos`, {
+  const result = await fetch(`${apiUrl}/videos`, {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -68,9 +68,24 @@ export const storeInterviewQuestion = (
       DetectRTC,
     }),
   });
+  if (result.status === 201) {
+    const location = result.headers.get('Location');
+    if (location) {
+      const n = location.lastIndexOf('/');
+      const videosId = location.substring(n + 1);
+      return videosId;
+    }
+  }
 };
 
-export const notifyRecruiter = (id, candidateName, candidateEmail, interviewName, createdBy) => {
+export const notifyRecruiter = (
+  id,
+  candidateName,
+  candidateEmail,
+  interviewName,
+  createdBy,
+  videosId
+) => {
   var data = {
     type: 'interviewCompleted',
     id,
@@ -78,6 +93,7 @@ export const notifyRecruiter = (id, candidateName, candidateEmail, interviewName
     recipients: [createdBy || 'noemail@deephire.com'],
     candidateEmail,
     interviewName,
+    videosId,
   };
 
   fetch(`${apiUrl}/emails`, {
@@ -147,7 +163,6 @@ export const checkVideo = async (url, n = 20) => {
   };
   try {
     const res = await fetch(url, options);
-    console.log(res.status);
     await new Promise(resolve => setTimeout(() => resolve(), 500));
 
     if (res.status === 206) return url;

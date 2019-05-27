@@ -30,6 +30,7 @@ export default ({ location }) => {
   const fullName = qs.parse(location.search)['fullName'];
   const email = qs.parse(location.search)['email'];
   const p = qs.parse(location.search)['practice'];
+  
 
   // const [connection, setConnection] = useState('Disconnected');
   const [error, setError] = useState(null);
@@ -39,6 +40,7 @@ export default ({ location }) => {
   const [connectionDetails, setApi] = useState(null);
   const [practice, setPractice] = useState(p);
   const [supported, setSupported] = useState(0);
+
   const [realInterviewModal, setRealInterviewModal] = useState(false);
 
   const [preTestCompleted, setPreTestCompleted] = useState(false);
@@ -248,9 +250,10 @@ export default ({ location }) => {
     setAction('nextQuestion');
   };
 
-  const nextQuestion = () => {
+  const nextQuestion = async () => {
+    let videosId
     if (!practice) {
-      storeInterviewQuestion(
+      videosId = await storeInterviewQuestion(
         id,
         email,
         fullName,
@@ -267,8 +270,8 @@ export default ({ location }) => {
         setRealInterviewModal(true);
       } else {
         notifyCandidate(fullName, email);
-        notifyRecruiter(id, fullName, email, startingData.interviewName, startingData.createdBy);
-        router.push('/victory');
+        notifyRecruiter(id, fullName, email, startingData.interviewName, startingData.createdBy, videosId);
+        router.push(`/victory?id=${id}`);
       }
     } else {
       setIndex(index + 1);
