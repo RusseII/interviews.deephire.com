@@ -1,9 +1,14 @@
+/* global mixpanel */
 import { hideChat } from '@/services/crisp';
 import { Icon } from 'antd';
 import { useEffect } from 'react';
 
 export default () => {
-  useEffect(() => hideChat());
+  useEffect(() => {
+    mixpanel.track('SafariWebview shown');
+
+    hideChat();
+  });
 
   return (
     <div

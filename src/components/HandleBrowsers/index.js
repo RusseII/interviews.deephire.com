@@ -9,7 +9,6 @@ export default props => {
   switch (DetectRTC && DetectRTC.osName) {
     case 'iOS':
       if (browser.name === 'Safari') {
-        mixpanel.track('SafariWebview shown');
         if (!DetectRTC.isGetUserMediaSupported) return <SafariWebview />;
       } else {
         alert('This Interview will only work in the Safari Browser, please reopen in Safari');
