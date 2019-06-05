@@ -1,4 +1,4 @@
-/* global OT mixpanel*/
+/* global FS mixpanel*/
 import { Form, Input, Button } from 'antd';
 import { router } from 'umi';
 
@@ -24,9 +24,13 @@ const SignIn = Form.create()(props => {
         $last_login: new Date(), // properties can be dates...
         $name: fullName,
         id,
-        interviewStage: "started"
+        interviewStage: 'started',
       });
       mixpanel.track('Interview started');
+      FS.identify(id, {
+        displayName: fullName,
+        email,
+      });
       router.push(`record?id=${id}&fullName=${fullName}&email=${email}&practice=true`);
 
       form.resetFields();
