@@ -1,3 +1,4 @@
+/* global mixpanel */
 import { getCredentials } from '@/services/api';
 import { openChat, setEvent, showError } from '@/services/crisp';
 import { Alert, Button, Col, Icon, Modal, Progress, Row, Spin } from 'antd';
@@ -103,7 +104,10 @@ const PreInterviewTest = ({ setSupported, setPreTestCompleted, visible, setVisib
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (error) showErr(error);
+    if (error) {
+      mixpanel.track('PreInterviewTest error');
+      showErr(error);
+    }
   }, [error]);
 
   const runTest = () => {
@@ -114,6 +118,7 @@ const PreInterviewTest = ({ setSupported, setPreTestCompleted, visible, setVisib
       .then(testSession => checkSessionConnection(testSession));
   };
   useEffect(() => {
+    mixpanel.track('PreInterviewTest started');
     // the test must have seprate credentials to run correctly
     runTest();
   }, []);
@@ -134,6 +139,8 @@ const PreInterviewTest = ({ setSupported, setPreTestCompleted, visible, setVisib
     } else {
       setProgress(20);
     }
+    mixpanel.track('PreInterViewTest connectionResults', connectionResults);
+
     return connectionResults.success;
   };
 
@@ -170,7 +177,7 @@ const PreInterviewTest = ({ setSupported, setPreTestCompleted, visible, setVisib
 
     // This function is called when the quality test is completed.
     console.log('OpenTok quality qualityResults', qualityResults);
-
+    mixpanel.track('PreInterViewTest qualityResults', qualityResults);
     let result;
     const { audio = {}, video = {} } = qualityResults;
     if (video.reason === 'Bandwidth too low.') {

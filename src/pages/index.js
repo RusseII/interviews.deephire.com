@@ -1,3 +1,4 @@
+/* global mixpanel */
 import SignIn from '@/components/SignIn';
 import { fetchCompanyInfo, fetchInterview } from '@/services/api';
 import conditionalLogicForOneClient from '@/technicalDebt/conditionalLogic';
@@ -18,12 +19,15 @@ const Index = ({ location }) => {
 
     if (interview) {
       interview = interview[0] || interview;
-      const { createdBy } = interview;
+      const { createdBy, _id, interviewName } = interview;
       const url = await fetchCompanyInfo(createdBy);
-      const { introVideo: companyIntro } = url || {};
-      console.log(companyIntro);
+      const { introVideo: companyIntro, companyName } = url || {};
       setUrl(companyIntro ? companyIntro : defaultIntroVideo);
+      mixpanel.set_group('InterviewCompany', [companyName]);
+      mixpanel.set_group('Interview', [_id, interviewName]);
+      mixpanel.track('Interview visited');
     } else {
+      mixpanel.track('Invalid ID');
       router.push('/404');
       setUrl(defaultIntroVideo);
     }
@@ -40,6 +44,8 @@ const Index = ({ location }) => {
         <Col span={15} xxl={11} xl={12}>
           <div className={styles.playerWrapper}>
             <ReactPlayer
+              onStart={() => mixpanel.track('Watched intro video')}
+              onEnded={() => mixpanel.track('Watched full intro video')}
               controls
               key={url}
               className={styles.reactPlayer}

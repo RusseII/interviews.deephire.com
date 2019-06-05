@@ -1,3 +1,5 @@
+/* global mixpanel */
+
 import { openChat } from '@/services/crisp';
 import { Button, Row } from 'antd';
 import React from 'react';

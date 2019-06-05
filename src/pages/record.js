@@ -1,4 +1,4 @@
-/* global OT */
+/* global OT mixpanel*/
 import HandleBrowsers from '@/components/HandleBrowsers';
 import Timer from '@/components/Timer';
 import Video from '@/components/Video';
@@ -30,7 +30,6 @@ export default ({ location }) => {
   const fullName = qs.parse(location.search)['fullName'];
   const email = qs.parse(location.search)['email'];
   const p = qs.parse(location.search)['practice'];
-  
 
   // const [connection, setConnection] = useState('Disconnected');
   const [error, setError] = useState(null);
@@ -162,7 +161,6 @@ export default ({ location }) => {
   const setup = async () => {
     var [data] = await fetchInterview(id);
     setData(data);
-    console.log(data);
     const {
       createdBy,
       interviewName,
@@ -251,7 +249,7 @@ export default ({ location }) => {
   };
 
   const nextQuestion = async () => {
-    let videosId
+    let videosId;
     if (!practice) {
       videosId = await storeInterviewQuestion(
         id,
@@ -270,7 +268,18 @@ export default ({ location }) => {
         setRealInterviewModal(true);
       } else {
         notifyCandidate(fullName, email);
-        notifyRecruiter(id, fullName, email, startingData.interviewName, startingData.createdBy, videosId);
+        notifyRecruiter(
+          id,
+          fullName,
+          email,
+          startingData.interviewName,
+          startingData.createdBy,
+          videosId
+        );
+        mixpanel.people.set({
+          interviewStage: 'completed',
+        });
+        mixpanel.track('Interview completed');
         router.push(`/victory?id=${id}`);
       }
     } else {
@@ -280,6 +289,7 @@ export default ({ location }) => {
   };
 
   const retake = () => {
+    mixpanel.track('Retake used', { retakes });
     if (retakes > 0) {
       setRetakes(retakes - 1);
       prepareScreen(startingData);
@@ -333,6 +343,8 @@ export default ({ location }) => {
             {interview.review && (
               <Spin spinning={!videoUrl}>
                 <ReactPlayer
+                  onStart={() => mixpanel.track('Watched interview replay')}
+                  onEnded={() => mixpanel.track('Watched full interview replay')}
                   controls
                   key={videoUrl}
                   className="OTPublisherContainer"
