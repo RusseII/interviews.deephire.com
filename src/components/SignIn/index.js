@@ -8,7 +8,7 @@ import qs from 'qs';
 const FormItem = Form.Item;
 
 const SignIn = Form.create()(props => {
-  const { form, location } = props;
+  const { form, location, removeExitIntent, text, metaData } = props;
   const id = qs.parse(location.search)['?id'];
 
   const okHandle = e => {
@@ -24,6 +24,7 @@ const SignIn = Form.create()(props => {
         $last_login: new Date(), // properties can be dates...
         $name: fullName,
         id,
+        metaData,
         interviewStage: 'started',
       });
       mixpanel.track('Interview started');
@@ -32,7 +33,7 @@ const SignIn = Form.create()(props => {
         email,
       });
       router.push(`record?id=${id}&fullName=${fullName}&email=${email}&practice=true`);
-
+      removeExitIntent();
       form.resetFields();
     });
   };
@@ -66,7 +67,7 @@ const SignIn = Form.create()(props => {
         </FormItem>
         <Form.Item>
           <Button type="primary" htmlType="submit">
-            Take Practice Interview
+            {text}
           </Button>
         </Form.Item>
       </Form>
