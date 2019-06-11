@@ -8,6 +8,23 @@ import React, { useEffect, useState } from 'react';
 import ReactPlayer from 'react-player';
 import { router } from 'umi';
 import styles from './index.less';
+import exitIntent from "@/services/exitIntent"
+
+
+// const exitModal = (
+ 
+//         <Modal
+//           title="Before you go"
+//           visible={this.state.visible}
+//           onOk={this.handleOk}
+//           onCancel={this.handleCancel}
+//         >
+//           <p>Some contents...</p>
+//           <p>Some contents...</p>
+//           <p>Some contents...</p>
+//         </Modal>
+//     );
+  
 
 const Index = ({ location }) => {
   const id = qs.parse(location.search)['?id'];
@@ -23,9 +40,9 @@ const Index = ({ location }) => {
       const url = await fetchCompanyInfo(createdBy);
       const { introVideo: companyIntro, companyName } = url || {};
       setUrl(companyIntro ? companyIntro : defaultIntroVideo);
-      mixpanel.set_group('InterviewCompany', [companyName]);
-      mixpanel.set_group('Interview', [_id, interviewName]);
-      mixpanel.track('Interview visited');
+      // mixpanel.set_group('InterviewCompany', [companyName]);
+      // mixpanel.set_group('Interview', [_id, interviewName]);
+      // mixpanel.track('Interview visited');
     } else {
       mixpanel.track('Invalid ID');
       router.push('/404');
@@ -34,6 +51,12 @@ const Index = ({ location }) => {
   };
 
   useEffect(() => {
+    const removeExitIntent = exitIntent({
+
+      onExitIntent: () => {
+        console.log('exit-intent triggered')
+      }
+    })
     getData();
   }, []);
 

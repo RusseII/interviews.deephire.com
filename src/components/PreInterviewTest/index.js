@@ -217,7 +217,6 @@ const PreInterviewTest = ({ setSupported, setPreTestCompleted, visible, setVisib
           break;
         case ErrorNames.INCOMPLETE_SESSON_CREDENTIALS:
         case ErrorNames.MISSING_SESSON_CREDENTIALS:
-        case ErrorNames.INVALID_SESSON_CREDENTIALS:
           console.error('Missing or invalid OpenTok session credentials.');
           break;
         default:
@@ -250,7 +249,7 @@ const PreInterviewTest = ({ setSupported, setPreTestCompleted, visible, setVisib
     window.open(window.location.href, '_self');
   };
   const failureFooter = [
-    <Button key="retake" type="info" onClick={reload}>
+    <Button key="retake" onClick={reload}>
       Retake
     </Button>,
     <Button key="Take Interview" type="danger" onClick={handleError}>
@@ -259,7 +258,7 @@ const PreInterviewTest = ({ setSupported, setPreTestCompleted, visible, setVisib
   ];
 
   const warningFooter = [
-    <Button key="retake" type="info" onClick={reload}>
+    <Button key="retake" onClick={reload}>
       Retake
     </Button>,
     <Button key="Take Interview" type="primary" onClick={handleOk}>

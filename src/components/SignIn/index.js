@@ -1,4 +1,4 @@
-/* global FS mixpanel*/
+import React from 'react';
 import { Form, Input, Button } from 'antd';
 import { router } from 'umi';
 
