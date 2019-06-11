@@ -2,16 +2,20 @@
 import SignIn from '@/components/SignIn';
 import { fetchCompanyInfo, fetchInterview } from '@/services/api';
 import conditionalLogicForOneClient from '@/technicalDebt/conditionalLogic';
-import { Col, Row, Upload } from 'antd';
+import { Col, Row, Upload, Modal } from 'antd';
 import qs from 'qs';
 import React, { useEffect, useState } from 'react';
 import ReactPlayer from 'react-player';
+import exitIntent from '@/services/exit-intent';
+
 import { router } from 'umi';
 import styles from './index.less';
 
+let removeExitIntent;
 const Index = ({ location }) => {
   const id = qs.parse(location.search)['?id'];
   const [url, setUrl] = useState(null);
+  const [exitIntentModal, setExitIntentModal] = useState(false);
 
   const getData = async () => {
     const defaultIntroVideo = 'https://vimeo.com/337638606/0468e0b64d';
@@ -34,11 +38,26 @@ const Index = ({ location }) => {
   };
 
   useEffect(() => {
+    removeExitIntent = exitIntent({
+      maxDisplays: 1,
+      onExitIntent: () => {
+        setExitIntentModal(true);
+      },
+    });
     getData();
   }, []);
 
   return (
     <div className={styles.normal}>
+      <Modal
+        title="Save Your Info to Complete the Interview Later"
+        visible={exitIntentModal}
+        footer={null}
+        // onOk={handleOk}
+        onCancel={() => setExitIntentModal(false)}
+      >
+        <SignIn metaData="Exit Intent Modal" text="Save" removeExitIntent={removeExitIntent} location={location} />
+      </Modal>
       <h1 style={{ paddingTop: '24px' }}>Welcome to your Video Interview!</h1>{' '}
       <Row type="flex" justify="center">
         <Col span={15} xxl={11} xl={12}>
@@ -61,7 +80,11 @@ const Index = ({ location }) => {
         {id === '5c93849154b7ba00088dde51' && <Upload {...conditionalLogicForOneClient} />}
         {/* YUCK - Conditional logic for 1 client (above) */}
       </Row>
-      <SignIn location={location} />
+      <SignIn
+        text="Take Practice Interview"
+        removeExitIntent={removeExitIntent}
+        location={location}
+      />
     </div>
   );
 };
