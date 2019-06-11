@@ -26,7 +26,7 @@ const Index = ({ location }) => {
       const { createdBy, _id, interviewName } = interview;
       const url = await fetchCompanyInfo(createdBy);
       const { introVideo: companyIntro, companyName } = url || {};
-      setUrl(companyIntro ? companyIntro : defaultIntroVideo);
+      setUrl(companyIntro || defaultIntroVideo);
       mixpanel.set_group('InterviewCompany', [companyName]);
       mixpanel.set_group('Interview', [_id, interviewName]);
       mixpanel.track('Interview visited');
@@ -56,7 +56,12 @@ const Index = ({ location }) => {
         // onOk={handleOk}
         onCancel={() => setExitIntentModal(false)}
       >
-        <SignIn metaData="Exit Intent Modal" text="Save" removeExitIntent={removeExitIntent} location={location} />
+        <SignIn
+          metaData="Exit Intent Modal"
+          text="Save"
+          removeExitIntent={removeExitIntent}
+          location={location}
+        />
       </Modal>
       <h1 style={{ paddingTop: '24px' }}>Welcome to your Video Interview!</h1>{' '}
       <Row type="flex" justify="center">

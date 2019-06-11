@@ -1,4 +1,4 @@
-/* global OT mixpanel*/
+/* global OT mixpanel */
 import HandleBrowsers from '@/components/HandleBrowsers';
 import Timer from '@/components/Timer';
 import Video from '@/components/Video';
@@ -21,15 +21,16 @@ import React, { useEffect, useState } from 'react';
 import ReactPlayer from 'react-player';
 import { router } from 'umi';
 import styles from './victory.less';
+
 const showErr = () => {
   showError();
 };
 
 export default ({ location }) => {
   const id = qs.parse(location.search)['?id'];
-  const fullName = qs.parse(location.search)['fullName'];
-  const email = qs.parse(location.search)['email'];
-  const p = qs.parse(location.search)['practice'];
+  const { fullName } = qs.parse(location.search);
+  const { email } = qs.parse(location.search);
+  const p = qs.parse(location.search).practice;
 
   // const [connection, setConnection] = useState('Disconnected');
   const [error, setError] = useState(null);
@@ -159,7 +160,7 @@ export default ({ location }) => {
     prepareScreen(startingData);
   };
   const setup = async () => {
-    var [data] = await fetchInterview(id);
+    const [data] = await fetchInterview(id);
     setData(data);
     const {
       createdBy,
@@ -325,7 +326,7 @@ export default ({ location }) => {
 
       <Timer
         key={interview.key}
-        reset={true}
+        reset
         countDown={interview.countDown}
         paused={interview.paused}
         onFinish={() => changeButtonAction(action)}
@@ -348,8 +349,8 @@ export default ({ location }) => {
                   controls
                   key={videoUrl}
                   className="OTPublisherContainer"
-                  playing={true}
-                  playsinline={true}
+                  playing
+                  playsinline
                   url={videoUrl}
                 />
               </Spin>

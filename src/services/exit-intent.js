@@ -1,14 +1,11 @@
-import throttle from 'lodash/throttle';
-
 export default function ExitIntent(options = {}) {
   const defaultOptions = {
     threshold: 20,
     maxDisplays: 1,
-    eventThrottle: 200,
     onExitIntent: () => {},
   };
 
-  return (function() {
+  return (function exit() {
     const config = { ...defaultOptions, ...options };
     const eventListeners = new Map();
     let displays = 0;
@@ -26,10 +23,14 @@ export default function ExitIntent(options = {}) {
 
     const shouldDisplay = position => {
       if (position <= config.threshold && displays < config.maxDisplays) {
-        displays++;
+        displays += 1;
         return true;
       }
       return false;
+    };
+
+    const removeEvents = () => {
+      eventListeners.forEach((_value, key) => removeEvent(key));
     };
 
     const mouseDidMove = event => {
@@ -40,12 +41,7 @@ export default function ExitIntent(options = {}) {
         }
       }
     };
-
-    const removeEvents = () => {
-      eventListeners.forEach((value, key, map) => removeEvent(key));
-    };
-
-    addEvent('mousemove', throttle(mouseDidMove, config.eventThrottle));
+    addEvent('mousemove', mouseDidMove);
 
     return removeEvents;
   })();
