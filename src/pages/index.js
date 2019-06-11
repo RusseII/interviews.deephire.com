@@ -47,16 +47,25 @@ const Index = ({ location }) => {
     getData();
   }, []);
 
+  const exit = e => {
+    mixpanel.track(`Exit modal clicked ${e}`);
+
+    setExitIntentModal(false);
+  };
   return (
     <div className={styles.normal}>
       <Modal
-        title="Save Your Info to Complete the Interview Later"
+        title="Are you sure you want to leave?"
         visible={exitIntentModal}
-        footer={null}
-        // onOk={handleOk}
-        onCancel={() => setExitIntentModal(false)}
+        // onOk={handleOk}e
+        cancelText="Leave"
+        okText="Stay"
+        onOk={() => exit('Stay')}
+        onCancel={() => exit('Leave')}
       >
-        <SignIn metaData="Exit Intent Modal" text="Save" removeExitIntent={removeExitIntent} location={location} />
+        This intervew is a chance to show off what makes you unique. Please complete it now, or
+        message our support if you have issues!
+        {/* <SignIn metaData="Exit Intent Modal" text="Save" removeExitIntent={removeExitIntent} location={location} /> */}
       </Modal>
       <h1 style={{ paddingTop: '24px' }}>Welcome to your Video Interview!</h1>{' '}
       <Row type="flex" justify="center">

@@ -1,6 +1,7 @@
 /* global FS mixpanel*/
 import { Form, Input, Button } from 'antd';
 import { router } from 'umi';
+import PropTypes from 'prop-types'; 
 
 import styles from './index.less';
 import qs from 'qs';
@@ -75,4 +76,10 @@ const SignIn = Form.create()(props => {
   );
 });
 
+SignIn.propTypes = {
+   location: PropTypes.object.isRequired,
+   removeExitIntent: PropTypes.func,
+   text: PropTypes.string.isRequired,
+   metaData: PropTypes.string,
+}
 export default SignIn;
