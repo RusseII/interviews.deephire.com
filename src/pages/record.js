@@ -202,7 +202,6 @@ export default ({ location }) => {
   const start = async () => {
     console.log(index, interviewQuestions);
     console.log(startingData.interviewQuestions);
-    setVideoUrl(null);
     await startRecording();
   };
 
@@ -297,12 +296,15 @@ export default ({ location }) => {
   };
 
   const stop = async () => {
+    setVideoUrl(null); // makes sure old video is not shown
     stopRecording();
     reviewScreen();
     const url = `https://s3.amazonaws.com/deephire-video-dump/${
       connectionDetails.apiKey
     }/${archiveId}/archive.mp4`;
+    setNextDisabled(true);
     setVideoUrl(await checkVideo(url));
+    setNextDisabled(false);
   };
 
   if (!data) return null;
