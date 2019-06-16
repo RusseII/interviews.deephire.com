@@ -31,7 +31,7 @@ const BasicLayout = ({ children, location }) => {
             <img
               src={companyInfo.logo || 'https://s3.amazonaws.com/deephire/dh_vertical.png'}
               alt={companyInfo.companyName}
-              height="50px"
+              style={{maxHeight: 50, maxWidth: "30vw"}}
             />
           </Col>
         </Row>
