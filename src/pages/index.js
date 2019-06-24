@@ -1,4 +1,4 @@
-/* global mixpanel */
+/* global mixpanel FS*/
 import SignIn from '@/components/SignIn';
 import { fetchCompanyInfo, fetchInterview } from '@/services/api';
 import conditionalLogicForOneClient from '@/technicalDebt/conditionalLogic';
@@ -11,9 +11,27 @@ import exitIntent from '@/services/exit-intent';
 import { router } from 'umi';
 import styles from './index.less';
 
+const identify = (email, fullName, id) => {
+  mixpanel.alias(email);
+  mixpanel.people.set({
+    $email: email, 
+    $last_login: new Date(), 
+    $name: fullName,
+    id,
+    interviewStage: 'visited',
+  });
+  FS.identify(id, {
+    displayName: fullName,
+    email,
+  });
+};
+
 let removeExitIntent;
 const Index = ({ location }) => {
   const id = qs.parse(location.search)['?id'];
+  const emailParms = qs.parse(location.search)['fullname'];
+  const fullNameParams = qs.parse(location.search)['email'];
+
   const [url, setUrl] = useState(null);
   const [exitIntentModal, setExitIntentModal] = useState(false);
 
@@ -44,6 +62,9 @@ const Index = ({ location }) => {
         setExitIntentModal(true);
       },
     });
+    if (emailParms && fullNameParams && id) {
+      identify(emailParms, fullNameParams, id);
+    }
     getData();
   }, []);
 
@@ -69,7 +90,7 @@ const Index = ({ location }) => {
       </Modal>
       <h1 style={{ paddingTop: '24px' }}>Welcome to your Video Interview!</h1>{' '}
       <Row type="flex" justify="center">
-        <Col span={15} xxl={11} xl={12}>
+        <Col xxl={8} xl={8} lg={8} md={8} xs={8} sm={15}>
           <div className={styles.playerWrapper}>
             <ReactPlayer
               onStart={() => mixpanel.track('Watched intro video')}
@@ -90,7 +111,7 @@ const Index = ({ location }) => {
         {/* YUCK - Conditional logic for 1 client (above) */}
       </Row>
       <SignIn
-        text="Take Practice Interview"
+        text="Start Interview (10 minutes)"
         removeExitIntent={removeExitIntent}
         location={location}
       />
