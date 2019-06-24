@@ -16,8 +16,8 @@ const BasicLayout = ({ children, location }) => {
   useEffect(() => {
     fetchInterview(id).then(r => {
       if (r[0]) {
-      const { createdBy } = r[0];
-      fetchCompanyInfo(createdBy).then(r => setCompanyInfo(r || {}));
+        const { createdBy } = r[0];
+        fetchCompanyInfo(createdBy).then(r => setCompanyInfo(r || {}));
       }
     });
   }, []);
@@ -31,7 +31,7 @@ const BasicLayout = ({ children, location }) => {
             <img
               src={companyInfo.logo || 'https://s3.amazonaws.com/deephire/dh_vertical.png'}
               alt={companyInfo.companyName}
-              style={{maxHeight: 50, maxWidth: "30vw"}}
+              className={styles.logo}
             />
           </Col>
         </Row>

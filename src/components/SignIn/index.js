@@ -1,7 +1,7 @@
 /* global FS mixpanel*/
 import { Form, Input, Button } from 'antd';
 import { router } from 'umi';
-import PropTypes from 'prop-types'; 
+import PropTypes from 'prop-types';
 
 import styles from './index.less';
 import qs from 'qs';
@@ -11,6 +11,26 @@ const FormItem = Form.Item;
 const SignIn = Form.create()(props => {
   const { form, location, removeExitIntent, text, metaData } = props;
   const id = qs.parse(location.search)['?id'];
+  const fullNameParam = qs.parse(location.search)['fullName'];
+  const emailParam = qs.parse(location.search)['email'];
+
+  const skipForm = () => {
+    mixpanel.track('Interview started');
+    router.push(`record?id=${id}&fullName=${fullNameParam}&email=${emailParam}&practice=true`);
+    removeExitIntent();
+  };
+  if (fullNameParam && emailParam) {
+    return (
+      <Button
+        size="large"
+        style={{ marginTop: 40, marginBottom: 40 }}
+        type="primary"
+        onClick={skipForm}
+      >
+        {text}
+      </Button>
+    );
+  }
 
   const okHandle = e => {
     e.preventDefault();
@@ -77,9 +97,9 @@ const SignIn = Form.create()(props => {
 });
 
 SignIn.propTypes = {
-   location: PropTypes.object.isRequired,
-   removeExitIntent: PropTypes.func,
-   text: PropTypes.string.isRequired,
-   metaData: PropTypes.string,
-}
+  location: PropTypes.object.isRequired,
+  removeExitIntent: PropTypes.func,
+  text: PropTypes.string.isRequired,
+  metaData: PropTypes.string,
+};
 export default SignIn;
