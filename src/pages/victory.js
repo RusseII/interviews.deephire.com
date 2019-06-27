@@ -20,7 +20,7 @@ export default () => {
           <img
             style={{ margin: '0 -100%', verticalAlign: 'middle' }}
             height="100%"
-            src="https://interview.deephire.com/static/media/trophy.81ebf3a9.gif"
+            src="https://deephire.s3.amazonaws.com/logos/trophy.gif"
             alt="Prepare to Record!"
           />
         </div>
