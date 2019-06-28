@@ -5,7 +5,7 @@ import { Alert, Button, Col, Icon, Modal, Progress, Row, Spin } from 'antd';
 import NetworkTest, { ErrorNames } from 'opentok-network-test-js';
 import React, { useEffect, useState } from 'react';
 
-// import styles from './index.less';
+import styles from './index.less';
 
 const showErr = event => {
   showError();
@@ -281,6 +281,8 @@ const PreInterviewTest = ({ setSupported, setPreTestCompleted, visible, setVisib
   return (
     <div>
       <Modal
+        className={styles.modal}
+        // style={{top: "0px"}}
         closable={false}
         visible={visible}
         title="Setting up device"
