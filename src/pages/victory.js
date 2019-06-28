@@ -16,7 +16,7 @@ export default () => {
       <br />
 
       <Row type="flex" justify="center">
-        <div class="OTPublisherContainer" style={{ overflow: 'hidden' }}>
+        <div className="OTPublisherContainer" style={{ overflow: 'hidden' }}>
           <img
             style={{ margin: '0 -100%', verticalAlign: 'middle' }}
             height="100%"
