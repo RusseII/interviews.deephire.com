@@ -47,8 +47,11 @@ export const storeInterviewQuestion = async (
   candidateEmail,
   interviewName,
   question,
-  response
+  response,
+  responseThumbnail
 ) => {
+  console.log(response, responseThumbnail);
+
   const result = await fetch(`${apiUrl}/videos`, {
     method: 'POST',
     headers: {
@@ -64,6 +67,7 @@ export const storeInterviewQuestion = async (
       responses: {
         question,
         response,
+        responseThumbnail,
       },
       DetectRTC,
     }),

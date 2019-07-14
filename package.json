@@ -17,6 +17,7 @@
     "opentok-react": "0.9.0",
     "prop-types": "15.7.2",
     "qs": "^6.6.0",
+    "rc-texty": "0.2.0",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
     "react-loading-screen": "0.0.17",

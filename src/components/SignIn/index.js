@@ -53,7 +53,7 @@ const SignIn = Form.create()(props => {
         displayName: fullName,
         email,
       });
-      router.push(`record?id=${id}&fullName=${fullName}&email=${email}&practice=true`);
+      router.push(`cameratag?id=${id}&fullName=${fullName}&email=${email}&practice=true`);
       removeExitIntent();
       form.resetFields();
     });
