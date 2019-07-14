@@ -4,7 +4,7 @@ import {
   fetchInterview,
   notifyCandidate,
   notifyRecruiter,
-  storeInterviewQuestion,
+  storeInterviewQuestionRework,
 } from '@/services/api';
 
 import { Modal } from 'antd';
@@ -44,34 +44,29 @@ const Record = ({ location }) => {
   const completedQ = (response, responseThumbnail) => {
     console.log('is response new?', response);
     setIndex(index => {
-      console.log(index);
+      const interviewData = {
+        interviewId: id,
+        userId: email,
+        userName: fullName,
+        candidateEmail: email,
+        interviewName: data.interviewName,
+        question: data.interviewName.interviewQuestions[index],
+        response,
+        responseThumbnail,
+      };
+      storeInterviewQuestionRework(interviewData);
       return index + 1;
     });
-
-    const interviewData = {
-      interviewId: id,
-      userId: email,
-      userName: fullName,
-      candidateEmail: email,
-      interviewName: data.interviewName,
-      question: data.interviewName.interviewQuestions[index],
-      response,
-      responseThumbnail,
-    };
-    // storeInterviewQuestionRework(interviewData)
   };
   if (!data) return null;
 
- 
   const { interviewQuestions } = data;
   return (
     <>
       <h3 key={index} style={{ textAlign: 'center' }}>{`Question ${index + 1}/${
         interviewQuestions.length
       }`}</h3>
-      <h1 style={{ textAlign: 'center' }}>
-      {interviewQuestions[index].question}
-      </h1>
+      <h1 style={{ textAlign: 'center' }}>{interviewQuestions[index].question}</h1>
       <CameraTag onUpload={completedQ} />
     </>
   );

@@ -82,6 +82,50 @@ export const storeInterviewQuestion = async (
   }
 };
 
+
+export const storeInterviewQuestionRework = async ({
+  interviewId,
+  userId,
+  userName,
+  candidateEmail,
+  interviewName,
+  question,
+  response,
+  responseThumbnail
+}) => {
+  console.log(response, responseThumbnail);
+
+  const result = await fetch(`${apiUrl}/videos`, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      interviewId,
+      userId,
+      userName,
+      candidateEmail,
+      interviewName,
+      responses: {
+        question,
+        response,
+        responseThumbnail,
+      },
+      DetectRTC,
+    }),
+  });
+  if (result.status === 201) {
+    const location = result.headers.get('Location');
+    if (location) {
+      const n = location.lastIndexOf('/');
+      const videosId = location.substring(n + 1);
+      return videosId;
+    }
+  }
+};
+
+
 export const notifyRecruiter = (
   id,
   candidateName,
