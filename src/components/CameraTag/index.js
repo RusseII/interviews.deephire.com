@@ -4,18 +4,17 @@ import styles from './style.less';
 
 const cameraId = 'DeepHire';
 
-const setupObservers = (onUpload) => {
+const setupObservers = onUpload => {
   CameraTag.observe(cameraId, 'published', ({ medias, uuid }) => {
     const { mp4, thumb } = medias;
-    console.log("mp4", "thumb", mp4, thumb)
+    console.log('mp4', 'thumb', mp4, thumb);
     const myCamera = CameraTag.cameras[cameraId];
     myCamera.reset();
-    onUpload(mp4,thumb)
+    onUpload(mp4, thumb);
   });
 };
 
-const Record = ({onUpload}) => {
-
+const Record = ({ onUpload, name, description }) => {
   useEffect(() => {
     CameraTag.setup();
     setupObservers(onUpload);
@@ -24,6 +23,8 @@ const Record = ({onUpload}) => {
   return (
     <div className={styles.wrapper}>
       <camera
+        data-name={name}
+        data-description={description}
         className={styles.center}
         data-app-id="a-b0419fd0-86f2-0137-a3ff-02f6e3696dde"
         id={cameraId}

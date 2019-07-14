@@ -3,15 +3,11 @@ import React, { useEffect, useState } from 'react';
 import CameraTag from '@/components/CameraTag';
 import {
   fetchInterview,
-  notifyCandidate,
-  notifyRecruiter,
   storeInterviewQuestionRework,
 } from '@/services/api';
 
-import { Modal } from 'antd';
 import { router } from 'umi';
 
-import practiceQuestions from '@/services/practiceInterviewQuestions';
 
 import qs from 'qs';
 import Texty from 'rc-texty';
@@ -22,9 +18,7 @@ const Record = ({ location }) => {
   const id = qs.parse(location.search)['?id'];
   const fullName = qs.parse(location.search)['fullName'];
   const email = qs.parse(location.search)['email'];
-
   const [index, setIndex] = useState(0);
-
   const [data, setData] = useState(null);
 
   const setup = async () => {
@@ -44,7 +38,7 @@ const Record = ({ location }) => {
 
   const completedQ = (response, responseThumbnail) => {
     console.log('is response new?', response);
-    setIndex( index => {
+    setIndex(index => {
       const interviewData = {
         interviewId: id,
         userId: email,
@@ -55,42 +49,36 @@ const Record = ({ location }) => {
         response,
         responseThumbnail,
       };
-    storeInterviewQuestionRework(interviewData);
+      storeInterviewQuestionRework(interviewData);
 
       if (index + 1 === interviewQuestions.length) {
-        notifyCandidate(fullName, email);
-        notifyRecruiter(
-          id,
-          fullName,
-          email,
-          data.interviewName,
-          data.createdBy,
-          "videosId"
-        );
+        storeInterviewQuestionRework(interviewData, data.createdBy);
         mixpanel.people.set({
           interviewStage: 'completed',
         });
         mixpanel.track('Interview completed');
         router.push(`/victory?id=${id}`);
-        return index
-      }
-    
-      else {
-      return index + 1;
+        return index;
+      } else {
+        return index + 1;
       }
     });
   };
   if (!data) return null;
 
   const { interviewQuestions } = data;
-  console.log("weird", interviewQuestions, index)
+  console.log('weird', interviewQuestions, index);
   return (
     <>
       <h3 key={index} style={{ textAlign: 'center' }}>{`Question ${index + 1}/${
         interviewQuestions.length
       }`}</h3>
       <h1 style={{ textAlign: 'center' }}>{interviewQuestions[index].question}</h1>
-      <CameraTag onUpload={completedQ} />
+      <CameraTag
+        name={`${fullName}: ${interviewQuestions[index].question}`}
+        description={`${email} ${id} ${index}`}
+        onUpload={completedQ}
+      />
     </>
   );
 };

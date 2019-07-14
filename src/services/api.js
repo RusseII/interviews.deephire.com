@@ -82,17 +82,19 @@ export const storeInterviewQuestion = async (
   }
 };
 
-
-export const storeInterviewQuestionRework = async ({
-  interviewId,
-  userId,
-  userName,
-  candidateEmail,
-  interviewName,
-  question,
-  response,
-  responseThumbnail
-}) => {
+export const storeInterviewQuestionRework = async (
+  {
+    interviewId,
+    userId,
+    userName,
+    candidateEmail,
+    interviewName,
+    question,
+    response,
+    responseThumbnail,
+  },
+  createdBy
+) => {
   console.log(response, responseThumbnail);
 
   const result = await fetch(`${apiUrl}/videos`, {
@@ -120,11 +122,14 @@ export const storeInterviewQuestionRework = async ({
     if (location) {
       const n = location.lastIndexOf('/');
       const videosId = location.substring(n + 1);
+      if (createdBy) {
+      notifyCandidate(userName, candidateEmail);
+      notifyRecruiter(interviewId, userName, candidateEmail, interviewName, createdBy, videosId);
+      }
       return videosId;
     }
   }
 };
-
 
 export const notifyRecruiter = (
   id,
