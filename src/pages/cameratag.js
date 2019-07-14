@@ -1,3 +1,4 @@
+/* global mixpanel */
 import React, { useEffect, useState } from 'react';
 import CameraTag from '@/components/CameraTag';
 import {
@@ -43,24 +44,46 @@ const Record = ({ location }) => {
 
   const completedQ = (response, responseThumbnail) => {
     console.log('is response new?', response);
-    setIndex(index => {
+    setIndex( index => {
       const interviewData = {
         interviewId: id,
         userId: email,
         userName: fullName,
         candidateEmail: email,
         interviewName: data.interviewName,
-        question: data.interviewName.interviewQuestions[index],
+        question: data.interviewQuestions[index].question,
         response,
         responseThumbnail,
       };
-      storeInterviewQuestionRework(interviewData);
+    storeInterviewQuestionRework(interviewData);
+
+      if (index + 1 === interviewQuestions.length) {
+        notifyCandidate(fullName, email);
+        notifyRecruiter(
+          id,
+          fullName,
+          email,
+          data.interviewName,
+          data.createdBy,
+          "videosId"
+        );
+        mixpanel.people.set({
+          interviewStage: 'completed',
+        });
+        mixpanel.track('Interview completed');
+        router.push(`/victory?id=${id}`);
+        return index
+      }
+    
+      else {
       return index + 1;
+      }
     });
   };
   if (!data) return null;
 
   const { interviewQuestions } = data;
+  console.log("weird", interviewQuestions, index)
   return (
     <>
       <h3 key={index} style={{ textAlign: 'center' }}>{`Question ${index + 1}/${
