@@ -9,7 +9,6 @@ import qs from 'qs';
 import Texty from 'rc-texty';
 import QueueAnim from 'rc-queue-anim';
 
-require('rc-texty/assets/index.css');
 
 const Record = ({ location }) => {
   const id = qs.parse(location.search)['?id'];
