@@ -13,7 +13,7 @@ const setupObservers = onUpload => {
   });
 };
 
-const Record = ({ onUpload, name, description }) => {
+const Record = ({ onUpload, name, description, maxLength }) => {
   let mobile = false;
   const width = () =>
     window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
@@ -38,7 +38,7 @@ const Record = ({ onUpload, name, description }) => {
         data-sources="record"
         data-pre-roll-length="3"
         data-min-length="0"
-        data-maxlength="90"
+        data-maxlength={ maxLength|| 90}
         data-autopreview="false"
         data-simple-security="true"
         data-height={mobile ? height() / 2 : height() / 2}

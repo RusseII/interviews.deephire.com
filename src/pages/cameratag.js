@@ -78,6 +78,7 @@ const Record = ({ location }) => {
         name={`${fullName}: ${interviewQuestions[index].question}`}
         description={`${email} ${id} ${index}`}
         onUpload={completedQ}
+        maxLength={data.interviewConfig.answerTime}
       />
     </>
   );
