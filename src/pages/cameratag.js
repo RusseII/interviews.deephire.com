@@ -9,6 +9,8 @@ import qs from 'qs';
 import Texty from 'rc-texty';
 import QueueAnim from 'rc-queue-anim';
 
+import HandleBrowsers from "@/components/HandleBrowsers"
+
 const Record = ({ location }) => {
   const id = qs.parse(location.search)['?id'];
   const fullName = qs.parse(location.search)['fullName'];
@@ -63,7 +65,7 @@ const Record = ({ location }) => {
 
   const { interviewQuestions } = data;
   return (
-    <>
+    <HandleBrowsers>
       <h3 key={index} style={{ textAlign: 'center' }}>{`Question ${index + 1}/${
         interviewQuestions.length
       }`}</h3>
@@ -80,7 +82,7 @@ const Record = ({ location }) => {
         onUpload={completedQ}
         maxLength={data.interviewConfig.answerTime}
       />
-    </>
+    </HandleBrowsers>
   );
 };
 export default Record;
