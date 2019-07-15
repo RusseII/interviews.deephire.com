@@ -30,6 +30,7 @@ const Record = ({ onUpload, name, description }) => {
         id={cameraId}
         data-sources="record"
         data-pre-roll-length="3"
+        data-min-length="0"
         data-maxlength="90"
         data-autopreview="false"
         data-simple-security="true"
