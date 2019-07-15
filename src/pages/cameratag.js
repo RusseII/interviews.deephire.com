@@ -9,7 +9,6 @@ import qs from 'qs';
 import Texty from 'rc-texty';
 import QueueAnim from 'rc-queue-anim';
 
-
 const Record = ({ location }) => {
   const id = qs.parse(location.search)['?id'];
   const fullName = qs.parse(location.search)['fullName'];
@@ -68,9 +67,11 @@ const Record = ({ location }) => {
       <h3 key={index} style={{ textAlign: 'center' }}>{`Question ${index + 1}/${
         interviewQuestions.length
       }`}</h3>
-      <h1 style={{ textAlign: 'center' }}>
+      <h1 style={{ color: '#2f69f8', textAlign: 'center' }}>
         <QueueAnim type="alpha">
-          <Texty key={index} leave={{}}>{interviewQuestions[index].question}</Texty>
+          <Texty key={index} leave={{}}>
+            {interviewQuestions[index].question}
+          </Texty>
         </QueueAnim>
       </h1>
       <CameraTag
