@@ -71,7 +71,7 @@ const Record = ({ location }) => {
       }`}</h3>
       <h1 style={{ textAlign: 'center' }}>
         <QueueAnim type="alpha">
-          <Texty leave={{}}>{interviewQuestions[index].question}</Texty>
+          <Texty key={index} leave={{}}>{interviewQuestions[index].question}</Texty>
         </QueueAnim>
       </h1>
       <CameraTag
