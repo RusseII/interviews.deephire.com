@@ -92,6 +92,7 @@ export const storeInterviewQuestionRework = async (
     question,
     response,
     responseThumbnail,
+    uuid
   },
   createdBy
 ) => {
@@ -113,6 +114,7 @@ export const storeInterviewQuestionRework = async (
         question,
         response,
         responseThumbnail,
+        uuid
       },
       DetectRTC,
     }),

@@ -10,7 +10,7 @@ const setupObservers = onUpload => {
     console.log('mp4', 'thumb', mp4, thumb);
     const myCamera = CameraTag.cameras[cameraId];
     myCamera.reset();
-    onUpload(mp4, thumb);
+    onUpload(mp4, thumb, uuid);
   });
 };
 

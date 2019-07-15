@@ -33,7 +33,7 @@ const Record = ({ location }) => {
     setup();
   }, []);
 
-  const completedQ = (response, responseThumbnail) => {
+  const completedQ = (response, responseThumbnail, uuid) => {
     setIndex(index => {
       const interviewData = {
         interviewId: id,
@@ -44,6 +44,7 @@ const Record = ({ location }) => {
         question: data.interviewQuestions[index].question,
         response,
         responseThumbnail,
+        uuid
       };
       storeInterviewQuestionRework(interviewData);
 
