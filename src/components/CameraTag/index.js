@@ -7,7 +7,6 @@ const cameraId = 'DeepHire';
 const setupObservers = onUpload => {
   CameraTag.observe(cameraId, 'published', ({ medias, uuid }) => {
     const { mp4, thumb } = medias;
-    console.log('mp4', 'thumb', mp4, thumb);
     const myCamera = CameraTag.cameras[cameraId];
     myCamera.reset();
     onUpload(mp4, thumb, uuid);
@@ -15,6 +14,14 @@ const setupObservers = onUpload => {
 };
 
 const Record = ({ onUpload, name, description }) => {
+  let mobile = false;
+  const width = () =>
+    window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+
+  if (width() < 400) mobile = true;
+  
+  const height = () =>
+    window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
   useEffect(() => {
     CameraTag.setup();
     setupObservers(onUpload);
@@ -34,6 +41,8 @@ const Record = ({ onUpload, name, description }) => {
         data-maxlength="90"
         data-autopreview="false"
         data-simple-security="true"
+        data-height={mobile ? height() / 2 : height() / 2}
+        data-width={mobile ? (height() / 2) * 0.75 : (height() / 2) * (4 / 3)}
       />
     </div>
   );
