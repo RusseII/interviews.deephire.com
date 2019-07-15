@@ -44,7 +44,6 @@ const Record = ({ location }) => {
         responseThumbnail,
         uuid,
       };
-      storeInterviewQuestionRework(interviewData);
 
       if (index + 1 === interviewQuestions.length) {
         storeInterviewQuestionRework(interviewData, data.createdBy);
@@ -55,6 +54,7 @@ const Record = ({ location }) => {
         router.push(`/victory?id=${id}`);
         return index;
       } else {
+        storeInterviewQuestionRework(interviewData);
         return index + 1;
       }
     });
