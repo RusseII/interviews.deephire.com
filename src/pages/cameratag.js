@@ -44,7 +44,7 @@ const Record = ({ location }) => {
         question: data.interviewQuestions[index].question,
         response,
         responseThumbnail,
-        uuid
+        uuid,
       };
       storeInterviewQuestionRework(interviewData);
 
@@ -70,9 +70,9 @@ const Record = ({ location }) => {
         interviewQuestions.length
       }`}</h3>
       <h1 style={{ textAlign: 'center' }}>
-              <QueueAnim type="alpha">
-
-        <Texty leave={{}}>{interviewQuestions[index].question}</Texty></QueueAnim>
+        <QueueAnim type="alpha">
+          <Texty leave={{}}>{interviewQuestions[index].question}</Texty>
+        </QueueAnim>
       </h1>
       <CameraTag
         name={`${fullName}: ${interviewQuestions[index].question}`}
