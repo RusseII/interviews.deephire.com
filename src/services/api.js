@@ -47,8 +47,11 @@ export const storeInterviewQuestion = async (
   candidateEmail,
   interviewName,
   question,
-  response
+  response,
+  responseThumbnail
 ) => {
+  console.log(response, responseThumbnail);
+
   const result = await fetch(`${apiUrl}/videos`, {
     method: 'POST',
     headers: {
@@ -64,6 +67,7 @@ export const storeInterviewQuestion = async (
       responses: {
         question,
         response,
+        responseThumbnail,
       },
       DetectRTC,
     }),
@@ -73,6 +77,57 @@ export const storeInterviewQuestion = async (
     if (location) {
       const n = location.lastIndexOf('/');
       const videosId = location.substring(n + 1);
+      return videosId;
+    }
+  }
+};
+
+export const storeInterviewQuestionRework = async (
+  {
+    interviewId,
+    userId,
+    userName,
+    candidateEmail,
+    interviewName,
+    question,
+    response,
+    responseThumbnail,
+    uuid
+  },
+  createdBy
+) => {
+
+  const result = await fetch(`${apiUrl}/videos`, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    //this throws an error strying to stringify DetectRtc, but it still works
+    body: JSON.stringify({
+      interviewId,
+      userId,
+      userName,
+      candidateEmail,
+      interviewName,
+      responses: {
+        question,
+        response,
+        responseThumbnail,
+        uuid
+      },
+      DetectRTC,
+    }),
+  });
+  if (result.status === 201) {
+    const location = result.headers.get('Location');
+    if (location) {
+      const n = location.lastIndexOf('/');
+      const videosId = location.substring(n + 1);
+      if (createdBy) {
+        notifyCandidate(userName, candidateEmail);
+        notifyRecruiter(interviewId, userName, candidateEmail, interviewName, createdBy, videosId);
+      }
       return videosId;
     }
   }
