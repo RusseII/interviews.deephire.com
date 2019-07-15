@@ -95,7 +95,6 @@ export const storeInterviewQuestionRework = async (
   },
   createdBy
 ) => {
-  console.log(response, responseThumbnail);
 
   const result = await fetch(`${apiUrl}/videos`, {
     method: 'POST',
@@ -103,6 +102,7 @@ export const storeInterviewQuestionRework = async (
       Accept: 'application/json',
       'Content-Type': 'application/json',
     },
+    //this throws an error strying to stringify DetectRtc, but it still works
     body: JSON.stringify({
       interviewId,
       userId,
@@ -123,8 +123,8 @@ export const storeInterviewQuestionRework = async (
       const n = location.lastIndexOf('/');
       const videosId = location.substring(n + 1);
       if (createdBy) {
-      notifyCandidate(userName, candidateEmail);
-      notifyRecruiter(interviewId, userName, candidateEmail, interviewName, createdBy, videosId);
+        notifyCandidate(userName, candidateEmail);
+        notifyRecruiter(interviewId, userName, candidateEmail, interviewName, createdBy, videosId);
       }
       return videosId;
     }

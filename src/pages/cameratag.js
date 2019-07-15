@@ -1,16 +1,13 @@
 /* global mixpanel */
 import React, { useEffect, useState } from 'react';
 import CameraTag from '@/components/CameraTag';
-import {
-  fetchInterview,
-  storeInterviewQuestionRework,
-} from '@/services/api';
+import { fetchInterview, storeInterviewQuestionRework } from '@/services/api';
 
 import { router } from 'umi';
 
-
 import qs from 'qs';
 import Texty from 'rc-texty';
+import QueueAnim from 'rc-queue-anim';
 
 require('rc-texty/assets/index.css');
 
@@ -37,7 +34,6 @@ const Record = ({ location }) => {
   }, []);
 
   const completedQ = (response, responseThumbnail) => {
-    console.log('is response new?', response);
     setIndex(index => {
       const interviewData = {
         interviewId: id,
@@ -67,13 +63,16 @@ const Record = ({ location }) => {
   if (!data) return null;
 
   const { interviewQuestions } = data;
-  console.log('weird', interviewQuestions, index);
   return (
     <>
       <h3 key={index} style={{ textAlign: 'center' }}>{`Question ${index + 1}/${
         interviewQuestions.length
       }`}</h3>
-      <h1 style={{ textAlign: 'center' }}>{interviewQuestions[index].question}</h1>
+      <h1 style={{ textAlign: 'center' }}>
+              <QueueAnim type="alpha">
+
+        <Texty leave={{}}>{interviewQuestions[index].question}</Texty></QueueAnim>
+      </h1>
       <CameraTag
         name={`${fullName}: ${interviewQuestions[index].question}`}
         description={`${email} ${id} ${index}`}

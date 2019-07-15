@@ -16,7 +16,7 @@ const SignIn = Form.create()(props => {
 
   const skipForm = () => {
     mixpanel.track('Interview started');
-    router.push(`record?id=${id}&fullName=${fullNameParam}&email=${emailParam}&practice=true`);
+    router.push(`cameratag?id=${id}&fullName=${fullNameParam}&email=${emailParam}&practice=true`);
     removeExitIntent();
   };
   if (fullNameParam && emailParam) {
