@@ -1,5 +1,4 @@
 /* global mixpanel */
-import PreInterviewTest from '../PreInterviewTest';
 import SafariWebview from '../SafariWebview';
 const DetectRTC = require('detectrtc');
 
@@ -16,7 +15,7 @@ export default props => {
       }
       break;
     default:
-      return <PreInterviewTest {...props} />;
+      return props.children;
   }
-  return <PreInterviewTest {...props} />;
+  return props.children;
 };

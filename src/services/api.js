@@ -40,48 +40,6 @@ export const sendEmail = data => {
     .then(data => data);
 };
 
-export const storeInterviewQuestion = async (
-  interviewId,
-  userId,
-  userName,
-  candidateEmail,
-  interviewName,
-  question,
-  response,
-  responseThumbnail
-) => {
-  console.log(response, responseThumbnail);
-
-  const result = await fetch(`${apiUrl}/videos`, {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      interviewId,
-      userId,
-      userName,
-      candidateEmail,
-      interviewName,
-      responses: {
-        question,
-        response,
-        responseThumbnail,
-      },
-      DetectRTC,
-    }),
-  });
-  if (result.status === 201) {
-    const location = result.headers.get('Location');
-    if (location) {
-      const n = location.lastIndexOf('/');
-      const videosId = location.substring(n + 1);
-      return videosId;
-    }
-  }
-};
-
 export const storeInterviewQuestionRework = async (
   {
     interviewId,
@@ -92,10 +50,11 @@ export const storeInterviewQuestionRework = async (
     question,
     response,
     responseThumbnail,
-    uuid
+    uuid,
   },
   createdBy
 ) => {
+  console.log(DetectRTC);
 
   const result = await fetch(`${apiUrl}/videos`, {
     method: 'POST',
@@ -103,7 +62,7 @@ export const storeInterviewQuestionRework = async (
       Accept: 'application/json',
       'Content-Type': 'application/json',
     },
-    //this throws an error strying to stringify DetectRtc, but it still works
+
     body: JSON.stringify({
       interviewId,
       userId,
@@ -114,9 +73,9 @@ export const storeInterviewQuestionRework = async (
         question,
         response,
         responseThumbnail,
-        uuid
+        uuid,
       },
-      // DetectRTC
+      DetectRTC
     }),
   });
   if (result.status === 201) {
