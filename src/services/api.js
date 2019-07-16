@@ -116,7 +116,7 @@ export const storeInterviewQuestionRework = async (
         responseThumbnail,
         uuid
       },
-      // DetectRTC
+      DetectRTC
     }),
   });
   if (result.status === 201) {
