@@ -14,8 +14,8 @@ import styles from './index.less';
 const identify = (email, fullName, id) => {
   mixpanel.alias(email);
   mixpanel.people.set({
-    $email: email, 
-    $last_login: new Date(), 
+    $email: email,
+    $last_login: new Date(),
     $name: fullName,
     id,
     interviewStage: 'visited',
@@ -36,7 +36,7 @@ const Index = ({ location }) => {
   const [exitIntentModal, setExitIntentModal] = useState(false);
 
   const getData = async () => {
-    const defaultIntroVideo = 'https://vimeo.com/337638606/0468e0b64d';
+    const defaultIntroVideo = 'https://vimeo.com/348346561/29e3914964';
     let interview = await fetchInterview(id);
 
     if (interview) {
