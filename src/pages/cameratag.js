@@ -77,8 +77,8 @@ const Record = ({ location }) => {
         </QueueAnim>
       </h1>
       <CameraTag
-        name={`${fullName}: ${interviewQuestions[index].question}`}
-        description={`${email} ${id} ${index}`}
+        name={`${fullName} ${data.interviewName}`}
+        description={`${email} ${id} ${index} ${data.createdBy}`}
         onUpload={completedQ}
         maxLength={data.interviewConfig.answerTime}
       />
