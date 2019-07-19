@@ -1,6 +1,7 @@
 /* global CameraTag */
 import React, { useEffect } from 'react';
 import styles from './style.less';
+const DetectRTC = require('detectrtc');
 
 const cameraId = 'DeepHire';
 
@@ -43,6 +44,7 @@ const Record = ({ onUpload, name, description, maxLength }) => {
         data-simple-security="true"
         data-height={mobile ? height() / 2 : height() / 2}
         data-width={mobile ? (height() / 2) * 0.75 : (height() / 2) * (4 / 3)}
+        data-stack={ DetectRTC.osName === "android" ? "mediarecorder" :'auto'}
       />
     </div>
   );
