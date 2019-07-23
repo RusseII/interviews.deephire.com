@@ -33,7 +33,7 @@ const Record = ({ location }) => {
     setup();
   }, []);
 
-  const completedQ = (response, responseThumbnail, uuid) => {
+  const completedQ = (medias, uuid) => {
     setIndex(index => {
       const interviewData = {
         interviewId: id,
@@ -42,8 +42,7 @@ const Record = ({ location }) => {
         candidateEmail: email,
         interviewName: data.interviewName,
         question: data.interviewQuestions[index].question,
-        response,
-        responseThumbnail,
+        medias,
         uuid,
       };
 
