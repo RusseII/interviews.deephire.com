@@ -7,14 +7,11 @@ const cameraId = 'DeepHire';
 
 const setupObservers = (onUpload, setCameraTagReady) => {
   CameraTag.observe(cameraId, 'published', ({ medias, uuid }) => {
+
     const myCamera = CameraTag.cameras[cameraId];
-    myCamera.reset();
-    console.log('camera reset called');
-
+    //set timeout is to fix a bug on edge/ie with event queue (reset does not work without it)
+    setTimeout(()=> {myCamera.reset()}, 1);
     setCameraTagReady(false);
-    console.time('someFunction');
-
-    console.log('camera reset called');
     onUpload(medias, uuid);
   });
 
@@ -62,7 +59,6 @@ const Record = ({ onUpload, name, description, maxLength }) => {
           data-width={mobile ? (height() / 2) * 0.75 : (height() / 2) * (4 / 3)}
           data-stack={DetectRTC.osName.toLowerCase() === 'android' ? 'mediarecorder' : 'auto'}
         />
-      
     </div>
   );
 };
