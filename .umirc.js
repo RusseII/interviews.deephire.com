@@ -1,5 +1,6 @@
 // ref: https://umijs.org/config/
 export default {
+  hash: true,
   treeShaking: true,
   targets: {
     ie: 11,
