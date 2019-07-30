@@ -1,5 +1,5 @@
 /* global CameraTag */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import styles from './style.less';
 const DetectRTC = require('detectrtc');
 
@@ -9,22 +9,15 @@ const setupObservers = (onUpload, setCameraTagReady) => {
   CameraTag.observe(cameraId, 'published', ({ medias, uuid }) => {
 
     const myCamera = CameraTag.cameras[cameraId];
-    //set timeout is to fix a bug on edge/ie with event queue (reset does not work without it)
+    //setTmeout is to fix a bug on edge/ie with event queue (reset does not work without it)
     setTimeout(()=> {myCamera.reset()}, 1);
-    setCameraTagReady(false);
     onUpload(medias, uuid);
   });
 
-  CameraTag.observe(cameraId, 'cameraReset', () => {
-    setCameraTagReady(true);
-    console.timeEnd('someFunction');
 
-    console.log('camera reset ready');
-  });
 };
 
 const Record = ({ onUpload, name, description, maxLength }) => {
-  const [cameraTagReady, setCameraTagReady] = useState(true);
   let mobile = false;
   const width = () =>
     window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
@@ -35,7 +28,7 @@ const Record = ({ onUpload, name, description, maxLength }) => {
     window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
   useEffect(() => {
     CameraTag.setup();
-    setupObservers(onUpload, setCameraTagReady);
+    setupObservers(onUpload);
     return () => {
       CameraTag.cameras[cameraId].destroy();
     };
