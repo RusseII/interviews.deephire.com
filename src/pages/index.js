@@ -56,12 +56,15 @@ const Index = ({ location }) => {
   };
 
   useEffect(() => {
-    removeExitIntent = exitIntent({
+    setTimeout(() => {
+      removeExitIntent = exitIntent({
       maxDisplays: 1,
       onExitIntent: () => {
         setExitIntentModal(true);
       },
     });
+  }, 5000)
+
     if (emailParms && fullNameParams && id) {
       identify(emailParms, fullNameParams, id);
     }
