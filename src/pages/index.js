@@ -1,5 +1,5 @@
 /* global mixpanel FS */
-import { Col, Row, Upload, Modal } from 'antd';
+import { Col, Row, Upload, Modal, Button } from 'antd';
 import qs from 'qs';
 import React, { useEffect, useState } from 'react';
 import ReactPlayer from 'react-player';
@@ -77,16 +77,16 @@ const Index = ({ location }) => {
     <div style={{ height: '100%' }} className={styles.normal}>
       <Modal
         title="Are you sure you want to leave?"
+        onCancel={() => exit('Stay')}
         visible={exitIntentModal}
-        // onOk={handleOk}e
-        cancelText="Leave"
-        okText="Stay"
-        onOk={() => exit('Stay')}
-        onCancel={() => exit('Leave')}
+        footer={
+          <Button size="large" type="primary" onClick={() => exit('Stay')}>
+            Close
+          </Button>
+        }
       >
-        This interview is a chance to show off what makes you unique. Please
-        complete it now, or message our support if you have issues!
-        {/* <SignIn metaData="Exit Intent Modal" text="Save" removeExitIntent={removeExitIntent} location={location} /> */}
+        This interview is a chance to show off what makes you unique. If you're
+        having a problem, please message our support team.
       </Modal>
       <Row style={{ height: '100%' }}>
         <Col span={12} style={{ height: '100%' }}>
