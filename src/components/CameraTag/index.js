@@ -1,6 +1,7 @@
 /* eslint-disable no-console */
 /* global CameraTag */
 import React, { useEffect, useState } from 'react';
+import { Spin } from 'antd';
 import RecordButton from '@/components/CameraTag/RecordButton';
 import styles from './style.less';
 
@@ -8,7 +9,12 @@ const DetectRTC = require('detectrtc');
 
 const cameraId = 'DeepHire';
 
-const setupObservers = (onUpload, setCameraTagReady, setLoaded) => {
+const setupObservers = (
+  onUpload,
+  setCameraTagReady,
+  setLoaded,
+  setCountdownStarted
+) => {
   CameraTag.observe(cameraId, 'initialized', () => {
     CameraTag.cameras[cameraId].connect();
   });
@@ -23,11 +29,14 @@ const setupObservers = (onUpload, setCameraTagReady, setLoaded) => {
   });
 
   CameraTag.observe(cameraId, 'initialized', () => {
-    setCameraTagReady(true);
+    setLoaded(true);
+  });
+  CameraTag.observe(cameraId, 'countdownStarted', () => {
+    setCountdownStarted(true);
   });
 
   CameraTag.observe(cameraId, 'cameraReset', () => {
-    setLoaded(true);
+    setCameraTagReady(true);
     console.timeEnd('someFunction');
 
     console.log('camera reset ready');
@@ -36,6 +45,7 @@ const setupObservers = (onUpload, setCameraTagReady, setLoaded) => {
 
 const Record = ({ onUpload, name, description, maxLength }) => {
   const [cameraTagReady, setCameraTagReady] = useState(true);
+  const [countdownStarted, setCountdownStarted] = useState(false);
   const [loaded, setLoaded] = useState(false);
   let mobile = false;
   const width = () =>
@@ -51,14 +61,18 @@ const Record = ({ onUpload, name, description, maxLength }) => {
     document.body.clientHeight;
   useEffect(() => {
     CameraTag.setup();
-    setupObservers(onUpload, setCameraTagReady, setLoaded);
+    setupObservers(onUpload, setCameraTagReady, setLoaded, setCountdownStarted);
     return () => {
       CameraTag.cameras[cameraId].destroy();
     };
   }, []);
   return (
-    <div className={`${styles.wrapper} wrapper`}>
-      <RecordButton />
+    <div className={styles.wrapper}>
+      <RecordButton
+        cameraId={cameraId}
+        countdownStarted={countdownStarted}
+        loaded={loaded}
+      />
 
       <camera
         data-name={name}
