@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { Button, Result } from 'antd';
 import { showError } from '@/services/crisp';
 import styles from './404.less';
 
@@ -9,17 +10,15 @@ export default function NotFound() {
     );
   }, []);
   return (
-    <div className={styles.notFound}>
-      <section>
-        <h1>404</h1>
-        <p>Interview not found</p>
-        <p>Please contact our support</p>
-      </section>
-      <style
-        dangerouslySetInnerHTML={{
-          __html: '#react-content { height: 100%; background-color: #fff }'
-        }}
-      />
-    </div>
+    <Result
+      status="404"
+      title="404"
+      subTitle="Sorry, the page you visited does not exist."
+      extra={
+        <Button href="https://deephire.com" type="primary">
+          Back Home
+        </Button>
+      }
+    />
   );
 }
