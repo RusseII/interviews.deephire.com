@@ -8,14 +8,14 @@ const conditionalLogicForOneClient = {
     {
       uid: '1',
       name: 'HR Director.docx',
-      url: 'https://s3.amazonaws.com/deephire/logos/HR+Director.docx',
+      url: 'https://s3.amazonaws.com/deephire/logos/HR+Director.docx'
     },
     {
       uid: '2',
       name: 'Electrocraft Overview.pdf',
-      url: 'https://s3.amazonaws.com/deephire/logos/Electrocraft+overview.pdf',
-    },
-  ],
+      url: 'https://s3.amazonaws.com/deephire/logos/Electrocraft+overview.pdf'
+    }
+  ]
 };
 
 export default conditionalLogicForOneClient;

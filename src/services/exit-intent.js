@@ -5,7 +5,7 @@ export default function ExitIntent(options = {}) {
     threshold: 20,
     maxDisplays: 1,
     eventThrottle: 200,
-    onExitIntent: () => {},
+    onExitIntent: () => {}
   };
 
   return (function() {

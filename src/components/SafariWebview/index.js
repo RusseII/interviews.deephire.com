@@ -1,7 +1,7 @@
 /* global mixpanel */
-import { hideChat } from '@/services/crisp';
 import { Icon } from 'antd';
 import { useEffect } from 'react';
+import { hideChat } from '@/services/crisp';
 
 export default () => {
   useEffect(() => {
@@ -18,13 +18,15 @@ export default () => {
         bottom: 0,
         right: 0,
         left: 0,
-        position: 'absolute',
+        position: 'absolute'
       }}
     >
       <div style={{ textAlign: 'center', marginTop: 20 }}>
         To take your interview - click the safari button on the bottom right
       </div>
-      <div style={{ fontSize: 15, position: 'absolute', right: 10, bottom: 80 }}>
+      <div
+        style={{ fontSize: 15, position: 'absolute', right: 10, bottom: 80 }}
+      >
         Click Safari button below
       </div>
 

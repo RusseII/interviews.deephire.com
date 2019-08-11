@@ -1,5 +1,5 @@
-import BasicLayout from '..';
 import renderer from 'react-test-renderer';
+import BasicLayout from '..';
 
 describe('Layout: BasicLayout', () => {
   it('Render correctly', () => {

@@ -1,4 +1,5 @@
 import fetch from 'isomorphic-fetch';
+
 const DetectRTC = require('detectrtc');
 
 const apiUrl = 'https://a.deephire.com/v1';
@@ -29,8 +30,8 @@ export const sendEmail = data => {
     body: JSON.stringify(data),
     headers: {
       Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
+      'Content-Type': 'application/json'
+    }
   })
     .then(response => response.json())
     .then(data => data);
@@ -45,7 +46,7 @@ export const storeInterviewQuestionRework = async (
     interviewName,
     question,
     medias,
-    uuid,
+    uuid
   },
   createdBy
 ) => {
@@ -55,7 +56,7 @@ export const storeInterviewQuestionRework = async (
     method: 'POST',
     headers: {
       Accept: 'application/json',
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json'
     },
 
     body: JSON.stringify({
@@ -67,10 +68,10 @@ export const storeInterviewQuestionRework = async (
       responses: {
         question,
         ...medias,
-        uuid,
-      },
+        uuid
+      }
       // DetectRTC
-    }),
+    })
   });
   if (result.status === 201) {
     const location = result.headers.get('Location');
@@ -79,7 +80,14 @@ export const storeInterviewQuestionRework = async (
       const videosId = location.substring(n + 1);
       if (createdBy) {
         notifyCandidate(userName, candidateEmail);
-        notifyRecruiter(interviewId, userName, candidateEmail, interviewName, createdBy, videosId);
+        notifyRecruiter(
+          interviewId,
+          userName,
+          candidateEmail,
+          interviewName,
+          createdBy,
+          videosId
+        );
       }
       return videosId;
     }
@@ -94,40 +102,40 @@ export const notifyRecruiter = (
   createdBy,
   videosId
 ) => {
-  var data = {
+  const data = {
     type: 'interviewCompleted',
     id,
     candidateName,
     recipients: [createdBy || 'noemail@deephire.com'],
     candidateEmail,
     interviewName,
-    videosId,
+    videosId
   };
 
   fetch(`${apiUrl}/emails`, {
     method: 'POST',
     headers: {
       Accept: 'application/json',
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json'
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(data)
   });
 };
 
 export const notifyCandidate = (candidateName, candidateEmail) => {
-  var data = {
+  const data = {
     type: 'jobSeekerCompleted',
     candidateName,
     recipients: [candidateEmail || 'noCandidateEmail@deephire.com'],
-    candidateEmail,
+    candidateEmail
   };
 
   fetch('https://a.deephire.com/v1/emails', {
     method: 'POST',
     headers: {
       Accept: 'application/json',
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json'
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(data)
   });
 };

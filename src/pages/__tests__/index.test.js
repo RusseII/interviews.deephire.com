@@ -1,5 +1,5 @@
-import Index from '..';
 import renderer from 'react-test-renderer';
+import Index from '..';
 
 describe('Page: index', () => {
   it('Render correctly', () => {

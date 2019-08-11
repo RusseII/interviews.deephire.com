@@ -1,9 +1,8 @@
-import { showError } from '@/services/crisp';
 import React, { useEffect } from 'react';
+import { showError } from '@/services/crisp';
 import styles from './404.less';
 
 export default function NotFound() {
-
   useEffect(() => {
     showError(
       'it looks like the link you clicked on is invalid. Which company are you interviewing for?'
@@ -18,7 +17,7 @@ export default function NotFound() {
       </section>
       <style
         dangerouslySetInnerHTML={{
-          __html: '#react-content { height: 100%; background-color: #fff }',
+          __html: '#react-content { height: 100%; background-color: #fff }'
         }}
       />
     </div>
