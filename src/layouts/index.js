@@ -9,17 +9,21 @@ const BasicLayout = ({ children, location }) => {
   const [companyInfo, setCompanyInfo] = useState({
     companyName: 'Loading...',
     logo:
-      'http://atelier.swiftideas.com/union-demo/wp-content/uploads/sites/5/2014/05/unionproducts-img-blank.png'
+      'https://atelier.swiftideas.com/union-demo/wp-content/uploads/sites/5/2014/05/unionproducts-img-blank.png'
   });
   const id = qs.parse(location.search)['?id'];
 
   useEffect(() => {
-    fetchInterview(id).then(r => {
-      if (r && r[0]) {
-        const { createdBy } = r[0];
-        fetchCompanyInfo(createdBy).then(r => setCompanyInfo(r || {}));
-      }
-    });
+    if (!id) {
+      setCompanyInfo({});
+    } else {
+      fetchInterview(id).then(r => {
+        if (r && r[0]) {
+          const { createdBy } = r[0];
+          fetchCompanyInfo(createdBy).then(r => setCompanyInfo(r || {}));
+        }
+      });
+    }
   }, []);
 
   return (

@@ -9,10 +9,14 @@ const apiUrl = 'https://a.deephire.com/v1';
 // const openTokApi = 'http://localhost:8081';
 
 export const fetchInterview = async id => {
-  const resp = await fetch(`${apiUrl}/interviews/${id}`);
-  if (resp.ok) {
-    return await resp.json();
-  }
+  try {
+    if(id) {
+      const resp = await fetch(`${apiUrl}/interviews/${id}`);
+      if (resp.ok) {
+        return await resp.json();
+      }
+    }
+  } catch (e) {}
   return null;
 };
 

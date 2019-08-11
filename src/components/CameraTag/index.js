@@ -66,7 +66,7 @@ const Record = ({ onUpload, name, description, maxLength }) => {
           WebkitBoxAlign: 'center',
           alignItems: 'center',
           height: '380px',
-          animation: '0.3s ease-in-out 0s 1 normal none running ievwDh',
+          animation: '0.3s ease-in-out 0s 1 normal none running',
           padding: '0px 24px 68px'
         }}
       >
