@@ -57,8 +57,9 @@ const Record = ({ onUpload, name, description, maxLength }) => {
     };
   }, []);
   return (
-    <div className={styles.wrapper}>
+    <div className={`${styles.wrapper} wrapper`}>
       <RecordButton />
+
       <camera
         data-name={name}
         data-description={description}

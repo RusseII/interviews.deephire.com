@@ -5,9 +5,6 @@ const RecordButton = ({ cameraId }) => (
   <div
     style={{
       zIndex: '9992229',
-      position: 'absolute',
-      bottom: '0px',
-      left: '0px',
       width: '100%',
       display: 'flex',
       flexDirection: 'column',
@@ -15,16 +12,14 @@ const RecordButton = ({ cameraId }) => (
       justifyContent: 'flex-end',
       WebkitBoxAlign: 'center',
       alignItems: 'center',
-      height: '380px',
       animation: '0.3s ease-in-out 0s 1 normal none running',
-      padding: '0px 24px 68px'
+      padding: '0px 24px 1px'
     }}
   >
     <div
       style={{
         fontWeight: '500',
         fontSize: '18px',
-        color: 'rgb(255, 255, 255)',
         marginBottom: '24px',
         textAlign: 'center',
         textShadow: 'rgba(0, 0, 0, 0.5) 0px 0px 20px'
@@ -69,17 +64,15 @@ const RecordButton = ({ cameraId }) => (
         display: 'flex',
         WebkitBoxAlign: 'center',
         alignItems: 'center',
+        marginTop: 15,
         WebkitBoxPack: 'center',
         justifyContent: 'center',
         height: '44px',
         width: '100%',
-        position: 'absolute',
-        bottom: '0px',
         fontSize: '14px',
         fontWeight: '500',
         textAlign: 'center',
         lineHeight: '120%',
-        background: 'rgba(76, 217, 100, 0.8)',
         padding: '0px 8px'
       }}
     >
