@@ -54,6 +54,7 @@ const Record = ({ onUpload, name, description, maxLength }) => {
     <div className={styles.wrapper}>
       <div
         style={{
+          zIndex: '9992229',
           position: 'absolute',
           bottom: '0px',
           left: '0px',
@@ -64,7 +65,6 @@ const Record = ({ onUpload, name, description, maxLength }) => {
           justifyContent: 'flex-end',
           WebkitBoxAlign: 'center',
           alignItems: 'center',
-          pointerEvents: 'none',
           height: '380px',
           animation: '0.3s ease-in-out 0s 1 normal none running ievwDh',
           padding: '0px 24px 68px'
@@ -72,8 +72,6 @@ const Record = ({ onUpload, name, description, maxLength }) => {
       >
         <div
           style={{
-            fontFamily:
-              '"Apercu Pro", apercu-pro, Arial, "Helvetica Neue", Helvetica, sans-serif',
             fontWeight: '500',
             fontSize: '18px',
             color: 'rgb(255, 255, 255)',
@@ -116,7 +114,25 @@ const Record = ({ onUpload, name, description, maxLength }) => {
           }}
           className="ixYAQg"
         />
-        <div className="common-components__SupportPrompt-y60bw1-14 hMAexU">
+        <div
+          style={{
+            display: 'flex',
+            WebkitBoxAlign: 'center',
+            alignItems: 'center',
+            WebkitBoxPack: 'center',
+            justifyContent: 'center',
+            height: '44px',
+            width: '100%',
+            position: 'absolute',
+            bottom: '0px',
+            fontSize: '14px',
+            fontWeight: '500',
+            textAlign: 'center',
+            lineHeight: '120%',
+            background: 'rgba(76, 217, 100, 0.8)',
+            padding: '0px 8px'
+          }}
+        >
           <span aria-labelledby="selfie" role="img">
             😉&nbsp;
           </span>
