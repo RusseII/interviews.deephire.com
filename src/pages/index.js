@@ -84,7 +84,7 @@ const Index = ({ location }) => {
         onOk={() => exit('Stay')}
         onCancel={() => exit('Leave')}
       >
-        This intervew is a chance to show off what makes you unique. Please
+        This interview is a chance to show off what makes you unique. Please
         complete it now, or message our support if you have issues!
         {/* <SignIn metaData="Exit Intent Modal" text="Save" removeExitIntent={removeExitIntent} location={location} /> */}
       </Modal>
