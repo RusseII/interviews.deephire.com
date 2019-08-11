@@ -17,12 +17,18 @@ const BasicLayout = ({ children, location }) => {
     if (!id) {
       setCompanyInfo({});
     } else {
-      fetchInterview(id).then(r => {
-        if (r && r[0]) {
-          const { createdBy } = r[0];
-          fetchCompanyInfo(createdBy).then(r => setCompanyInfo(r || {}));
-        }
-      });
+      const findInterview = fetchInterview(id);
+
+      findInterview
+        .then(r => {
+          if (r && r[0]) {
+            const { createdBy } = r[0];
+            fetchCompanyInfo(createdBy).then(r => setCompanyInfo(r || {}));
+          } else {
+            setCompanyInfo({})
+          }
+        })
+        .catch(e => setCompanyInfo({}));
     }
   }, []);
 
