@@ -15,7 +15,7 @@ const BasicLayout = ({ children, location }) => {
 
   useEffect(() => {
     fetchInterview(id).then(r => {
-      if (r[0]) {
+      if (r && r[0]) {
         const { createdBy } = r[0];
         fetchCompanyInfo(createdBy).then(r => setCompanyInfo(r || {}));
       }
