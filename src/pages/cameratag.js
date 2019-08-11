@@ -1,25 +1,29 @@
 /* global mixpanel */
 import React, { useEffect, useState } from 'react';
-import CameraTag from '@/components/CameraTag';
-import { fetchInterview, storeInterviewQuestionRework } from '@/services/api';
 
 import { router } from 'umi';
 
-import qs from 'qs';
-import Texty from 'rc-texty';
-import QueueAnim from 'rc-queue-anim';
+import { Button, Steps, Typography } from 'antd';
 
-import HandleBrowsers from "@/components/HandleBrowsers"
+import qs from 'qs';
+import { fetchInterview, storeInterviewQuestionRework } from '@/services/api';
+import CameraTag from '@/components/CameraTag';
+
+import HandleBrowsers from '@/components/HandleBrowsers';
+
+const { Title } = Typography;
+
+const { Step } = Steps;
 
 const Record = ({ location }) => {
   const id = qs.parse(location.search)['?id'];
-  const fullName = qs.parse(location.search)['fullName'];
-  const email = qs.parse(location.search)['email'];
+  const { fullName } = qs.parse(location.search);
+  const { email } = qs.parse(location.search);
   const [index, setIndex] = useState(0);
   const [data, setData] = useState(null);
 
   const setup = async () => {
-    var [data] = await fetchInterview(id);
+    const [data] = await fetchInterview(id);
     setData(data);
     // const {
     //   createdBy,
@@ -43,21 +47,20 @@ const Record = ({ location }) => {
         interviewName: data.interviewName,
         question: data.interviewQuestions[index].question,
         medias,
-        uuid,
+        uuid
       };
 
-      if (index + 1 === interviewQuestions.length) {
+      if (index + 1 === data.interviewQuestions.length) {
         storeInterviewQuestionRework(interviewData, data.createdBy);
         mixpanel.people.set({
-          interviewStage: 'completed',
+          interviewStage: 'completed'
         });
         mixpanel.track('Interview completed');
         router.push(`/victory?id=${id}`);
         return index;
-      } else {
-        storeInterviewQuestionRework(interviewData);
-        return index + 1;
       }
+      storeInterviewQuestionRework(interviewData);
+      return index + 1;
     });
   };
   if (!data) return null;
@@ -65,16 +68,12 @@ const Record = ({ location }) => {
   const { interviewQuestions } = data;
   return (
     <HandleBrowsers>
-      <h3 key={index} style={{ textAlign: 'center' }}>{`Question ${index + 1}/${
-        interviewQuestions.length
-      }`}</h3>
-      <h1 style={{ color: '#2f69f8', textAlign: 'center' }}>
-        <QueueAnim type="alpha">
-          <Texty key={index} leave={{}}>
-            {interviewQuestions[index].question}
-          </Texty>
-        </QueueAnim>
-      </h1>
+      <Button type="primary" shape="round" size="small">
+        {`Question ${index + 1}/${interviewQuestions.length}`}
+      </Button>
+      <Title level={2} style={{ textAlign: 'center' }}>
+        <p>{interviewQuestions[index].question}</p>
+      </Title>
       <CameraTag
         name={`${fullName} ${data.interviewName}`}
         description={`${email} ${id} ${index} ${data.createdBy}`}

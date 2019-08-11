@@ -1,35 +1,38 @@
-/* global FS mixpanel*/
+/* global FS mixpanel */
+import React from 'react';
 import { Form, Input, Button } from 'antd';
 import { router } from 'umi';
 import PropTypes from 'prop-types';
-
-import styles from './index.less';
 import qs from 'qs';
+import styles from './index.less';
 
 const FormItem = Form.Item;
 
 const SignIn = Form.create()(props => {
-  const { form, location, removeExitIntent, text, metaData } = props;
+  const { form, location, removeExitIntent, text, subText, metaData } = props;
   const id = qs.parse(location.search)['?id'];
-  const fullNameParam = qs.parse(location.search)['fullName'];
-  const emailParam = qs.parse(location.search)['email'];
+  const fullNameParam = qs.parse(location.search).fullName;
+  const emailParam = qs.parse(location.search).email;
 
   const skipForm = () => {
     mixpanel.track('Interview started');
-    router.push(`cameratag?id=${id}&fullName=${fullNameParam}&email=${emailParam}&practice=true`);
+    router.push(
+      `cameratag?id=${id}&fullName=${fullNameParam}&email=${emailParam}&practice=true`
+    );
     removeExitIntent();
   };
   if (fullNameParam && emailParam) {
-    return (
+    return [
       <Button
         size="large"
+        key={1}
         style={{ marginTop: 40, marginBottom: 40 }}
         type="primary"
         onClick={skipForm}
       >
         {text}
       </Button>
-    );
+    ];
   }
 
   const okHandle = e => {
@@ -46,14 +49,16 @@ const SignIn = Form.create()(props => {
         $name: fullName,
         id,
         metaData,
-        interviewStage: 'started',
+        interviewStage: 'started'
       });
       mixpanel.track('Interview started');
       FS.identify(id, {
         displayName: fullName,
-        email,
+        email
       });
-      router.push(`cameratag?id=${id}&fullName=${fullName}&email=${email}&practice=true`);
+      router.push(
+        `cameratag?id=${id}&fullName=${fullName}&email=${email}&practice=true`
+      );
       removeExitIntent();
       form.resetFields();
     });
@@ -61,35 +66,36 @@ const SignIn = Form.create()(props => {
 
   return (
     <div className={styles.container}>
-      <Form hideRequiredMark onSubmit={okHandle}>
-        <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 5 }} label="Name">
+      <Form hideRequiredMark layout="vertical" onSubmit={okHandle}>
+        <FormItem colon={false} label="Your name">
           {form.getFieldDecorator('fullName', {
             rules: [
               {
                 required: true,
-                message: 'Please input your full name!',
-              },
-            ],
-          })(<Input placeholder="full name" />)}
+                message: 'Your name is required'
+              }
+            ]
+          })(<Input placeholder="John Smith" />)}
         </FormItem>
-        <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 5 }} label="Email">
+        <FormItem label="Your email address">
           {form.getFieldDecorator('email', {
             rules: [
               {
                 type: 'email',
-                message: 'The input is not valid E-mail!',
+                message: 'Does not appear to be a valid email address'
               },
               {
                 required: true,
-                message: 'Please input your E-mail!',
-              },
-            ],
-          })(<Input placeholder="email" />)}
+                message: 'Email is required'
+              }
+            ]
+          })(<Input placeholder="john@smith.com" />)}
         </FormItem>
         <Form.Item>
-          <Button type="primary" htmlType="submit">
+          <Button type="primary" block size="large" htmlType="submit">
             {text}
           </Button>
+          <p style={{ marginTop: 10, fontSize: 11 }}>{subText}</p>
         </Form.Item>
       </Form>
     </div>
@@ -100,6 +106,6 @@ SignIn.propTypes = {
   location: PropTypes.object.isRequired,
   removeExitIntent: PropTypes.func,
   text: PropTypes.string.isRequired,
-  metaData: PropTypes.string,
+  metaData: PropTypes.string
 };
 export default SignIn;
