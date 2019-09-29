@@ -37,16 +37,7 @@ export const sendEmail = data => {
 };
 
 export const storeInterviewQuestionRework = async (
-  {
-    interviewId,
-    userId,
-    userName,
-    candidateEmail,
-    interviewName,
-    question,
-    medias,
-    uuid,
-  },
+  { interviewId, userId, userName, candidateEmail, interviewName, question, medias, uuid },
   createdBy
 ) => {
   console.log(DetectRTC);
@@ -78,8 +69,17 @@ export const storeInterviewQuestionRework = async (
       const n = location.lastIndexOf('/');
       const videosId = location.substring(n + 1);
       if (createdBy) {
+        const { thumbnail640x480 } = medias;
         notifyCandidate(userName, candidateEmail);
-        notifyRecruiter(interviewId, userName, candidateEmail, interviewName, createdBy, videosId);
+        notifyRecruiter(
+          interviewId,
+          userName,
+          candidateEmail,
+          interviewName,
+          createdBy,
+          videosId,
+          thumbnail640x480
+        );
       }
       return videosId;
     }
@@ -92,16 +92,18 @@ export const notifyRecruiter = (
   candidateEmail,
   interviewName,
   createdBy,
-  videosId
+  videosId,
+  thumbnail640x480
 ) => {
   var data = {
-    type: 'interviewCompleted',
+    template: 'completed-interview-recruiter-notification',
     id,
     candidateName,
     recipients: [createdBy || 'noemail@deephire.com'],
     candidateEmail,
     interviewName,
-    videosId,
+    candidateUrl: `https://recruiter.deephire.com/candidates/view-candidate/?id=${videosId}`,
+    candidateThumbnail: thumbnail640x480,
   };
 
   fetch(`${apiUrl}/emails`, {
@@ -116,13 +118,13 @@ export const notifyRecruiter = (
 
 export const notifyCandidate = (candidateName, candidateEmail) => {
   var data = {
-    type: 'jobSeekerCompleted',
+    template: 'job-seeker-completed-interview',
     candidateName,
     recipients: [candidateEmail || 'noCandidateEmail@deephire.com'],
     candidateEmail,
   };
 
-  fetch('https://a.deephire.com/v1/emails', {
+  fetch(`${apiUrl}/emails`, {
     method: 'POST',
     headers: {
       Accept: 'application/json',
