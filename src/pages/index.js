@@ -56,17 +56,19 @@ const Index = ({ location }) => {
   };
 
   useEffect(() => {
+    if (emailParms && fullNameParams && id) {
+      identify(emailParms, fullNameParams, id);
+    }
+    setTimeout(() =>
     removeExitIntent = exitIntent({
       maxDisplays: 1,
       onExitIntent: () => {
         setExitIntentModal(true);
       },
-    });
-    if (emailParms && fullNameParams && id) {
-      identify(emailParms, fullNameParams, id);
-    }
+    }), 5000)
+
     getData();
-  }, [emailParms, fullNameParams, getData, id]);
+  }, []);
 
   const exit = e => {
     mixpanel.track(`Exit modal clicked ${e}`);
