@@ -20,7 +20,7 @@ const identify = (email, fullName, id) => {
     id,
     interviewStage: 'visited',
   });
-  FS.identify(id, {
+  FS.identify(email, {
     displayName: fullName,
     email,
   });
@@ -66,7 +66,7 @@ const Index = ({ location }) => {
       identify(emailParms, fullNameParams, id);
     }
     getData();
-  }, []);
+  }, [emailParms, fullNameParams, getData, id]);
 
   const exit = e => {
     mixpanel.track(`Exit modal clicked ${e}`);

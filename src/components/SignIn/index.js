@@ -49,7 +49,7 @@ const SignIn = Form.create()(props => {
         interviewStage: 'started',
       });
       mixpanel.track('Interview started');
-      FS.identify(id, {
+      FS.identify(email, {
         displayName: fullName,
         email,
       });
