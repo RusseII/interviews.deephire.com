@@ -68,7 +68,7 @@ const Index = ({ location }) => {
     }), 5000)
 
     getData();
-  }, [emailParms, fullNameParams, getData, id]);
+  }, []);
 
   const exit = e => {
     mixpanel.track(`Exit modal clicked ${e}`);
