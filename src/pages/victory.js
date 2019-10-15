@@ -10,7 +10,7 @@ export default () => {
     <div className={styles.wrapper}>
       <div style={{ paddingTop: '24px' }}>
         <h1>Interview Completed!</h1>
-        Your Interview has been sent to your recruiter
+        Your Interview has been successfully submitted
       </div>
 
       <br />

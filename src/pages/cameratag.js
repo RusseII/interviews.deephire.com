@@ -15,8 +15,12 @@ const Record = ({ location }) => {
   const id = qs.parse(location.search)['?id'];
   const fullName = qs.parse(location.search)['fullName'];
   const email = qs.parse(location.search)['email'];
+  const simple = qs.parse(location.search)['simple'];
+
   const [index, setIndex] = useState(0);
   const [data, setData] = useState(null);
+  const [vis, setVis] = useState(true);
+
 
   const setup = async () => {
     var [data] = await fetchInterview(id);
@@ -31,8 +35,13 @@ const Record = ({ location }) => {
 
   useEffect(() => {
     setup();
-  }, []);
+  }, [setup]);
 
+
+  const reAnimateQuestion = () => {
+    setVis(false)
+    setTimeout(() => setVis(true),500)
+  }
   const completedQ = (medias, uuid) => {
     setIndex(index => {
       const interviewData = {
@@ -52,7 +61,7 @@ const Record = ({ location }) => {
           interviewStage: 'completed',
         });
         mixpanel.track('Interview completed');
-        router.push(`/victory?id=${id}`);
+        router.push(`/victory?id=${id}${simple === '1' ? '&simple=' + simple: ''}`);
         return index;
       } else {
         storeInterviewQuestionRework(interviewData);
@@ -70,9 +79,9 @@ const Record = ({ location }) => {
       }`}</h3>
       <h1 style={{ color: '#2f69f8', textAlign: 'center' }}>
         <QueueAnim type="alpha">
-          <Texty key={index} leave={{}}>
+          {vis && <Texty key={index} leave={{}}>
             {interviewQuestions[index].question}
-          </Texty>
+    </Texty> }
         </QueueAnim>
       </h1>
       <CameraTag
@@ -80,6 +89,7 @@ const Record = ({ location }) => {
         description={`${email} ${id} ${index} ${data.createdBy}`}
         onUpload={completedQ}
         maxLength={data.interviewConfig.answerTime}
+        reAnimateQuestion={reAnimateQuestion}
       />
     </HandleBrowsers>
   );

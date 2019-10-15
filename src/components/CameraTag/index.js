@@ -1,11 +1,14 @@
 /* global CameraTag */
 import React, { useEffect, useState } from 'react';
 import styles from './style.less';
+import qs from 'qs'
 const DetectRTC = require('detectrtc');
 
 const cameraId = 'DeepHire';
 
-const setupObservers = (onUpload, setCameraTagReady) => {
+const simple = qs.parse(window.location.search)['simple'];
+
+const setupObservers = (onUpload, setCameraTagReady, reAnimateQuestion) => {
   CameraTag.observe(cameraId, 'published', ({ medias, uuid }) => {
 
     const myCamera = CameraTag.cameras[cameraId];
@@ -13,6 +16,11 @@ const setupObservers = (onUpload, setCameraTagReady) => {
     setTimeout(()=> {myCamera.reset()}, 1);
     setCameraTagReady(false);
     onUpload(medias, uuid);
+  });
+  
+
+  CameraTag.observe(cameraId, 'countdownStarted', () => {
+    reAnimateQuestion()
   });
 
   CameraTag.observe(cameraId, 'cameraReset', () => {
@@ -23,7 +31,7 @@ const setupObservers = (onUpload, setCameraTagReady) => {
   });
 };
 
-const Record = ({ onUpload, name, description, maxLength }) => {
+const Record = ({ onUpload, name, description, maxLength, reAnimateQuestion }) => {
   const [cameraTagReady, setCameraTagReady] = useState(true);
   let mobile = false;
   const width = () =>
@@ -33,13 +41,20 @@ const Record = ({ onUpload, name, description, maxLength }) => {
 
   const height = () =>
     window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-  useEffect(() => {
+
+    
+  const useCameraTagSetup = () => useEffect(() => {
     CameraTag.setup();
-    setupObservers(onUpload, setCameraTagReady);
+    setupObservers(onUpload, setCameraTagReady, reAnimateQuestion);
     return () => {
       CameraTag.cameras[cameraId].destroy();
     };
   }, []);
+
+  useCameraTagSetup()
+
+  const useAsHeight = simple === '1' ? height() / 1.5 : height() / 2
+
 
   return (
     <div className={styles.wrapper}>
@@ -50,13 +65,13 @@ const Record = ({ onUpload, name, description, maxLength }) => {
           data-app-id="a-b0419fd0-86f2-0137-a3ff-02f6e3696dde"
           id={cameraId}
           data-sources="record"
-          data-pre-roll-length="3"
+          data-pre-roll-length="5"
           data-min-length="0"
           data-maxlength={maxLength || 90}
           data-autopreview="false"
           data-simple-security="true"
-          data-height={mobile ? height() / 2 : height() / 2}
-          data-width={mobile ? (height() / 2) * 0.75 : (height() / 2) * (4 / 3)}
+          data-height={useAsHeight}
+          data-width={mobile ? (useAsHeight) * 0.75 : (useAsHeight) * (4 / 3)}
           data-stack={DetectRTC.osName.toLowerCase() === 'android' ? 'mediarecorder' : 'auto'}
         />
     </div>

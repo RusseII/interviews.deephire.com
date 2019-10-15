@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import qs from 'qs';
 import { fetchInterview, fetchCompanyInfo } from '@/services/api';
 
+
 const { Footer, Content, Header } = Layout;
 const BasicLayout = ({ children, location }) => {
   const [companyInfo, setCompanyInfo] = useState({
@@ -12,6 +13,8 @@ const BasicLayout = ({ children, location }) => {
       'http://atelier.swiftideas.com/union-demo/wp-content/uploads/sites/5/2014/05/unionproducts-img-blank.png',
   });
   const id = qs.parse(location.search)['?id'];
+  const simple = qs.parse(location.search)['simple'];
+
 
   useEffect(() => {
     fetchInterview(id).then(r => {
@@ -20,10 +23,12 @@ const BasicLayout = ({ children, location }) => {
         fetchCompanyInfo(createdBy).then(r => setCompanyInfo(r || {}));
       }
     });
-  }, []);
+  }, [id]);
 
   return (
     <Layout>
+
+      {simple !== '1'  && 
       <Header className={styles.header}>
         <Row type="flex" justify="space-between">
           <Col>{companyInfo.companyName || 'DeepHire'}</Col>
@@ -35,10 +40,11 @@ const BasicLayout = ({ children, location }) => {
             />
           </Col>
         </Row>
-      </Header>
+      </Header> }
 
-      <Content className={styles.content}>{children}</Content>
-      <Footer className={styles.footer}>Powered by DeepHire | Find your fit.</Footer>
+      <Content className={simple === '1' ? styles.simpleContent : styles.content}>{children}</Content>
+      {simple !== '1'  && 
+<Footer className={styles.footer}>Powered by DeepHire | Find your fit.</Footer>}
     </Layout>
   );
 };
