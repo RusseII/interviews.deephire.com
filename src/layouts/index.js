@@ -28,7 +28,7 @@ const BasicLayout = ({ children, location }) => {
   return (
     <Layout>
 
-      {!simple && 
+      {simple !== '1'  && 
       <Header className={styles.header}>
         <Row type="flex" justify="space-between">
           <Col>{companyInfo.companyName || 'DeepHire'}</Col>
@@ -42,8 +42,8 @@ const BasicLayout = ({ children, location }) => {
         </Row>
       </Header> }
 
-      <Content className={simple ? styles.simpleContent : styles.content}>{children}</Content>
-      {!simple && 
+      <Content className={simple === '1' ? styles.simpleContent : styles.content}>{children}</Content>
+      {simple !== '1'  && 
 <Footer className={styles.footer}>Powered by DeepHire | Find your fit.</Footer>}
     </Layout>
   );

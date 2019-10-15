@@ -61,7 +61,7 @@ const Record = ({ location }) => {
           interviewStage: 'completed',
         });
         mixpanel.track('Interview completed');
-        router.push(`/victory?id=${id}${simple ? '&simple=' + simple: ''}`);
+        router.push(`/victory?id=${id}${simple === '1' ? '&simple=' + simple: ''}`);
         return index;
       } else {
         storeInterviewQuestionRework(interviewData);

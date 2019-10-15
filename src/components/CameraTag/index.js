@@ -53,7 +53,7 @@ const Record = ({ onUpload, name, description, maxLength, reAnimateQuestion }) =
 
   useCameraTagSetup()
 
-  const useAsHeight = simple ? height() / 1.5 : height() / 2
+  const useAsHeight = simple === '1' ? height() / 1.5 : height() / 2
 
 
   return (

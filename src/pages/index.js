@@ -92,9 +92,9 @@ const Index = ({ location }) => {
         message our support if you have issues!
         {/* <SignIn metaData="Exit Intent Modal" text="Save" removeExitIntent={removeExitIntent} location={location} /> */}
       </Modal>
-      { !simple && <h1 style={{ paddingTop: '24px' }}>Welcome to your Video Interview!</h1>}
+      { simple !== '1'  && <h1 style={{ paddingTop: '24px' }}>Welcome to your Video Interview!</h1>}
       <Row type="flex" justify="center">
-        <Col xxl={simple ? 24: 8} xl={simple ? 24: 8} lg={simple ? 24: 8} md={simple ? 24: 8} xs={simple ? 24: 8} sm={simple ? 24: 15}>
+        <Col xxl={simple === '1' ? 24: 8} xl={simple === '1' ? 24: 8} lg={simple === '1' ? 24: 8} md={simple === '1' ? 24: 8} xs={simple === '1' ? 24: 8} sm={simple === '1' ? 24: 15}>
           <div className={styles.playerWrapper}>
             <ReactPlayer
               onStart={() => mixpanel.track('Watched intro video')}

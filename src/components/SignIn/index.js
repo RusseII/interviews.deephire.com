@@ -18,7 +18,7 @@ const SignIn = Form.create()(props => {
 
   const skipForm = () => {
     mixpanel.track('Interview started');
-    router.push(`cameratag?id=${id}&fullName=${fullNameParam}&email=${emailParam}${simple ? '&simple=' + simple: ''}`);
+    router.push(`cameratag?id=${id}&fullName=${fullNameParam}&email=${emailParam}${simple === '1' ? '&simple=' + simple: ''}`);
     removeExitIntent();
   };
   if (fullNameParam && emailParam) {
@@ -55,7 +55,7 @@ const SignIn = Form.create()(props => {
         displayName: fullName,
         email,
       });
-      router.push(`cameratag?id=${id}&fullName=${fullName}&email=${email}${simple ? '&simple=' + simple: ''}`);
+      router.push(`cameratag?id=${id}&fullName=${fullName}&email=${email}${simple === '1' ? '&simple=' + simple: ''}`);
       removeExitIntent();
       form.resetFields();
     });
