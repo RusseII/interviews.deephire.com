@@ -31,6 +31,8 @@ const Index = ({ location }) => {
   const id = qs.parse(location.search)['?id'];
   const emailParms = qs.parse(location.search)['fullname'];
   const fullNameParams = qs.parse(location.search)['email'];
+  const simple = qs.parse(location.search)['simple'];
+
 
   const [url, setUrl] = useState(null);
   const [exitIntentModal, setExitIntentModal] = useState(false);
@@ -68,7 +70,7 @@ const Index = ({ location }) => {
     }), 5000)
 
     getData();
-  }, []);
+  }, [emailParms, fullNameParams, getData, id]);
 
   const exit = e => {
     mixpanel.track(`Exit modal clicked ${e}`);
@@ -90,9 +92,9 @@ const Index = ({ location }) => {
         message our support if you have issues!
         {/* <SignIn metaData="Exit Intent Modal" text="Save" removeExitIntent={removeExitIntent} location={location} /> */}
       </Modal>
-      <h1 style={{ paddingTop: '24px' }}>Welcome to your Video Interview!</h1>{' '}
+      { !simple && <h1 style={{ paddingTop: '24px' }}>Welcome to your Video Interview!</h1>}
       <Row type="flex" justify="center">
-        <Col xxl={8} xl={8} lg={8} md={8} xs={8} sm={15}>
+        <Col xxl={simple ? 24: 8} xl={simple ? 24: 8} lg={simple ? 24: 8} md={simple ? 24: 8} xs={simple ? 24: 8} sm={simple ? 24: 15}>
           <div className={styles.playerWrapper}>
             <ReactPlayer
               onStart={() => mixpanel.track('Watched intro video')}
@@ -113,7 +115,7 @@ const Index = ({ location }) => {
         {/* YUCK - Conditional logic for 1 client (above) */}
       </Row>
       <SignIn
-        text="Start Interview (10 minutes)"
+        text="Start Interview"
         removeExitIntent={removeExitIntent}
         location={location}
       />
