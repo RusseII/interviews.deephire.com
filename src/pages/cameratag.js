@@ -15,6 +15,8 @@ const Record = ({ location }) => {
   const id = qs.parse(location.search)['?id'];
   const fullName = qs.parse(location.search)['fullName'];
   const email = qs.parse(location.search)['email'];
+  const simple = qs.parse(location.search)['simple'];
+
   const [index, setIndex] = useState(0);
   const [data, setData] = useState(null);
   const [vis, setVis] = useState(true);
@@ -59,7 +61,7 @@ const Record = ({ location }) => {
           interviewStage: 'completed',
         });
         mixpanel.track('Interview completed');
-        router.push(`/victory?id=${id}`);
+        router.push(`/victory?id=${id}${simple ? '&simple=' + simple: ''}`);
         return index;
       } else {
         storeInterviewQuestionRework(interviewData);
