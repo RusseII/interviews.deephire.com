@@ -116,7 +116,7 @@ const Index = ({ location }) => {
       </Row>
       <SignIn
         text="Start Interview"
-        removeExitIntent={removeExitIntent}
+        removeExitIntent={removeExitIntent ? removeExitIntent : () => console.log("exit intent not setup yet")}
         location={location}
       />
     </div>
