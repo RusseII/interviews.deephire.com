@@ -43,13 +43,15 @@ const Record = ({ onUpload, name, description, maxLength, reAnimateQuestion }) =
     window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
 
     
-  useEffect(() => {
+  const useCameraTagSetup = () => useEffect(() => {
     CameraTag.setup();
     setupObservers(onUpload, setCameraTagReady, reAnimateQuestion);
     return () => {
       CameraTag.cameras[cameraId].destroy();
     };
-  }, [onUpload, reAnimateQuestion]);
+  }, []);
+
+  useCameraTagSetup()
 
   const useAsHeight = simple ? height() / 1.5 : height() / 2
 
