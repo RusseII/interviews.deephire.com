@@ -1,4 +1,4 @@
-/* global FS mixpanel*/
+/* global FS mixpanel $crisp */
 import { Form, Input, Button } from 'antd';
 import { router } from 'umi';
 import PropTypes from 'prop-types';
@@ -15,10 +15,13 @@ const SignIn = Form.create()(props => {
   const emailParam = qs.parse(location.search)['email'];
   const simple = qs.parse(location.search)['simple'];
 
-
   const skipForm = () => {
     mixpanel.track('Interview started');
-    router.push(`cameratag?id=${id}&fullName=${fullNameParam}&email=${emailParam}${simple === '1' ? '&simple=' + simple: ''}`);
+    router.push(
+      `cameratag?id=${id}&fullName=${fullNameParam}&email=${emailParam}${
+        simple === '1' ? '&simple=' + simple : ''
+      }`
+    );
     removeExitIntent();
   };
   if (fullNameParam && emailParam) {
@@ -55,7 +58,15 @@ const SignIn = Form.create()(props => {
         displayName: fullName,
         email,
       });
-      router.push(`cameratag?id=${id}&fullName=${fullName}&email=${email}${simple === '1' ? '&simple=' + simple: ''}`);
+      $crisp.push(['set', 'user:email', email]);
+      $crisp.push(['set', 'user:nickname', [fullName]]);
+    
+
+      router.push(
+        `cameratag?id=${id}&fullName=${fullName}&email=${email}${
+          simple === '1' ? '&simple=' + simple : ''
+        }`
+      );
       removeExitIntent();
       form.resetFields();
     });

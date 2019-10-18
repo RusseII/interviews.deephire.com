@@ -1,4 +1,4 @@
-/* global mixpanel FS*/
+/* global mixpanel FS $crisp*/
 import SignIn from '@/components/SignIn';
 import { fetchCompanyInfo, fetchInterview } from '@/services/api';
 import conditionalLogicForOneClient from '@/technicalDebt/conditionalLogic';
@@ -24,6 +24,8 @@ const identify = (email, fullName, id) => {
     displayName: fullName,
     email,
   });
+  $crisp.push(['set', 'user:email', email]);
+  $crisp.push(['set', 'user:nickname', [fullName]]);
 };
 
 let removeExitIntent;
@@ -57,7 +59,7 @@ const Index = ({ location }) => {
     }
   };
 
-  useEffect(() => {
+  const useOnMount = () => useEffect(() => {
     if (emailParms && fullNameParams && id) {
       identify(emailParms, fullNameParams, id);
     }
@@ -70,7 +72,10 @@ const Index = ({ location }) => {
     }), 5000)
 
     getData();
-  }, [emailParms, fullNameParams, getData, id]);
+  }, []);
+
+
+  useOnMount()
 
   const exit = e => {
     mixpanel.track(`Exit modal clicked ${e}`);
