@@ -21,7 +21,8 @@ const BasicLayout = ({ children, location }) => {
         const { companyId, createdBy, companyName } = r[0];
         fetchCompanyInfo(companyId).then(r => setCompanyInfo(r || {}));
         $crisp.push(['set', 'session:data', [['createdBy', createdBy], ['companyId', companyId]]]);
-        $crisp.push(['set', 'user:company', [companyId, { data: [createdBy, companyName] }]]);
+        $crisp.push(['set', 'user:company', [companyId, { description: `Job Seeker. Interview createdBy: ${createdBy}, ${companyName}` }]]);
+
       }
     });
   }, [id]);
