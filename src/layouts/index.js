@@ -5,7 +5,6 @@ import React, { useState, useEffect } from 'react';
 import qs from 'qs';
 import { fetchInterview, fetchCompanyInfo } from '@/services/api';
 
-
 const { Footer, Content, Header } = Layout;
 const BasicLayout = ({ children, location }) => {
   const [companyInfo, setCompanyInfo] = useState({
@@ -16,36 +15,40 @@ const BasicLayout = ({ children, location }) => {
   const id = qs.parse(location.search)['?id'];
   const simple = qs.parse(location.search)['simple'];
 
-
   useEffect(() => {
     fetchInterview(id).then(r => {
       if (r[0]) {
-        const { companyId, createdBy } = r[0];
+        const { companyId, createdBy, companyName } = r[0];
         fetchCompanyInfo(companyId).then(r => setCompanyInfo(r || {}));
-        $crisp.push(["set", "session:data", [["createdBy", createdBy], ["companyId", companyId  ]]])  }
+        $crisp.push(['set', 'session:data', [['createdBy', createdBy], ['companyId', companyId]]]);
+        $crisp.push(['set', 'user:company', [companyId, { data: [createdBy, companyName] }]]);
+      }
     });
   }, [id]);
 
   return (
     <Layout>
+      {simple !== '1' && (
+        <Header className={styles.header}>
+          <Row type="flex" justify="space-between">
+            <Col>{companyInfo.companyName || 'DeepHire'}</Col>
+            <Col>
+              <img
+                src={companyInfo.logo || 'https://s3.amazonaws.com/deephire/dh_vertical.png'}
+                alt={companyInfo.companyName}
+                className={styles.logo}
+              />
+            </Col>
+          </Row>
+        </Header>
+      )}
 
-      {simple !== '1'  && 
-      <Header className={styles.header}>
-        <Row type="flex" justify="space-between">
-          <Col>{companyInfo.companyName || 'DeepHire'}</Col>
-          <Col>
-            <img
-              src={companyInfo.logo || 'https://s3.amazonaws.com/deephire/dh_vertical.png'}
-              alt={companyInfo.companyName}
-              className={styles.logo}
-            />
-          </Col>
-        </Row>
-      </Header> }
-
-      <Content className={simple === '1' ? styles.simpleContent : styles.content}>{children}</Content>
-      {simple !== '1'  && 
-<Footer className={styles.footer}>Powered by DeepHire | Find your fit.</Footer>}
+      <Content className={simple === '1' ? styles.simpleContent : styles.content}>
+        {children}
+      </Content>
+      {simple !== '1' && (
+        <Footer className={styles.footer}>Powered by DeepHire | Find your fit.</Footer>
+      )}
     </Layout>
   );
 };
