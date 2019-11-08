@@ -45,12 +45,19 @@ const Index = ({ location }) => {
 
     if (interview) {
       interview = interview[0] || interview;
-      const { companyId, _id, interviewName } = interview;
+      const { companyId, _id, interviewName, createdBy } = interview;
       const url = await fetchCompanyInfo(companyId);
       const { introVideo: companyIntro, companyName } = url || {};
       setUrl(companyIntro ? companyIntro : defaultIntroVideo);
       mixpanel.set_group('InterviewCompany', [companyName]);
-      mixpanel.set_group('Interview', [_id, interviewName]);
+      mixpanel.set_group('InterviewID', [_id]);
+      mixpanel.set_group('InterviewName', [interviewName]);
+      mixpanel.set_group('CreatedBy', [createdBy]);
+      mixpanel.set_group('CompanyId', [companyId]);
+
+
+
+
       mixpanel.track('Interview visited');
     } else {
       mixpanel.track('Invalid ID');
