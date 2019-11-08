@@ -1,3 +1,4 @@
+/* global $crisp */
 import styles from './index.less';
 import { Layout, Row, Col } from 'antd';
 import React, { useState, useEffect } from 'react';
@@ -19,9 +20,9 @@ const BasicLayout = ({ children, location }) => {
   useEffect(() => {
     fetchInterview(id).then(r => {
       if (r[0]) {
-        const { createdBy } = r[0];
-        fetchCompanyInfo(createdBy).then(r => setCompanyInfo(r || {}));
-      }
+        const { companyId, createdBy } = r[0];
+        fetchCompanyInfo(companyId).then(r => setCompanyInfo(r || {}));
+        $crisp.push(["set", "session:data", [["createdBy", createdBy], ["companyId", companyId  ]]])  }
     });
   }, [id]);
 

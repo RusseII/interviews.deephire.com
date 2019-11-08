@@ -15,8 +15,8 @@ export const fetchInterview = async id => {
   return null;
 };
 
-export const fetchCompanyInfo = id => {
-  return fetch(`${apiUrl}/companies/${id}`)
+export const fetchCompanyInfo = companyId => {
+  return fetch(`${apiUrl}/companies/${companyId}`)
     .then(response => {
       if (response.ok) return response.json();
     })

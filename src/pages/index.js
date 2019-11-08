@@ -45,8 +45,8 @@ const Index = ({ location }) => {
 
     if (interview) {
       interview = interview[0] || interview;
-      const { createdBy, _id, interviewName } = interview;
-      const url = await fetchCompanyInfo(createdBy);
+      const { companyId, _id, interviewName } = interview;
+      const url = await fetchCompanyInfo(companyId);
       const { introVideo: companyIntro, companyName } = url || {};
       setUrl(companyIntro ? companyIntro : defaultIntroVideo);
       mixpanel.set_group('InterviewCompany', [companyName]);
