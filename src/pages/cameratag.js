@@ -9,7 +9,7 @@ import qs from 'qs';
 import Texty from 'rc-texty';
 import QueueAnim from 'rc-queue-anim';
 
-import HandleBrowsers from "@/components/HandleBrowsers"
+import HandleBrowsers from '@/components/HandleBrowsers';
 
 const Record = ({ location }) => {
   const id = qs.parse(location.search)['?id'];
@@ -21,27 +21,19 @@ const Record = ({ location }) => {
   const [data, setData] = useState(null);
   const [vis, setVis] = useState(true);
 
-
-  const setup = async () => {
-    var [data] = await fetchInterview(id);
-    setData(data);
-    // const {
-    //   createdBy,
-    //   interviewName,
-    //   interviewConfig: { answerTime, prepTime, retakesAllowed } = {},
-    //   interviewQuestions: interviewQ = [],
-    // } = data || {};
-  };
-
   useEffect(() => {
-    setup();
-  }, [setup]);
+    const setup = async () => {
+      var [data] = await fetchInterview(id);
+      setData(data);
+    };
 
+    setup();
+  }, [id]);
 
   const reAnimateQuestion = () => {
-    setVis(false)
-    setTimeout(() => setVis(true),500)
-  }
+    setVis(false);
+    setTimeout(() => setVis(true), 500);
+  };
   const completedQ = (medias, uuid) => {
     setIndex(index => {
       const interviewData = {
@@ -61,7 +53,7 @@ const Record = ({ location }) => {
           interviewStage: 'completed',
         });
         mixpanel.track('Interview completed');
-        router.push(`/victory?id=${id}${simple === '1' ? '&simple=' + simple: ''}`);
+        router.push(`/victory?id=${id}${simple === '1' ? '&simple=' + simple : ''}`);
         return index;
       } else {
         storeInterviewQuestionRework(interviewData);
@@ -79,9 +71,11 @@ const Record = ({ location }) => {
       }`}</h3>
       <h1 style={{ color: '#2f69f8', textAlign: 'center' }}>
         <QueueAnim type="alpha">
-          {vis && <Texty key={index} leave={{}}>
-            {interviewQuestions[index].question}
-    </Texty> }
+          {vis && (
+            <Texty key={index} leave={{}}>
+              {interviewQuestions[index].question}
+            </Texty>
+          )}
         </QueueAnim>
       </h1>
       <CameraTag
