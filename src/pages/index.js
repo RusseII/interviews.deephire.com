@@ -121,11 +121,7 @@ const Index = ({ location }) => {
           </div>
         </Col>
       </Row>
-      <Row type="flex" justify="center">
-        {/* YUCK - Conditional logic for 1 client (below) */}
-        {id === '5c93849154b7ba00088dde51' && <Upload {...conditionalLogicForOneClient} />}
-        {/* YUCK - Conditional logic for 1 client (above) */}
-      </Row>
+  
       <SignIn
         text="Start Interview"
         removeExitIntent={removeExitIntent ? removeExitIntent : () => console.log("exit intent not setup yet")}
