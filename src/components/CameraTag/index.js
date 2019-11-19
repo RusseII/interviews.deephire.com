@@ -24,24 +24,21 @@ const DetectRTC = require('detectrtc');
 const simple = qs.parse(window.location.search)['simple'];
 const cameraId = 'DeepHire';
 
-
 const useScreenHeight = () => {
-
-function debounce(fn, ms) {
-  let timer;
-  return _ => {
-    clearTimeout(timer);
-    timer = setTimeout(_ => {
-      timer = null;
-      // eslint-disable-next-line prefer-rest-params
-      fn.apply(this, arguments);
-    }, ms);
-  };
-}
+  function debounce(fn, ms) {
+    let timer;
+    return _ => {
+      clearTimeout(timer);
+      timer = setTimeout(_ => {
+        timer = null;
+        // eslint-disable-next-line prefer-rest-params
+        fn.apply(this, arguments);
+      }, ms);
+    };
+  }
   const height = () =>
     window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
   const handleResize = () => {
-    console.log("resise")
     setCameraHeight(height());
   };
   const [cameraHeight, setCameraHeight] = useState(height());
@@ -56,7 +53,7 @@ function debounce(fn, ms) {
         debounce(() => handleResize(), 500)
       );
     };
-  }, [handleResize]);
+  });
   return cameraHeight;
 };
 const height = () =>
@@ -86,18 +83,14 @@ const setupObservers = (onUpload, setRecording, setUploadProgress) => {
   CameraTag.observe(cameraId, 'published', percent => {
     setUploadProgress(0);
   });
-
-  //  CameraTag.observe(cameraId, "initialized", function(){
-
-  // });
 };
 
 const Record = ({ onUpload, name, description, maxLength }) => {
   const [recording, setRecording] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const screenHeight = useScreenHeight();
-  console.log(screenHeight)
-  
+  console.log(screenHeight);
+
   let mobile = false;
   const width = () =>
     window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
@@ -116,37 +109,22 @@ const Record = ({ onUpload, name, description, maxLength }) => {
 
   useCameraTagSetup();
 
-
- 
-
   const useAsHeight = simple === '1' ? screenHeight / 1.5 : screenHeight / 2;
-
-  // handleResize() {
-  //   this.setState({ width: getWidth() });
-  // }
-  // componentDidMount() {
-  //   window.addEventListener('resize', debounce(() => this.handleResize(), 500));
-  // }
-
-  // componentWillUnmount() {
-  //   window.removeEventListener('resize', debounce(() => this.handleResize(), 500));
-  // }
 
   return (
     <div className={styles.wrapper}>
       <camera
-      
         data-name={name}
         data-description={description}
         className={styles.center}
-        data-app-id='a-b0419fd0-86f2-0137-a3ff-02f6e3696dde'
+        data-app-id="a-b0419fd0-86f2-0137-a3ff-02f6e3696dde"
         id={cameraId}
-        data-sources='record'
-        data-pre-roll-length='3'
-        data-min-length='0'
+        data-sources="record"
+        data-pre-roll-length="3"
+        data-min-length="0"
         data-maxlength={maxLength || 90}
-        data-autopreview='false'
-        data-simple-security='true'
+        data-autopreview="false"
+        data-simple-security="true"
         data-height={useAsHeight}
         data-width={mobile ? useAsHeight * 0.75 : useAsHeight * (4 / 3)}
         data-stack={DetectRTC.osName.toLowerCase() === 'android' ? 'mediarecorder' : 'auto'}
