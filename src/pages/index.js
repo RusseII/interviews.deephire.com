@@ -107,11 +107,11 @@ const Index = ({ location }) => {
         </h1>
       )}
       <Row style={{paddingTop: 24}}type="flex" justify="center">
-        <Col span={8}>
+        <Col sm={8} xs={0}>
           <img style={{ width: "100%", maxWidth: 300 }} src={undrawPhoto} />
         </Col>
-        <Col span={16}>
-          <div style={{ marginRight: 100, textAlign: 'left' }}>
+        <Col sm={16} xs={22}>
+          <div style={{ textAlign: 'left' }}>
             You will be asked to record answers to a series of prompts that will ask you common
             interview questions.
           </div>
