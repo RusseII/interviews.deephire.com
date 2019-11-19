@@ -33,6 +33,9 @@ const Index = ({ location }) => {
   const emailParms = qs.parse(location.search)['fullname'];
   const fullNameParams = qs.parse(location.search)['email'];
   const simple = qs.parse(location.search)['simple'];
+  const chatbox = qs.parse(location.search)['chat'];
+
+  if (chatbox === '0') $crisp.push(["do", "chat:hide"])
 
   const [url, setUrl] = useState(null);
   const [exitIntentModal, setExitIntentModal] = useState(false);

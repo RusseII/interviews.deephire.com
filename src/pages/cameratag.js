@@ -1,7 +1,8 @@
-/* global mixpanel */
+/* global mixpanel $crisp */
 import React, { useEffect, useState } from 'react';
 import CameraTag from '@/components/CameraTag';
-import Timer from '@/components/Timer';
+
+import ReactPlayer from 'react-player'
 
 import { fetchInterview, storeInterviewQuestionRework } from '@/services/api';
 import { Typography, Row, Col, Icon, List, Button, Drawer } from 'antd';
@@ -43,6 +44,15 @@ const TipDrawer = ({ drawerVisible, setDrawerVisible, questionInfo, tips, exampl
         </div>
       )}
     />
+
+    {exampleVideos && <List
+      dataSource={exampleVideos}
+      renderItem={(item, i) => (
+          <ReactPlayer style={{marginTop: 24}} url={item} width={300} height={169}  />
+       
+      )}
+    />
+      }
   </Drawer>
 );
 const Record = ({ location }) => {
@@ -50,6 +60,10 @@ const Record = ({ location }) => {
   const fullName = qs.parse(location.search)['fullName'];
   const email = qs.parse(location.search)['email'];
   const simple = qs.parse(location.search)['simple'];
+  const chatbox = qs.parse(location.search)['chat'];
+
+  if (chatbox === '0') $crisp.push(["do", "chat:hide"])
+
 
   const [index, setIndex] = useState(0);
   const [data, setData] = useState(null);
@@ -83,7 +97,7 @@ const Record = ({ location }) => {
           interviewStage: 'completed',
         });
         mixpanel.track('Interview completed');
-        router.push(`/victory?id=${id}${simple === '1' ? '&simple=' + simple : ''}`);
+        router.push(`/victory?id=${id}${simple === '1' ? '&simple=' + simple : ''}${chatbox === '0' ? '&chat=' + chatbox : ''}`);
         return index;
       } else {
         storeInterviewQuestionRework(interviewData);
@@ -93,10 +107,10 @@ const Record = ({ location }) => {
   };
   if (!data) return null;
 
-  const { interviewQuestions } = data;
+  const { interviewQuestions, interviewConfig } = data;
   //  {tips, hint, questionInfo, exampleVideos} = interviewQuestions
   const currentQuestion = interviewQuestions[index]
-  const {question, hint, questionInfo, tips, exampleVideos} = currentQuestion
+  const {question, hint, questionInfo, tips, exampleVideos, answerTime} = currentQuestion
   return (
     <HandleBrowsers>
       <div className={styles.wrapper}>
@@ -127,7 +141,7 @@ const Record = ({ location }) => {
           name={`${fullName} ${data.interviewName}`}
           description={`${email} ${id} ${index} ${data.createdBy}`}
           onUpload={completedQ}
-          maxLength={data.interviewConfig.answerTime}
+          maxLength={answerTime || interviewConfig.answerTime}
         />
       </div>
     </HandleBrowsers>

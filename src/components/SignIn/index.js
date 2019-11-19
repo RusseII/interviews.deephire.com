@@ -14,13 +14,15 @@ const SignIn = Form.create()(props => {
   const fullNameParam = qs.parse(location.search)['fullName'];
   const emailParam = qs.parse(location.search)['email'];
   const simple = qs.parse(location.search)['simple'];
+  const chat = qs.parse(location.search)['chat'];
 
   const skipForm = () => {
     mixpanel.track('Interview started');
     router.push(
       `cameratag?id=${id}&fullName=${fullNameParam}&email=${emailParam}${
         simple === '1' ? '&simple=' + simple : ''
-      }`
+      }${
+        chat === '0' ? '&chat=' + chat : ''}`
     );
     removeExitIntent();
   };
@@ -60,12 +62,12 @@ const SignIn = Form.create()(props => {
       });
       $crisp.push(['set', 'user:email', email]);
       $crisp.push(['set', 'user:nickname', [fullName]]);
-    
+      console.log(chat)
 
       router.push(
         `cameratag?id=${id}&fullName=${fullName}&email=${email}${
-          simple === '1' ? '&simple=' + simple : ''
-        }`
+          simple === '1' ? '&simple=' + simple : ''}${
+            chat === '0' ? '&chat=' + chat : ''}`
       );
       removeExitIntent();
       form.resetFields();
