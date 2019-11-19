@@ -1,7 +1,7 @@
 @import '~antd/lib/style/themes/default.less';
 
 .content {
-  height: calc(~'100vh - 130px');
+  min-height: calc(~'100vh - 130px');
   // min-height: calc(~'500px + 25vh');
   padding: @padding-lg;
 }
@@ -25,7 +25,7 @@
 
 @media screen and (max-width: @screen-sm) {
   .content {
-    padding: 15px;
+    padding: @padding-sm;
   }
 
 }
