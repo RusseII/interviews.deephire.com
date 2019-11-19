@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import CameraTag from '@/components/CameraTag';
 import Timer from '@/components/Timer';
 
-
 import { fetchInterview, storeInterviewQuestionRework } from '@/services/api';
 import { Typography, Row, Col, Icon, List, Button, Drawer } from 'antd';
 
@@ -16,32 +15,31 @@ import qs from 'qs';
 import HandleBrowsers from '@/components/HandleBrowsers';
 const { Title, Paragraph } = Typography;
 
-const data = [
+const mockData = [
   'Focus on your most recent job title and experience.',
-  'Talk about your most impressive accomplishments.', 
-  'Include one or two sentences about what type of organization you are looking for.'
-
+  'Talk about your most impressive accomplishments.',
+  'Include one or two sentences about what type of organization you are looking for.',
 ];
 
-const TipDrawer = ({drawerVisible, setDrawerVisible}) => (
+const TipDrawer = ({ drawerVisible, setDrawerVisible, questionInfo, tips, exampleVideos }) => (
   <Drawer
     width={350}
-    title='Tips & Examples'
-    placement='right'
+    title="Tips & Examples"
+    placement="right"
     closable={true}
     onClose={() => setDrawerVisible(false)}
     visible={drawerVisible}
-  > 
-  {/* <Title level={4}>Introduce yourself</Title> */}
+  >
+   
 
-    <Paragraph type="secondary">Give employers an idea of you are as a candidate. Try to fully answer each of the questions. </Paragraph>
-<List
-     
-      
-      dataSource={data}
+    <Paragraph type="secondary">
+      {questionInfo || "These videos are a chance to show off what makes you unique."}
+    </Paragraph>
+    <List
+      dataSource={tips || mockData}
       renderItem={(item, i) => (
         <div>
-          <Typography.Text >{i+1}.</Typography.Text> {item}
+          <Typography.Text>{i + 1}.</Typography.Text> {item}
         </div>
       )}
     />
@@ -56,7 +54,6 @@ const Record = ({ location }) => {
   const [index, setIndex] = useState(0);
   const [data, setData] = useState(null);
   const [drawerVisible, setDrawerVisible] = useState(false);
-
 
   useEffect(() => {
     const setup = async () => {
@@ -97,28 +94,34 @@ const Record = ({ location }) => {
   if (!data) return null;
 
   const { interviewQuestions } = data;
+  //  {tips, hint, questionInfo, exampleVideos} = interviewQuestions
+  const currentQuestion = interviewQuestions[index]
+  const {question, hint, questionInfo, tips, exampleVideos} = currentQuestion
   return (
     <HandleBrowsers>
       <div className={styles.wrapper}>
-        <TipDrawer setDrawerVisible={setDrawerVisible} drawerVisible={drawerVisible}/>
+        <TipDrawer questionInfo={questionInfo} tips={tips} exampleVideos={exampleVideos}  setDrawerVisible={setDrawerVisible} drawerVisible={drawerVisible} />
         {/* <h3 key={index} style={{ textAlign: 'center' }}>{`Question ${index + 1}/${
         interviewQuestions.length
       }`}</h3> */}
         <Row type="flex" justify="center">
-         
           <Col style={{ textAlign: 'center' }} lg={12} sm={20} xs={24}>
             <Title level={2} style={{ marginBottom: 8 }}>
-             {interviewQuestions[index].question}
-              <Button onClick={() => setDrawerVisible(true)} size='small' shape='circle' icon='info' />
+              {question}
+              <Button
+                onClick={() => setDrawerVisible(true)}
+                size="small"
+                shape="circle"
+                icon="info"
+              />
             </Title>
 
-            {/* <Title level={4} type='secondary' style={{ marginTop: 0 }}>
-              Give some examples of your work/ study/ life experiences (During my time at... I was
-              able to... meaning I can now... for you)...
-            </Title> */}
+            {hint && (
+              <Title level={4} type="secondary" style={{ marginTop: 0 }}>
+                {hint}
+              </Title>
+            )}
           </Col>
-
-        
         </Row>
         <CameraTag
           name={`${fullName} ${data.interviewName}`}
