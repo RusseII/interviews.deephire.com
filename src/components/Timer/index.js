@@ -1,7 +1,11 @@
 import React, { useState } from 'react';
-import { Progress } from 'antd';
+import styles from "./style.less";
 
-const Timer = ({ countDown, seconds, onFinish, paused }) => {
+
+
+const Timer = (props) => {
+
+  const { seconds, onFinish, paused, style } = props
   const [time, setTime] = useState(seconds);
 
   const timer = setTimeout(function() {
@@ -10,30 +14,17 @@ const Timer = ({ countDown, seconds, onFinish, paused }) => {
 
   if (time === 0) {
     clearTimeout(timer);
-    onFinish();
+    if (onFinish)  onFinish();
+
   }
+  const transformTime = time =>
+    new Date(time * 1000).toISOString().substr(14, 5);
 
   return (
-    <div style={{paddingTop: "12px"}}>
-      {' '}
-      {countDown ? (
-        <Progress
-          status="normal"
-          width="8vh"
-          type="circle"
-          format={percent => time}
-          percent={(time / seconds) * 100}
-        />
-      ) : (
-        <Progress
-          status="normal"
-          width="8vh"
-          type="circle"
-          format={percent => seconds - time + ' sec'}
-          percent={(1 - time / seconds) * 100}
-        />
-      )}
-    </div>
+      <span className={styles.timer} style={style}>
+        <span className={time % 2 ? styles.dotClear: styles.dotRed } />
+        {`${transformTime(seconds - time)} / ${transformTime(seconds)}`}
+      </span>
   );
 };
 

@@ -1,12 +1,11 @@
 /* global mixpanel FS $crisp*/
 import SignIn from '@/components/SignIn';
 import { fetchCompanyInfo, fetchInterview } from '@/services/api';
-import conditionalLogicForOneClient from '@/technicalDebt/conditionalLogic';
-import { Col, Row, Upload, Modal } from 'antd';
+import { Col, Row, Divider } from 'antd';
 import qs from 'qs';
 import React, { useEffect, useState } from 'react';
-import ReactPlayer from 'react-player';
 import exitIntent from '@/services/exit-intent';
+import undrawPhoto from '@/../public/undrawPhoto.png';
 
 import { router } from 'umi';
 import styles from './index.less';
@@ -35,7 +34,6 @@ const Index = ({ location }) => {
   const fullNameParams = qs.parse(location.search)['email'];
   const simple = qs.parse(location.search)['simple'];
 
-
   const [url, setUrl] = useState(null);
   const [exitIntentModal, setExitIntentModal] = useState(false);
 
@@ -55,9 +53,6 @@ const Index = ({ location }) => {
       mixpanel.set_group('CreatedBy', [createdBy]);
       mixpanel.set_group('CompanyId', [companyId]);
 
-
-
-
       mixpanel.track('Interview visited');
     } else {
       mixpanel.track('Invalid ID');
@@ -66,23 +61,26 @@ const Index = ({ location }) => {
     }
   };
 
-  const useOnMount = () => useEffect(() => {
-    if (emailParms && fullNameParams && id) {
-      identify(emailParms, fullNameParams, id);
-    }
-    setTimeout(() =>
-    removeExitIntent = exitIntent({
-      maxDisplays: 1,
-      onExitIntent: () => {
-        setExitIntentModal(true);
-      },
-    }), 5000)
+  const useOnMount = () =>
+    useEffect(() => {
+      if (emailParms && fullNameParams && id) {
+        identify(emailParms, fullNameParams, id);
+      }
+      setTimeout(
+        () =>
+          (removeExitIntent = exitIntent({
+            maxDisplays: 1,
+            onExitIntent: () => {
+              setExitIntentModal(true);
+            },
+          })),
+        5000
+      );
 
-    getData();
-  }, []);
+      getData();
+    }, []);
 
-
-  useOnMount()
+  useOnMount();
 
   const exit = e => {
     mixpanel.track(`Exit modal clicked ${e}`);
@@ -91,7 +89,7 @@ const Index = ({ location }) => {
   };
   return (
     <div className={styles.normal}>
-      <Modal
+      {/* <Modal
         title="Are you sure you want to leave?"
         visible={exitIntentModal}
         // onOk={handleOk}e
@@ -102,29 +100,37 @@ const Index = ({ location }) => {
       >
         This intervew is a chance to show off what makes you unique. Please complete it now, or
         message our support if you have issues!
-        {/* <SignIn metaData="Exit Intent Modal" text="Save" removeExitIntent={removeExitIntent} location={location} /> */}
-      </Modal>
-      { simple !== '1'  && <h1 style={{ paddingTop: '24px' }}>Welcome to your Video Interview!</h1>}
-      <Row type="flex" justify="center">
-        <Col xxl={simple === '1' ? 24: 8} xl={simple === '1' ? 24: 8} lg={simple === '1' ? 24: 8} md={simple === '1' ? 24: 8} xs={simple === '1' ? 24: 8} sm={simple === '1' ? 24: 15}>
-          <div className={styles.playerWrapper}>
-            <ReactPlayer
-              onStart={() => mixpanel.track('Watched intro video')}
-              onEnded={() => mixpanel.track('Watched full intro video')}
-              controls
-              key={url}
-              className={styles.reactPlayer}
-              url={url}
-              width="100%"
-              height="100%"
-            />
+      </Modal> */}
+      {simple !== '1' && (
+        <h1 style={{ fontSize: 24, paddingTop: '24px' }}>
+          Welcome! You've been invited for a one-way video interview!
+        </h1>
+      )}
+      <Row style={{paddingTop: 24}}type="flex" justify="center">
+        <Col span={8}>
+          <img style={{ width: "100%", maxWidth: 300 }} src={undrawPhoto} />
+        </Col>
+        <Col span={16}>
+          <div style={{ marginRight: 100, textAlign: 'left' }}>
+            You will be asked to record answers to a series of prompts that will ask you common
+            interview questions.
           </div>
+          <br/>
+          <div style={{ textAlign: 'left', fontWeight: "bold" }}>You will need:</div>
+          <div style={{ textAlign: 'left' }}>- Computer with camera, or a phone.</div>
+          <div style={{ textAlign: 'left' }}>- Quiet environment.</div>
+          <div style={{ textAlign: 'left' }}>- Approximately 15 minutes.</div>
+
         </Col>
       </Row>
   
+      <Divider />
+      <h1 style={{fontSize: 20}}>Fill out the below info to get started!</h1>
       <SignIn
-        text="Start Interview"
-        removeExitIntent={removeExitIntent ? removeExitIntent : () => console.log("exit intent not setup yet")}
+        text="Next"
+        removeExitIntent={
+          removeExitIntent ? removeExitIntent : () => console.log('exit intent not setup yet')
+        }
         location={location}
       />
     </div>

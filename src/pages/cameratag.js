@@ -1,16 +1,52 @@
 /* global mixpanel */
 import React, { useEffect, useState } from 'react';
 import CameraTag from '@/components/CameraTag';
+import Timer from '@/components/Timer';
+
+
 import { fetchInterview, storeInterviewQuestionRework } from '@/services/api';
+import { Typography, Row, Col, Icon, List, Button, Drawer } from 'antd';
+
+import styles from './index.less';
 
 import { router } from 'umi';
 
 import qs from 'qs';
-import Texty from 'rc-texty';
-import QueueAnim from 'rc-queue-anim';
 
 import HandleBrowsers from '@/components/HandleBrowsers';
+const { Title, Paragraph } = Typography;
 
+const data = [
+  'Focus on your most recent job title and experience.',
+  'Talk about your most impressive accomplishments.', 
+  'Include one or two sentences about what type of organization you are looking for.'
+
+];
+
+const TipDrawer = ({drawerVisible, setDrawerVisible}) => (
+  <Drawer
+    width={350}
+    title='Tips & Examples'
+    placement='right'
+    closable={true}
+    onClose={() => setDrawerVisible(false)}
+    visible={drawerVisible}
+  > 
+  {/* <Title level={4}>Introduce yourself</Title> */}
+
+    <Paragraph type="secondary">Give employers an idea of you are as a candidate. Try to fully answer each of the questions. </Paragraph>
+<List
+     
+      
+      dataSource={data}
+      renderItem={(item, i) => (
+        <div>
+          <Typography.Text >{i+1}.</Typography.Text> {item}
+        </div>
+      )}
+    />
+  </Drawer>
+);
 const Record = ({ location }) => {
   const id = qs.parse(location.search)['?id'];
   const fullName = qs.parse(location.search)['fullName'];
@@ -19,7 +55,8 @@ const Record = ({ location }) => {
 
   const [index, setIndex] = useState(0);
   const [data, setData] = useState(null);
-  const [vis, setVis] = useState(true);
+  const [drawerVisible, setDrawerVisible] = useState(false);
+
 
   useEffect(() => {
     const setup = async () => {
@@ -30,10 +67,6 @@ const Record = ({ location }) => {
     setup();
   }, [id]);
 
-  const reAnimateQuestion = () => {
-    setVis(false);
-    setTimeout(() => setVis(true), 500);
-  };
   const completedQ = (medias, uuid) => {
     setIndex(index => {
       const interviewData = {
@@ -66,25 +99,34 @@ const Record = ({ location }) => {
   const { interviewQuestions } = data;
   return (
     <HandleBrowsers>
-      <h3 key={index} style={{ textAlign: 'center' }}>{`Question ${index + 1}/${
+      <div className={styles.wrapper}>
+        <TipDrawer setDrawerVisible={setDrawerVisible} drawerVisible={drawerVisible}/>
+        {/* <h3 key={index} style={{ textAlign: 'center' }}>{`Question ${index + 1}/${
         interviewQuestions.length
-      }`}</h3>
-      <h1 style={{ color: '#2f69f8', textAlign: 'center' }}>
-        <QueueAnim type="alpha">
-          {vis && (
-            <Texty key={index} leave={{}}>
-              {interviewQuestions[index].question}
-            </Texty>
-          )}
-        </QueueAnim>
-      </h1>
-      <CameraTag
-        name={`${fullName} ${data.interviewName}`}
-        description={`${email} ${id} ${index} ${data.createdBy}`}
-        onUpload={completedQ}
-        maxLength={data.interviewConfig.answerTime}
-        reAnimateQuestion={reAnimateQuestion}
-      />
+      }`}</h3> */}
+        <Row type="flex" justify="center">
+         
+          <Col style={{ textAlign: 'center' }} lg={12} sm={20} xs={24}>
+            <Title level={2} style={{ marginBottom: 8 }}>
+             {interviewQuestions[index].question}
+              <Button onClick={() => setDrawerVisible(true)} size='small' shape='circle' icon='info' />
+            </Title>
+
+            {/* <Title level={4} type='secondary' style={{ marginTop: 0 }}>
+              Give some examples of your work/ study/ life experiences (During my time at... I was
+              able to... meaning I can now... for you)...
+            </Title> */}
+          </Col>
+
+        
+        </Row>
+        <CameraTag
+          name={`${fullName} ${data.interviewName}`}
+          description={`${email} ${id} ${index} ${data.createdBy}`}
+          onUpload={completedQ}
+          maxLength={data.interviewConfig.answerTime}
+        />
+      </div>
     </HandleBrowsers>
   );
 };
