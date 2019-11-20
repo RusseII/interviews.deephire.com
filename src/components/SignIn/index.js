@@ -9,7 +9,7 @@ import qs from 'qs';
 const FormItem = Form.Item;
 
 const SignIn = Form.create()(props => {
-  const { form, location, removeExitIntent, text, metaData } = props;
+  const { form, location, text, metaData } = props;
   const id = qs.parse(location.search)['?id'];
   const fullNameParam = qs.parse(location.search)['fullName'];
   const emailParam = qs.parse(location.search)['email'];
@@ -24,8 +24,19 @@ const SignIn = Form.create()(props => {
       }${
         chat === '0' ? '&chat=' + chat : ''}`
     );
-    removeExitIntent();
+
   };
+
+  // const nextButton = () => (
+  //   <Button
+  //   size="large"
+  //   type="primary"
+  //   onClick={skipForm}
+  // >
+  //   {text}
+  // </Button>
+  // )
+
   if (fullNameParam && emailParam) {
     return (
       <Button
@@ -69,7 +80,7 @@ const SignIn = Form.create()(props => {
           simple === '1' ? '&simple=' + simple : ''}${
             chat === '0' ? '&chat=' + chat : ''}`
       );
-      removeExitIntent();
+  
       form.resetFields();
     });
   };
