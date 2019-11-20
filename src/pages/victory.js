@@ -30,9 +30,10 @@ export default () => {
           />
         </div>
       </Row>
-      <Button type="primary" onClick={openChat} className={styles.button}>
+      { (chatbox !== '0') && <Button type="primary" onClick={openChat} className={styles.button}>
         Leave Feedback
       </Button>
+}
     </div>
   );
 };
