@@ -59,8 +59,8 @@ const SignIn = Form.create()(props => {
 
       mixpanel.alias(email);
       mixpanel.people.set({
-        $email: email, // only special properties need the $
-        $last_login: new Date(), // properties can be dates...
+        $email: email, 
+        $last_login: new Date(), 
         $name: fullName,
         id,
         metaData,
@@ -73,7 +73,6 @@ const SignIn = Form.create()(props => {
       });
       $crisp.push(['set', 'user:email', email]);
       $crisp.push(['set', 'user:nickname', [fullName]]);
-      console.log(chat)
 
       router.push(
         `cameratag?id=${id}&fullName=${fullName}&email=${email}${
