@@ -107,7 +107,7 @@ const Record = ({ location }) => {
   };
   if (!data) return null;
 
-  const { interviewQuestions, interviewConfig } = data;
+  const { interviewQuestions, interviewConfig, createdBy } = data;
   //  {tips, hint, questionInfo, exampleVideos} = interviewQuestions
   const currentQuestion = interviewQuestions[index]
   const {question, hint, questionInfo, tips, exampleVideos, answerTime} = currentQuestion
@@ -124,7 +124,7 @@ const Record = ({ location }) => {
               {question}
               <Button
                 onClick={() => setDrawerVisible(true)}
-           
+          
                 shape="circle"
                 icon="info"
                 style={{marginLeft: 8}}
@@ -139,8 +139,8 @@ const Record = ({ location }) => {
           </Col>
         </Row>
         <CameraTag
-          name={`${fullName} ${data.interviewName}`}
-          description={`${email} ${id} ${index} ${data.createdBy}`}
+          name={`${createdBy} ${fullName} ${data.interviewName}`}
+          description={`${JSON.stringify(currentQuestion)} ${email} ${id} ${index} ${data.createdBy}`}
           onUpload={completedQ}
           maxLength={answerTime || interviewConfig.answerTime}
         />

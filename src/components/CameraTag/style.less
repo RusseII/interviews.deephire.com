@@ -27,9 +27,8 @@
   bottom: 0px;
   left: 0px;
   right: 0px;
-  color: #fff;
+  color: black;
   background: none;
-
 }
 
 .tester {
@@ -132,33 +131,50 @@
 //   background-size: contain;
 // }
 
-// .camera_tag .cameratag_screen.cameratag_select {
-//   background: none;
-// }
+.camera_tag .cameratag_screen.cameratag_select {
+  background: rgba(255,255,255,.7);
 
-// .camera_tag .cameratag_screen.cameratag_select .cameratag_save_device_selection {
-//   float: right;
-//   margin-top: 6px;
-//   margin-right: 10px;
-//   background: #2f69f8;
-//   color: #fff;
-//   padding: 5px 10px;
-//   cursor: pointer;
-//   font-size: 12px;
-// }
+}
 
-// .camera_tag .cameratag_screen.cameratag_select i {
-//   display: inline-block;
-//   width: 20px;
-//   margin-left: 10px;
-// }
+.camera_tag .cameratag_screen.cameratag_select .cameratag_save_device_selection {
+  float: right;
+  margin-top: 6px;
+  margin-right: 10px;
+  background: #2f69f8;
+  color: #fff;
+  padding: 5px 10px;
+  cursor: pointer;
+  font-size: 12px;
+}
 
-// .camera_tag .cameratag_screen.cameratag_select select {
-//   width: 50%;
-// }
+.camera_tag .cameratag_screen.cameratag_select i {
+  position: absolute;
+  width: 20px;
+  left: 10px;
+  // margin-left: 10px;
+ 
+  // color: white;
+}
+
+.camera_tag .cameratag_screen.cameratag_select select {
+  width: 50%;
+  position: absolute;
+  left: 50px
+}
 
 
-
+@media only screen and (max-width: 600px) {
+  .camera_tag .cameratag_screen.cameratag_select select {
+    width: 80%;
+  }
+  .camera_tag .cameratag_screen.cameratag_select .cameratag_save_device_selection {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  left: 0;
+  font-size: 16;
+  }
+}
 
 
 
@@ -1680,25 +1696,7 @@
 //   background-color: transparent;
 // }
 
-// .cameratag_cam_select {
-//   margin-top: 5%;
-//   width: 40%;
-// }
 
-// .cameratag_mic_select {
-//   margin-top: 2%;
-//   width: 40%;
-// }
-
-// .cameratag_save {
-//   margin-top: 2%;
-//   display: inline-block;
-//   padding: 10px 30px;
-//   color: #fff;
-//   font-size: 0.5em;
-//   cursor: pointer;
-//   background: #2f69f8;
-// }
 
 // /**************/
 // /* VIDEO WALL */
@@ -2085,28 +2083,28 @@
 //   height: 100%;
 // }
 
-.cameratag_audio_playbar_wavform_container {
-  display: table-cell;
-  text-align: center;
-  vertical-align: middle;
-  width: 100%;
-  height: 100%;
-}
-.cameratag_audio_playbar_waveform {
-  width: 100%;
-  background-color: #2f69f8;
-}
+// .cameratag_audio_playbar_wavform_container {
+//   display: table-cell;
+//   text-align: center;
+//   vertical-align: middle;
+//   width: 100%;
+//   height: 100%;
+// }
+// .cameratag_audio_playbar_waveform {
+//   width: 100%;
+//   background-color: #2f69f8;
+// }
 
-.cameratag_audio_playbar_cover {
-  position: absolute;
-  top: 0px;
-  bottom: 0px;
-  right: 0px;
-  background: #000;
-  width: 100%;
-  transition: width 0.5s;
-  transition-timing-function: linear;
-}
+// .cameratag_audio_playbar_cover {
+//   position: absolute;
+//   top: 0px;
+//   bottom: 0px;
+//   right: 0px;
+//   background: #000;
+//   width: 100%;
+//   transition: width 0.5s;
+//   transition-timing-function: linear;
+// }
 
 // .cameratag .jw-captions-text {
 //   background: rgba(0, 0, 0, 0.5);
