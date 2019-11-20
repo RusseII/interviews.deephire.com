@@ -1,11 +1,16 @@
-/* global mixpanel */
+/* global mixpanel $crisp */
 
 import { openChat } from '@/services/crisp';
 import { Button, Row } from 'antd';
 import React from 'react';
+import qs from 'qs';
 import styles from './victory.less';
 
 export default () => {
+
+  const chatbox = qs.parse(window.location.search)['chat'];
+
+  if (chatbox === '0') $crisp.push(["do", "chat:hide"])
   return (
     <div className={styles.wrapper}>
       <div style={{ paddingTop: '24px' }}>
@@ -25,9 +30,10 @@ export default () => {
           />
         </div>
       </Row>
-      <Button type="primary" onClick={openChat} className={styles.button}>
+      { (chatbox !== '0') && <Button type="primary" onClick={openChat} className={styles.button}>
         Leave Feedback
       </Button>
+}
     </div>
   );
 };

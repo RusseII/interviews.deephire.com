@@ -113,6 +113,7 @@ const Record = ({ onUpload, name, description, maxLength }) => {
 
   return (
     <div className={styles.wrapper}>
+     
       <camera
         data-name={name}
         data-description={description}
@@ -138,11 +139,12 @@ const Record = ({ onUpload, name, description, maxLength }) => {
       {/* <ErrorScreen /> */}
       <PlaybackScreen />
       <PausedScreen />
-      <SettingsScreen />
+    
       <MobileStartScreen />
       <SmsScreen />
       <UploadScreen percent={uploadProgress} />
       <CameraDetectionScreen />
+      <SettingsScreen />
     </div>
   );
 };
