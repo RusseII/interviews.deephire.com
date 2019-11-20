@@ -19,7 +19,7 @@ const SignIn = Form.create()(props => {
   const skipForm = () => {
     mixpanel.track('Interview started');
     router.push(
-      `cameratag?id=${id}&fullName=${fullNameParam}&email=${emailParam}${
+      `record?id=${id}&fullName=${fullNameParam}&email=${emailParam}${
         simple === '1' ? '&simple=' + simple : ''
       }${
         chat === '0' ? '&chat=' + chat : ''}`
@@ -75,7 +75,7 @@ const SignIn = Form.create()(props => {
       $crisp.push(['set', 'user:nickname', [fullName]]);
 
       router.push(
-        `cameratag?id=${id}&fullName=${fullName}&email=${email}${
+        `record?id=${id}&fullName=${fullName}&email=${email}${
           simple === '1' ? '&simple=' + simple : ''}${
             chat === '0' ? '&chat=' + chat : ''}`
       );
