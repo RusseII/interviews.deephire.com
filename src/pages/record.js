@@ -120,7 +120,7 @@ const Record = ({ location }) => {
       }`}</h3> */}
         <Row type="flex" justify="center">
           <Col style={{ textAlign: 'center' }} lg={12} sm={20} xs={24}>
-            <Paragraph style={{marginBottom: 0, marginTop: -20}} type="secondary">{`Question ${index + 1}/${interviewQuestions.length}`}</Paragraph>
+            <Paragraph style={{marginBottom: 0, marginTop: simple ? 0: -20}} type="secondary">{`Question ${index + 1}/${interviewQuestions.length}`}</Paragraph>
             <Title level={2} style={{ marginBottom: 8, marginTop: 0 }}>
               {question}
               <Button
