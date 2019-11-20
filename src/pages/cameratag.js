@@ -124,9 +124,10 @@ const Record = ({ location }) => {
               {question}
               <Button
                 onClick={() => setDrawerVisible(true)}
-                size="small"
+           
                 shape="circle"
                 icon="info"
+                style={{marginLeft: 8}}
               />
             </Title>
 
