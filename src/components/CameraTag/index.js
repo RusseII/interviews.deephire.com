@@ -61,6 +61,7 @@ const height = () =>
 
 const setupObservers = (onUpload, setRecording, setUploadProgress) => {
   CameraTag.observe(cameraId, 'published', ({ medias, uuid }) => {
+    setUploadProgress(0);
     const myCamera = CameraTag.cameras[cameraId];
     //set timeout is to fix a bug on edge/ie with event queue (reset does not work without it)
     setTimeout(() => {
@@ -80,17 +81,20 @@ const setupObservers = (onUpload, setRecording, setUploadProgress) => {
     setUploadProgress(Math.floor(percent * 100));
   });
 
-  CameraTag.observe(cameraId, 'published', percent => {
-    setUploadProgress(0);
-  });
+  // CameraTag.observe(cameraId, "initialized", function(){
+  //   CameraTag.cameras[cameraId].connect();
+  // })
+
+  // CameraTag.observe(cameraId, "cameraReset", function(){
+  //   CameraTag.cameras[cameraId].connect();
+  // })
 };
 
 const Record = ({ onUpload, name, description, maxLength }) => {
   const [recording, setRecording] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const screenHeight = useScreenHeight();
-  console.log(screenHeight);
-
+ 
   let mobile = false;
   const width = () =>
     window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
