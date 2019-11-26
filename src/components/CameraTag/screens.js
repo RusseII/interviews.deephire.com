@@ -174,9 +174,9 @@ export const SmsScreen = () => (
 
 export const UploadScreen = ({percent}) => (
   <div className={styles.tester} id={`${cameraId}-upload-screen`}>
-      <Row align="middle" type="flex" style={{height: "100%", backgroundColor: 'rgba(0,0,0,.9)' }}>
+      <Row align="middle" type="flex" style={{color: "white", height: "100%", backgroundColor: 'rgba(0,0,0,.9)' }}>
       <Col span={24}>
-      <Progress type="circle" percent={percent} />
+      <Progress  format={(percent) => <div style={{color: "white"}}>{`${percent}%`}</div>} type="circle" percent={percent} />
       </Col>
       <Col span={24}>
       Uploading...
