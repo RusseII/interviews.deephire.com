@@ -29,10 +29,7 @@ const identify = (email, fullName, id) => {
 };
 
 const Index = ({ location }) => {
-  const { '?id': id, fullname: fullNameParam, email: emailParam, simple, chat } = lowerCaseQueryParams(location.search);
-
-
-  if (chat === '0') $crisp.push(['do', 'chat:hide']);
+  const { id, fullname: fullNameParam, email: emailParam, simple } = lowerCaseQueryParams(location.search);
 
   const getData = async () => {
     let interview = await fetchInterview(id);

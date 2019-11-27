@@ -13,7 +13,7 @@ const SignIn = Form.create()(props => {
   const { form, location, text, metaData } = props;
 
 
-  const { '?id':id, fullname: fullNameParam, email: emailParam, simple, chat } = lowerCaseQueryParams(location.search);
+  const { id, fullname: fullNameParam, email: emailParam } = lowerCaseQueryParams(location.search);
 
   const skipForm = () => {
     console.log(location.search)

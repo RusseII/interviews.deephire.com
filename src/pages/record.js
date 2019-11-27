@@ -1,17 +1,17 @@
-/* global mixpanel $crisp */
+/* global mixpanel */
 import React, { useEffect, useState } from 'react';
 import CameraTag from '@/components/CameraTag';
 
 import ReactPlayer from 'react-player'
 
 import { fetchInterview, storeInterviewQuestionRework } from '@/services/api';
-import { Typography, Row, Col, Icon, List, Button, Drawer } from 'antd';
+import { Typography, Row, Col, List, Button, Drawer } from 'antd';
 
 import styles from './index.less';
 
 import { router } from 'umi';
 
-import { lowerCaseQueryParams } from '@/services/helpers.js';
+import { lowerCaseQueryParams } from '@/services/helpers';
 
 import HandleBrowsers from '@/components/HandleBrowsers';
 const { Title, Paragraph } = Typography;
@@ -56,7 +56,7 @@ const TipDrawer = ({ drawerVisible, setDrawerVisible, questionInfo, tips, exampl
   </Drawer>
 );
 const Record = ({ location }) => {
-  const {'?id': id, fullname: fullName, email, simple} = lowerCaseQueryParams(location.search)
+  const {id, fullname: fullName, email, simple} = lowerCaseQueryParams(location.search)
 
   const [index, setIndex] = useState(0);
   const [data, setData] = useState(null);

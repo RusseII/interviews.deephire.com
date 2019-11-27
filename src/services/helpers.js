@@ -16,6 +16,6 @@ const lowerCaseObj = obj => {
 };
 
 export const lowerCaseQueryParams = urlPath => {
-  const queryParams = qs.parse(urlPath);
+  const queryParams = qs.parse(urlPath, { ignoreQueryPrefix: true });
   return lowerCaseObj(queryParams);
 };
