@@ -2,40 +2,27 @@
 import { Form, Input, Button } from 'antd';
 import { router } from 'umi';
 import PropTypes from 'prop-types';
+import { lowerCaseQueryParams } from '@/services/helpers';
 
 import styles from './index.less';
-import qs from 'qs';
+
 
 const FormItem = Form.Item;
 
 const SignIn = Form.create()(props => {
   const { form, location, text, metaData } = props;
-  const id = qs.parse(location.search)['?id'];
-  const fullNameParam = qs.parse(location.search)['fullName'];
-  const emailParam = qs.parse(location.search)['email'];
-  const simple = qs.parse(location.search)['simple'];
-  const chat = qs.parse(location.search)['chat'];
+
+
+  const { '?id':id, fullname: fullNameParam, email: emailParam, simple, chat } = lowerCaseQueryParams(location.search);
 
   const skipForm = () => {
+    console.log(location.search)
     mixpanel.track('Interview started');
     router.push(
-      `record?id=${id}&fullName=${fullNameParam}&email=${emailParam}${
-        simple === '1' ? '&simple=' + simple : ''
-      }${
-        chat === '0' ? '&chat=' + chat : ''}`
+      `record${location.search}`
     );
-
   };
 
-  // const nextButton = () => (
-  //   <Button
-  //   size="large"
-  //   type="primary"
-  //   onClick={skipForm}
-  // >
-  //   {text}
-  // </Button>
-  // )
 
   if (fullNameParam && emailParam) {
     return (
@@ -59,8 +46,8 @@ const SignIn = Form.create()(props => {
 
       mixpanel.alias(email);
       mixpanel.people.set({
-        $email: email, 
-        $last_login: new Date(), 
+        $email: email,
+        $last_login: new Date(),
         $name: fullName,
         id,
         metaData,
@@ -75,11 +62,9 @@ const SignIn = Form.create()(props => {
       $crisp.push(['set', 'user:nickname', [fullName]]);
 
       router.push(
-        `record?id=${id}&fullName=${fullName}&email=${email}${
-          simple === '1' ? '&simple=' + simple : ''}${
-            chat === '0' ? '&chat=' + chat : ''}`
+        `record${location.search}`
       );
-  
+
       form.resetFields();
     });
   };

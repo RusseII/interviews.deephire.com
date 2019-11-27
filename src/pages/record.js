@@ -97,7 +97,7 @@ const Record = ({ location }) => {
           interviewStage: 'completed',
         });
         mixpanel.track('Interview completed');
-        router.push(`/victory?id=${id}${simple === '1' ? '&simple=' + simple : ''}${chatbox === '0' ? '&chat=' + chatbox : ''}`);
+        router.push(`/victory${location.search}`);
         return index;
       } else {
         storeInterviewQuestionRework(interviewData);
