@@ -89,10 +89,11 @@ const Index = ({ location }) => {
       </Row>
 
       <Divider />
-      <h1 style={{ fontSize: 20 }}>Fill out the below info to get started!</h1>
+      
       <SignIn
-        text="Next"
+
         location={location}
+        skip={fullNameParam && emailParam}
       />
     </div>
   );
