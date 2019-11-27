@@ -155,9 +155,13 @@ export const PausedScreen = () => (
 );
 
 export const PlaybackScreen = () => (
-      <div className={styles.tester} id={`${cameraId}-accept-screen`}>
-    <div  className="cameratag_stop_playback" style={{ width: '100%', height: '100%'}}>
-    
+      <div className={styles.tester} id={`${cameraId}-playback-screen`}>
+    {/* <div  style={{ width: '100%', height: '100%'}}> */}
+    <div  className="cameratag_stop_playback" style={{color: "white",height: "100%", backgroundColor: 'rgba(0,0,0,.1)' }}>
+     
+      <div className={styles.reviewScreen}>
+      Click to skip review.
+     </div>
     </div>
   </div>
 );
