@@ -1,7 +1,7 @@
 /* global $crisp */
 import qs from 'qs';
 
-const lowerCaseObj = obj => {
+export const lowerCaseObj = obj => {
   let key,
     keys = Object.keys(obj);
   let n = keys.length;
