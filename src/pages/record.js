@@ -11,7 +11,7 @@ import styles from './index.less';
 
 import { router } from 'umi';
 
-import qs from 'qs';
+import { lowerCaseQueryParams } from '@/services/helpers.js';
 
 import HandleBrowsers from '@/components/HandleBrowsers';
 const { Title, Paragraph } = Typography;
@@ -56,14 +56,7 @@ const TipDrawer = ({ drawerVisible, setDrawerVisible, questionInfo, tips, exampl
   </Drawer>
 );
 const Record = ({ location }) => {
-  const id = qs.parse(location.search)['?id'];
-  const fullName = qs.parse(location.search)['fullName'];
-  const email = qs.parse(location.search)['email'];
-  const simple = qs.parse(location.search)['simple'];
-  const chatbox = qs.parse(location.search)['chat'];
-
-  if (chatbox === '0') $crisp.push(["do", "chat:hide"])
-
+  const {'?id': id, fullname: fullName, email, simple} = lowerCaseQueryParams(location.search)
 
   const [index, setIndex] = useState(0);
   const [data, setData] = useState(null);

@@ -1,3 +1,4 @@
+/* global $crisp */
 import qs from 'qs';
 
 const lowerCaseObj = obj => {
@@ -9,7 +10,8 @@ const lowerCaseObj = obj => {
     key = keys[n];
     newobj[key.toLowerCase()] = obj[key];
   }
-
+  const {chat} = newobj
+  if (chat === '0') $crisp.push(['do', 'chat:hide']);
   return newobj;
 };
 
