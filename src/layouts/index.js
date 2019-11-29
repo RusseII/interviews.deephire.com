@@ -2,7 +2,7 @@
 import styles from './index.less';
 import { Layout, Row, Col } from 'antd';
 import React, { useState, useEffect } from 'react';
-import qs from 'qs';
+import { lowerCaseQueryParams } from '@/services/helpers';
 import { fetchInterview, fetchCompanyInfo } from '@/services/api';
 
 const { Footer, Content, Header } = Layout;
@@ -12,17 +12,30 @@ const BasicLayout = ({ children, location }) => {
     logo:
       'http://atelier.swiftideas.com/union-demo/wp-content/uploads/sites/5/2014/05/unionproducts-img-blank.png',
   });
-  const id = qs.parse(location.search)['?id'];
-  const simple = qs.parse(location.search)['simple'];
+
+  const { id, simple } = lowerCaseQueryParams(location.search);
 
   useEffect(() => {
     fetchInterview(id).then(r => {
       if (r[0]) {
         const { companyId, createdBy, companyName } = r[0];
         fetchCompanyInfo(companyId).then(r => setCompanyInfo(r || {}));
-        $crisp.push(['set', 'session:data', [['createdBy', createdBy], ['companyId', companyId]]]);
-        $crisp.push(['set', 'user:company', [companyId, { description: `Job Seeker. Interview createdBy: ${createdBy}, ${companyName}` }]]);
-
+        $crisp.push([
+          'set',
+          'session:data',
+          [
+            ['createdBy', createdBy],
+            ['companyId', companyId],
+          ],
+        ]);
+        $crisp.push([
+          'set',
+          'user:company',
+          [
+            companyId,
+            { description: `Job Seeker. Interview createdBy: ${createdBy}, ${companyName}` },
+          ],
+        ]);
       }
     });
   }, [id]);

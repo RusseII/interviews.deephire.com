@@ -1,17 +1,17 @@
-/* global mixpanel $crisp */
+/* global mixpanel */
 import React, { useEffect, useState } from 'react';
 import CameraTag from '@/components/CameraTag';
 
 import ReactPlayer from 'react-player'
 
 import { fetchInterview, storeInterviewQuestionRework } from '@/services/api';
-import { Typography, Row, Col, Icon, List, Button, Drawer } from 'antd';
+import { Typography, Row, Col, List, Button, Drawer } from 'antd';
 
 import styles from './index.less';
 
 import { router } from 'umi';
 
-import qs from 'qs';
+import { lowerCaseQueryParams } from '@/services/helpers';
 
 import HandleBrowsers from '@/components/HandleBrowsers';
 const { Title, Paragraph } = Typography;
@@ -56,14 +56,7 @@ const TipDrawer = ({ drawerVisible, setDrawerVisible, questionInfo, tips, exampl
   </Drawer>
 );
 const Record = ({ location }) => {
-  const id = qs.parse(location.search)['?id'];
-  const fullName = qs.parse(location.search)['fullName'];
-  const email = qs.parse(location.search)['email'];
-  const simple = qs.parse(location.search)['simple'];
-  const chatbox = qs.parse(location.search)['chat'];
-
-  if (chatbox === '0') $crisp.push(["do", "chat:hide"])
-
+  const {id, fullname: fullName, email, simple} = lowerCaseQueryParams(location.search)
 
   const [index, setIndex] = useState(0);
   const [data, setData] = useState(null);
@@ -97,7 +90,7 @@ const Record = ({ location }) => {
           interviewStage: 'completed',
         });
         mixpanel.track('Interview completed');
-        router.push(`/victory?id=${id}${simple === '1' ? '&simple=' + simple : ''}${chatbox === '0' ? '&chat=' + chatbox : ''}`);
+        router.push(`/victory${location.search}`);
         return index;
       } else {
         storeInterviewQuestionRework(interviewData);

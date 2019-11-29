@@ -2,9 +2,10 @@
 import SignIn from '@/components/SignIn';
 import { fetchCompanyInfo, fetchInterview } from '@/services/api';
 import { Col, Row, Divider } from 'antd';
-import qs from 'qs';
-import React, { useEffect, useState } from 'react';
-import exitIntent from '@/services/exit-intent';
+import React, { useEffect } from 'react';
+import { lowerCaseQueryParams } from '@/services/helpers';
+
+
 import undrawPhoto from '@/../public/undrawPhoto.png';
 
 import { router } from 'umi';
@@ -28,13 +29,7 @@ const identify = (email, fullName, id) => {
 };
 
 const Index = ({ location }) => {
-  const id = qs.parse(location.search)['?id'];
-  const emailParms = qs.parse(location.search)['fullname'];
-  const fullNameParams = qs.parse(location.search)['email'];
-  const simple = qs.parse(location.search)['simple'];
-  const chatbox = qs.parse(location.search)['chat'];
-
-  if (chatbox === '0') $crisp.push(['do', 'chat:hide']);
+  const { id, fullname: fullNameParam, email: emailParam, simple } = lowerCaseQueryParams(location.search);
 
   const getData = async () => {
     let interview = await fetchInterview(id);
@@ -60,8 +55,8 @@ const Index = ({ location }) => {
 
   const useOnMount = () =>
     useEffect(() => {
-      if (emailParms && fullNameParams && id) {
-        identify(emailParms, fullNameParams, id);
+      if (emailParam && fullNameParam && id) {
+        identify(emailParam, fullNameParam, id);
       }
 
       getData();
@@ -94,10 +89,11 @@ const Index = ({ location }) => {
       </Row>
 
       <Divider />
-      <h1 style={{ fontSize: 20 }}>Fill out the below info to get started!</h1>
+      
       <SignIn
-        text="Next"
+
         location={location}
+        skip={fullNameParam && emailParam}
       />
     </div>
   );
