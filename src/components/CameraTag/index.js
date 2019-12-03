@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from './style.less';
 import qs from 'qs';
-
+import { Spin } from 'antd';
 import {
   StartScreen,
   RecordingScreen,
@@ -59,7 +59,7 @@ const useScreenHeight = () => {
 const height = () =>
   window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
 
-const setupObservers = (onUpload, setRecording, setUploadProgress) => {
+const setupObservers = (onUpload, setRecording, setUploadProgress, setInitialized) => {
   CameraTag.observe(cameraId, 'published', ({ medias, uuid }) => {
     setUploadProgress(0);
     const myCamera = CameraTag.cameras[cameraId];
@@ -81,20 +81,24 @@ const setupObservers = (onUpload, setRecording, setUploadProgress) => {
     setUploadProgress(Math.floor(percent * 100));
   });
 
-  // CameraTag.observe(cameraId, "initialized", function(){
-  //   CameraTag.cameras[cameraId].connect();
-  // })
+  CameraTag.observe(cameraId, "initialized", function(){
+    setInitialized(true)
+    // CameraTag.cameras[cameraId].connect();
+  })
 
-  // CameraTag.observe(cameraId, "cameraReset", function(){
-  //   CameraTag.cameras[cameraId].connect();
-  // })
+  CameraTag.observe(cameraId, "cameraReset", function(){
+    // CameraTag.cameras[cameraId].connect();
+    setInitialized(false)
+    setTimeout(() => setInitialized(true), 1000)
+  })
 };
 
 const Record = ({ onUpload, name, description, maxLength }) => {
   const [recording, setRecording] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [initialized, setInitialized] = useState(false);
   const screenHeight = useScreenHeight();
- 
+
   let mobile = false;
   const width = () =>
     window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
@@ -105,51 +109,53 @@ const Record = ({ onUpload, name, description, maxLength }) => {
     useEffect(() => {
       CameraTag.setup();
 
-      setupObservers(onUpload, setRecording, setUploadProgress);
+      setupObservers(onUpload, setRecording, setUploadProgress, setInitialized);
       return () => {
         CameraTag.cameras[cameraId].destroy();
       };
     }, []);
 
   useCameraTagSetup();
-
   const useAsHeight = simple === '1' ? screenHeight / 1.5 : screenHeight / 2;
 
   return (
-    <div className={styles.wrapper}>
-     
-      <camera
-        data-name={name}
-        data-description={description}
-        className={styles.center}
-        data-app-id="a-b0419fd0-86f2-0137-a3ff-02f6e3696dde"
-        id={cameraId}
-        data-sources="record"
-        data-pre-roll-length="3"
-        data-min-length="0"
-        data-maxlength={maxLength || 90}
-        data-autopreview="false"
-        data-simple-security="true"
-        data-height={useAsHeight}
-        data-width={mobile ? useAsHeight * 0.75 : useAsHeight * (4 / 3)}
-        data-stack={DetectRTC.osName.toLowerCase() === 'android' ? 'mediarecorder' : 'auto'}
-      ></camera>
-      <StartScreen />
-      <RecordingScreen maxLength={maxLength} recording={recording} />
-      <CountDownScreen />
-      <WaitScreen />
-      <CompletedScreen />
-      <AcceptScreen mobile={mobile} />
-      {/* <ErrorScreen /> */}
-      <PlaybackScreen />
-      <PausedScreen />
-    
-      <MobileStartScreen />
-      <SmsScreen />
-      <UploadScreen percent={uploadProgress} />
-      <CameraDetectionScreen />
-      <SettingsScreen />
-    </div>
+    <Spin spinning={!initialized}>
+      <div className={styles.wrapper}>
+        <div style={{display: 'inline-block', width: mobile ? useAsHeight * 0.75 : useAsHeight * (4 / 3), height: useAsHeight}}> 
+        <camera
+          data-name={name}
+          data-description={description}
+       
+          data-app-id="a-b0419fd0-86f2-0137-a3ff-02f6e3696dde"
+          id={cameraId}
+          data-sources="record"
+          data-pre-roll-length="3"
+          data-min-length="0"
+          data-maxlength={maxLength || 90}
+          data-autopreview="false"
+          data-simple-security="true"
+          data-height={useAsHeight}
+          data-width={mobile ? useAsHeight * 0.75 : useAsHeight * (4 / 3)}
+          data-stack={DetectRTC.osName.toLowerCase() === 'android' ? 'mediarecorder' : 'auto'}
+        />
+        </div>
+        <StartScreen />
+        <RecordingScreen maxLength={maxLength} recording={recording} />
+        <CountDownScreen />
+        <WaitScreen />
+        <CompletedScreen />
+        <AcceptScreen mobile={mobile} />
+        {/* <ErrorScreen /> */}
+        <PlaybackScreen />
+        <PausedScreen />
+
+        <MobileStartScreen />
+        <SmsScreen />
+        <UploadScreen percent={uploadProgress} />
+        <CameraDetectionScreen />
+        <SettingsScreen />
+      </div>
+    </Spin>
   );
 };
 
