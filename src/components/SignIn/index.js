@@ -11,7 +11,7 @@ const FormItem = Form.Item;
 const SignIn = Form.create()(props => {
   const { form, location, text, skip} = props;
 
-  const { id} = lowerCaseQueryParams(location.search);
+  const { id, chat, simple} = lowerCaseQueryParams(location.search);
 
   const skipForm = () => {
     mixpanel.track('Interview started');
@@ -100,7 +100,13 @@ const SignIn = Form.create()(props => {
       $crisp.push(['set', 'user:email', email]);
       $crisp.push(['set', 'user:nickname', [fullName]]);
 
-      router.push(`record${location.search}`);
+      // router.push(`record${location.search}`);
+      router.push(
+        `record?id=${id}&fullName=${fullName}&email=${email}${
+          simple === '1' ? '&simple=' + simple : ''
+        }${
+          chat === '0' ? '&chat=' + chat : ''}`
+      );
 
       form.resetFields();
     });
