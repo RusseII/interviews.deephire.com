@@ -70,6 +70,15 @@ export const storeInterviewQuestionRework = async (
       const videosId = location.substring(n + 1);
       if (createdBy) {
         const { thumbnail640x480 } = medias;
+        victoryEvent(
+          interviewId,
+          userName,
+          candidateEmail,
+          interviewName,
+          createdBy,
+          videosId,
+          thumbnail640x480
+        );
         notifyCandidate(userName, candidateEmail);
         notifyRecruiter(
           interviewId,
@@ -125,6 +134,54 @@ export const notifyCandidate = (candidateName, candidateEmail) => {
   };
 
   fetch(`${apiUrl}/emails`, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+};
+
+export const startedEvent = (candidateEmail, userName, companyId, interviewName) => {
+  var data = {
+    candidateEmail,
+    userName,
+    companyId,
+    interviewName,
+  };
+
+  fetch(`${apiUrl}/events/started`, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+};
+
+export const victoryEvent = (
+  interviewId,
+  candidateName,
+  candidateEmail,
+  interviewName,
+  createdBy,
+  videosId,
+  thumbnail640x480
+) => {
+  const data = {
+    thumbnail640x480,
+    createdBy,
+    userName: candidateName,
+    candidateEmail,
+    interviewId,
+    companyId: "5df26d0a8c9a8b000113b15b",
+    interviewName,
+    candidateUrl: `https://recruiter.deephire.com/candidates/view-candidate/?id=${videosId}`,
+  };
+
+  fetch(`${apiUrl}/events/victory`, {
     method: 'POST',
     headers: {
       Accept: 'application/json',
