@@ -38,7 +38,8 @@ export const sendEmail = data => {
 
 export const storeInterviewQuestionRework = async (
   { interviewId, userId, userName, candidateEmail, interviewName, question, medias, uuid },
-  createdBy
+  createdBy,
+  companyId
 ) => {
   console.log(DetectRTC);
 
@@ -77,7 +78,8 @@ export const storeInterviewQuestionRework = async (
           interviewName,
           createdBy,
           videosId,
-          thumbnail640x480
+          thumbnail640x480,
+          companyId
         );
         notifyCandidate(userName, candidateEmail);
         notifyRecruiter(
@@ -168,7 +170,8 @@ export const victoryEvent = (
   interviewName,
   createdBy,
   videosId,
-  thumbnail640x480
+  thumbnail640x480,
+  companyId
 ) => {
   const data = {
     thumbnail640x480,
@@ -176,7 +179,7 @@ export const victoryEvent = (
     userName: candidateName,
     candidateEmail,
     interviewId,
-    companyId: "5df26d0a8c9a8b000113b15b",
+    companyId,
     interviewName,
     candidateUrl: `https://recruiter.deephire.com/candidates/view-candidate/?id=${videosId}`,
   };
