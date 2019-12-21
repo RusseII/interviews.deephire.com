@@ -1,10 +1,10 @@
 /* global mixpanel */
-import React, { useEffect, useState } from 'react';
+import React, {useContext, useState } from 'react';
 import CameraTag from '@/components/CameraTag';
 
 import ReactPlayer from 'react-player'
 
-import { fetchInterview, storeInterviewQuestionRework } from '@/services/api';
+import {  storeInterviewQuestionRework } from '@/services/api';
 import { Typography, Row, Col, List, Button, Drawer } from 'antd';
 
 import styles from './index.less';
@@ -14,6 +14,7 @@ import { router } from 'umi';
 import { lowerCaseQueryParams } from '@/services/helpers';
 
 import HandleBrowsers from '@/components/HandleBrowsers';
+import { CompleteInterviewDataContext } from '@/layouts'
 const { Title, Paragraph } = Typography;
 
 const mockData = [
@@ -59,17 +60,12 @@ const Record = ({ location }) => {
   const {id, fullname: fullName, email, simple} = lowerCaseQueryParams(location.search)
 
   const [index, setIndex] = useState(0);
-  const [data, setData] = useState(null);
+
   const [drawerVisible, setDrawerVisible] = useState(false);
+  const completeInterviewData = useContext(CompleteInterviewDataContext)
+  const data = completeInterviewData?.interviewData
+  
 
-  useEffect(() => {
-    const setup = async () => {
-      var [data] = await fetchInterview(id);
-      setData(data);
-    };
-
-    setup();
-  }, [id]);
 
   const completedQ = (medias, uuid) => {
     setIndex(index => {
