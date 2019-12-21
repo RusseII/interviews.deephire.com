@@ -12,7 +12,7 @@ const FormItem = Form.Item;
 const SignIn = Form.create()(props => {
   const { form, location, skip, executeStartedEvent } = props;
 
-  const { id, chat, simple, fullName: fullNameParam, email: emailParam } = lowerCaseQueryParams(
+  const { id, chat, simple } = lowerCaseQueryParams(
     location.search
   );
 
@@ -96,7 +96,7 @@ const SignIn = Form.create()(props => {
         id,
         interviewStage: 'started',
       });
-      mixpanel.track('Interview started');
+      mixpanel.track('Intervicytew started');
       FS.identify(email, {
         displayName: fullName,
         email,
