@@ -82,7 +82,7 @@ const Record = ({ location }) => {
       };
 
       if (index + 1 === interviewQuestions.length) {
-  const companyId = data?.comoanyData?._id
+ 
         storeInterviewQuestionRework(interviewData, data.createdBy, companyId);
         mixpanel.people.set({
           interviewStage: 'completed',
