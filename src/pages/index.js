@@ -1,13 +1,14 @@
 /* global mixpanel FS $crisp*/
 import SignIn from '@/components/SignIn';
-import { fetchCompanyInfo, fetchInterview } from '@/services/api';
 import { Col, Row, Divider } from 'antd';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useContext } from 'react';
 import { lowerCaseQueryParams } from '@/services/helpers';
+import { startedEvent } from '@/services/api';
+import { CompleteInterviewDataContext } from '@/layouts'
 
 import undrawPhoto from '@/../public/undrawPhoto.png';
 
-import { router } from 'umi';
+
 import styles from './index.less';
 
 const dotJobsCompanyId = '5d35e2acfc5e3205581b573d';
@@ -60,32 +61,15 @@ const identify = (email, fullName, id) => {
 };
 
 const Index = ({ location }) => {
-  const [compId, setCompId] = useState(null)
+  const completeInterviewData = useContext(CompleteInterviewDataContext)
+  const companyId = completeInterviewData?.companyData?._id
+  const interviewName = completeInterviewData.interviewData?.interviewName
   const { id, fullname: fullNameParam, email: emailParam, simple } = lowerCaseQueryParams(
     location.search
   );
 
-  const getData = async () => {
-    let interview = await fetchInterview(id);
-
-    if (interview) {
-      interview = interview[0] || interview;
-      const { companyId, _id, interviewName, createdBy } = interview;
-      setCompId(companyId)
-      const url = await fetchCompanyInfo(companyId);
-      const { companyName } = url || {};
-
-      mixpanel.set_group('InterviewCompany', [companyName]);
-      mixpanel.set_group('InterviewID', [_id]);
-      mixpanel.set_group('InterviewName', [interviewName]);
-      mixpanel.set_group('CreatedBy', [createdBy]);
-      mixpanel.set_group('CompanyId', [companyId]);
-
-      mixpanel.track('Interview visited');
-    } else {
-      mixpanel.track('Invalid ID');
-      router.push('/404');
-    }
+  const executeStartedEvent = async (candidateEmail = emailParam, userName = fullNameParam) => {
+    return await startedEvent(candidateEmail, userName, companyId, interviewName );
   };
 
   const useOnMount = () =>
@@ -93,8 +77,6 @@ const Index = ({ location }) => {
       if (emailParam && fullNameParam && id) {
         identify(emailParam, fullNameParam, id);
       }
-
-      getData();
     }, []);
 
   useOnMount();
@@ -103,7 +85,7 @@ const Index = ({ location }) => {
     <div className={styles.normal}>
       {simple !== '1' && (
         <h1 style={{ fontSize: 24, paddingTop: '24px' }}>
-          { compId !== dotJobsCompanyId ? 'Welcome! You\'ve been invited for a one-way video interview!': 'Record Your Video Interview'}
+          { companyId !== dotJobsCompanyId ? 'Welcome! You\'ve been invited for a one-way video interview!': 'Record Your Video Interview'}
         </h1>
       )}
       <Row style={{ paddingTop: 24 }} type="flex" justify="center">
@@ -112,26 +94,26 @@ const Index = ({ location }) => {
         </Col>
         <Col sm={16} xs={22} style={{ textAlign: 'left' }}>
           <div>
-          {compId !== dotJobsCompanyId ?
+          {companyId !== dotJobsCompanyId ?
             'You will be asked to record answers to a series of prompts that will ask you common interview questions.' :
           'You are about to record your video interview. You will be asked to answer a series of interview questions. '}
           </div>
 
 
-          {compId === dotJobsCompanyId && thingsToKnow}
+          {companyId === dotJobsCompanyId && thingsToKnow}
           <br />
           <div style={{ fontWeight: 'bold' }}>What you will need:</div>
           <div>- Your phone or a computer with a camera</div>
           <div>- Quiet environment</div>
           <div>- 10-15 minutes </div>
 
-          {compId === dotJobsCompanyId && proTips}
+          {companyId === dotJobsCompanyId && proTips}
         </Col>
       </Row>
 
       <Divider />
 
-      <SignIn location={location} skip={fullNameParam && emailParam} />
+      <SignIn executeStartedEvent={executeStartedEvent} location={location} skip={fullNameParam && emailParam} />
     </div>
   );
 };

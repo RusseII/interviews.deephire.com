@@ -4,70 +4,74 @@ import { router } from 'umi';
 import PropTypes from 'prop-types';
 import { lowerCaseQueryParams } from '@/services/helpers';
 
+
 import styles from './index.less';
 
 const FormItem = Form.Item;
 
 const SignIn = Form.create()(props => {
-  const { form, location, text, skip} = props;
+  const { form, location, skip, executeStartedEvent } = props;
 
-  const { id, chat, simple} = lowerCaseQueryParams(location.search);
+  const { id, chat, simple } = lowerCaseQueryParams(
+    location.search
+  );
 
   const skipForm = () => {
     mixpanel.track('Interview started');
+    executeStartedEvent();
     router.push(`record${location.search}`);
   };
 
   const nameEmailForm = () => (
     <>
-    <h1 style={{fontSize: 20}}>Fill out the below info to get started!</h1>
-    <div className={styles.container}>
-      <Form hideRequiredMark onSubmit={okHandle}>
-        <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 5 }} label="Name">
-          {form.getFieldDecorator('fullName', {
-            rules: [
-              {
-                required: true,
-                message: 'Please input your full name!',
-              },
-            ],
-          })(<Input placeholder="full name" />)}
-        </FormItem>
-        <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 5 }} label="Email">
-          {form.getFieldDecorator('email', {
-            rules: [
-              {
-                type: 'email',
-                message: 'The input is not valid E-mail!',
-              },
-              {
-                required: true,
-                message: 'Please input your E-mail!',
-              },
-            ],
-          })(<Input placeholder="email" />)}
-        </FormItem>
-        <Form.Item>
-          <Button type="primary" htmlType="submit">
-            Next
-          </Button>
-        </Form.Item>
-      </Form>
-    </div>
+      <h1 style={{ fontSize: 20 }}>Fill out the below info to get started!</h1>
+      <div className={styles.container}>
+        <Form hideRequiredMark onSubmit={okHandle}>
+          <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 5 }} label="Name">
+            {form.getFieldDecorator('fullName', {
+              rules: [
+                {
+                  required: true,
+                  message: 'Please input your full name!',
+                },
+              ],
+            })(<Input placeholder="full name" />)}
+          </FormItem>
+          <FormItem labelCol={{ span: 10 }} wrapperCol={{ span: 5 }} label="Email">
+            {form.getFieldDecorator('email', {
+              rules: [
+                {
+                  type: 'email',
+                  message: 'The input is not valid E-mail!',
+                },
+                {
+                  required: true,
+                  message: 'Please input your E-mail!',
+                },
+              ],
+            })(<Input placeholder="email" />)}
+          </FormItem>
+          <Form.Item>
+            <Button type="primary" htmlType="submit">
+              Next
+            </Button>
+          </Form.Item>
+        </Form>
+      </div>
     </>
   );
 
   const skipFormButton = () => (
     <>
-    <h1 style={{fontSize: 20}}>Click the button below to get started!</h1>
-    <Button
-      size="large"
-      style={{ marginTop: 40, marginBottom: 40 }}
-      type="primary"
-      onClick={skipForm}
-    >
-      Take Interview Now
-    </Button>
+      <h1 style={{ fontSize: 20 }}>Click the button below to get started!</h1>
+      <Button
+        size="large"
+        style={{ marginTop: 40, marginBottom: 40 }}
+        type="primary"
+        onClick={skipForm}
+      >
+        Take Interview Now
+      </Button>
     </>
   );
 
@@ -92,7 +96,7 @@ const SignIn = Form.create()(props => {
         id,
         interviewStage: 'started',
       });
-      mixpanel.track('Interview started');
+      mixpanel.track('Intervicytew started');
       FS.identify(email, {
         displayName: fullName,
         email,
@@ -101,11 +105,12 @@ const SignIn = Form.create()(props => {
       $crisp.push(['set', 'user:nickname', [fullName]]);
 
       // router.push(`record${location.search}`);
+      executeStartedEvent(email, fullName);
+
       router.push(
         `record?id=${id}&fullName=${fullName}&email=${email}${
           simple === '1' ? '&simple=' + simple : ''
-        }${
-          chat === '0' ? '&chat=' + chat : ''}`
+        }${chat === '0' ? '&chat=' + chat : ''}`
       );
 
       form.resetFields();
@@ -118,5 +123,6 @@ const SignIn = Form.create()(props => {
 SignIn.propTypes = {
   location: PropTypes.object.isRequired,
   skip: PropTypes.bool.isRequired,
+  companyInfo: PropTypes.object,
 };
 export default SignIn;
