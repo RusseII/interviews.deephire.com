@@ -64,9 +64,8 @@ const Record = ({ location }) => {
   const [drawerVisible, setDrawerVisible] = useState(false);
   const completeInterviewData = useContext(CompleteInterviewDataContext)
   const data = completeInterviewData?.interviewData
-  const companyId = data?.comoanyData?._id
+  const companyId = completeInterviewData?.companyData?._id
   
-
 
   const completedQ = (medias, uuid) => {
     setIndex(index => {
@@ -82,7 +81,7 @@ const Record = ({ location }) => {
       };
 
       if (index + 1 === interviewQuestions.length) {
-  const companyId = data?.comoanyData?._id
+
         storeInterviewQuestionRework(interviewData, data.createdBy, companyId);
         mixpanel.people.set({
           interviewStage: 'completed',
