@@ -85,7 +85,7 @@ const Index = ({ location }) => {
     <div className={styles.normal}>
       {simple !== '1' && (
         <h1 style={{ fontSize: 24, paddingTop: '24px' }}>
-          { companyId !== dotJobsCompanyId ? 'Welcome! You\'ve been invited for a one-way video interview!': 'Record Your Video Interview'}
+          { companyId !== dotJobsCompanyId ? 'Welcome! You\'ve been invited to complete a video introduction!': 'Record Your Video Interview'}
         </h1>
       )}
       <Row style={{ paddingTop: 24 }} type="flex" justify="center">
