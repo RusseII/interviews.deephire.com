@@ -69,7 +69,7 @@ const Index = ({ location }) => {
   );
 
   const executeStartedEvent = async (candidateEmail = emailParam, userName = fullNameParam) => {
-    return await startedEvent(candidateEmail, userName, companyId, interviewName );
+    return await startedEvent(candidateEmail, userName, companyId, interviewName, completeInterviewData );
   };
 
   const useOnMount = () =>
