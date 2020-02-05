@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import styles from './style.less';
 import qs from 'qs';
-import { Spin } from 'antd';
+// import { Spin } from 'antd';
 import {
   StartScreen,
   RecordingScreen,
@@ -119,7 +119,8 @@ const Record = ({ onUpload, name, description, maxLength }) => {
   const useAsHeight = simple === '1' ? screenHeight / 1.5 : screenHeight / 2;
 
   return (
-    <Spin spinning={!initialized}>
+    // SPIN was causing an issue on browsers using flash. It did not allow them to click on the button to enable flash. 
+    // <Spin spinning={!initialized}>
       <div className={styles.wrapper}>
         <div style={{display: 'inline-block', width: mobile ? useAsHeight * 0.75 : useAsHeight * (4 / 3), height: useAsHeight}}> 
         <camera
@@ -155,7 +156,7 @@ const Record = ({ onUpload, name, description, maxLength }) => {
         <CameraDetectionScreen />
         <SettingsScreen />
       </div>
-    </Spin>
+    // </Spin>
   );
 };
 
