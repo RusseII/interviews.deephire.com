@@ -4,7 +4,7 @@ const DetectRTC = require('detectrtc');
 const apiUrl = 'https://a.deephire.com/v1';
 // const apiUrl = 'https://dev-a.deephire.com/v1/';
 
-// const apiUrl = 'http://localhost:3000/v1/';
+// const apiUrl = 'http://localhost:3000/v1';
 // const openTokApi = 'http://localhost:8081';
 
 export const fetchInterview = async id => {

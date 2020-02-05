@@ -24,40 +24,6 @@ const DetectRTC = require('detectrtc');
 const simple = qs.parse(window.location.search)['simple'];
 const cameraId = 'DeepHire';
 
-const useScreenHeight = () => {
-  function debounce(fn, ms) {
-    let timer;
-    return _ => {
-      clearTimeout(timer);
-      timer = setTimeout(_ => {
-        timer = null;
-        // eslint-disable-next-line prefer-rest-params
-        fn.apply(this, arguments);
-      }, ms);
-    };
-  }
-  const height = () =>
-    window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
-  const handleResize = () => {
-    setCameraHeight(height());
-  };
-  const [cameraHeight, setCameraHeight] = useState(height());
-  useEffect(() => {
-    window.addEventListener(
-      'resize',
-      debounce(() => handleResize(), 500)
-    );
-    return () => {
-      window.removeEventListener(
-        'resize',
-        debounce(() => handleResize(), 500)
-      );
-    };
-  });
-  return cameraHeight;
-};
-const height = () =>
-  window.innerHeight || document.documentElement.clientHeight || document.body.clientHeight;
 
 const setupObservers = (onUpload, setRecording, setUploadProgress, setInitialized) => {
   CameraTag.observe(cameraId, 'published', ({ medias, uuid }) => {
@@ -97,7 +63,7 @@ const Record = ({ onUpload, name, description, maxLength }) => {
   const [recording, setRecording] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [initialized, setInitialized] = useState(false);
-  const screenHeight = useScreenHeight();
+  
 
   let mobile = false;
   const width = () =>
@@ -116,14 +82,14 @@ const Record = ({ onUpload, name, description, maxLength }) => {
     }, []);
 
   useCameraTagSetup();
-  const useAsHeight = simple === '1' ? screenHeight / 1.5 : screenHeight / 2;
 
   return (
     // SPIN was causing an issue on browsers using flash. It did not allow them to click on the button to enable flash. 
     // <Spin spinning={!initialized}>
       <div className={styles.wrapper}>
-        <div style={{display: 'inline-block', width: mobile ? useAsHeight * 0.75 : useAsHeight * (4 / 3), height: useAsHeight}}> 
+        {/* <div style={{display: 'inline-block', width: mobile ? useAsHeight * 0.75 : useAsHeight * (4 / 3), height: useAsHeight}}>  */}
         <camera
+        className={"testing"}
           data-name={name}
           data-description={description}
        
@@ -135,11 +101,9 @@ const Record = ({ onUpload, name, description, maxLength }) => {
           data-maxlength={maxLength || 90}
           data-autopreview="false"
           data-simple-security="true"
-          data-height={useAsHeight}
-          data-width={mobile ? useAsHeight * 0.75 : useAsHeight * (4 / 3)}
           data-stack={DetectRTC.osName.toLowerCase() === 'android' ? 'mediarecorder' : 'auto'}
         />
-        </div>
+        {/* </div> */}
         <StartScreen />
         <RecordingScreen maxLength={maxLength} recording={recording} />
         <CountDownScreen />
