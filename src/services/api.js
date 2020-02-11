@@ -1,3 +1,4 @@
+/* global $crisp */
 import fetch from 'isomorphic-fetch';
 const DetectRTC = require('detectrtc');
 
@@ -174,6 +175,8 @@ export const victoryEvent = (
   thumbnail640x480,
   companyId, completeInterviewData
 ) => {
+
+  $crisp.push(['set', 'session:event', [[['victory_event', { victory: 'true' }, 'green']]]]);
   const data = {
     thumbnail640x480,
     createdBy,
