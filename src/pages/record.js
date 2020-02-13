@@ -23,6 +23,24 @@ const mockData = [
   'Include one or two sentences about what type of organization you are looking for.',
 ];
 
+function replaceUrlParam(url, paramName, paramValue)
+{
+    if (paramValue == null) {
+        paramValue = '';
+    }
+    var pattern = new RegExp('\\b('+paramName+'=).*?(&|#|$)');
+    if (url.search(pattern)>=0) {
+        return url.replace(pattern,'$1' + paramValue + '$2');
+    }
+    url = url.replace(/[?#]$/,'');
+    return url + (url.indexOf('?')>0 ? '&' : '?') + paramName + '=' + paramValue;
+}
+
+const addQuestionIndexQueryParam = (index) => {
+  const myNewURL = replaceUrlParam(window.location.href, 'question', index)
+window.history.pushState({}, document.title, myNewURL );
+}
+
 const TipDrawer = ({ drawerVisible, setDrawerVisible, questionInfo, tips, exampleVideos }) => (
   <Drawer
     width={350}
@@ -57,9 +75,10 @@ const TipDrawer = ({ drawerVisible, setDrawerVisible, questionInfo, tips, exampl
   </Drawer>
 );
 const Record = ({ location }) => {
-  const {id, fullname: fullName, email, simple} = lowerCaseQueryParams(location.search)
+  const {id, fullname: fullName, email, simple, question: questionIndex} = lowerCaseQueryParams(location.search)
+  const startingQuestionIndex = parseInt(questionIndex)
 
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState( startingQuestionIndex ? startingQuestionIndex: 0 );
 
   const [drawerVisible, setDrawerVisible] = useState(false);
   const completeInterviewData = useContext(CompleteInterviewDataContext)
@@ -91,7 +110,9 @@ const Record = ({ location }) => {
         return index;
       } else {
         storeInterviewQuestionRework(interviewData);
+        addQuestionIndexQueryParam(index + 1)
         return index + 1;
+        
       }
     });
   };

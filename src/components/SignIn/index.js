@@ -12,7 +12,7 @@ const FormItem = Form.Item;
 const SignIn = Form.create()(props => {
   const { form, location, skip, executeStartedEvent } = props;
 
-  const { id, chat, simple } = lowerCaseQueryParams(
+  const { id, chat, simple, question: questionIndex } = lowerCaseQueryParams(
     location.search
   );
 
@@ -110,7 +110,7 @@ const SignIn = Form.create()(props => {
       router.push(
         `record?id=${id}&fullName=${fullName}&email=${email}${
           simple === '1' ? '&simple=' + simple : ''
-        }${chat === '0' ? '&chat=' + chat : ''}`
+        }${chat === '0' ? '&chat=' + chat : ''}${questionIndex ? '&question=' + questionIndex: ''}`
       );
 
       form.resetFields();
