@@ -1,5 +1,5 @@
 /* global FS mixpanel $crisp */
-import { Form, Input, Button } from 'antd';
+import { Form, Input, Button, Checkbox } from 'antd';
 import { router } from 'umi';
 import PropTypes from 'prop-types';
 import { lowerCaseQueryParams } from '@/services/helpers';
@@ -9,18 +9,50 @@ import styles from './index.less';
 
 const FormItem = Form.Item;
 
+
+const GmpSingaporeCompanyId = '5e546dc52851550001802430'
 const SignIn = Form.create()(props => {
-  const { form, location, skip, executeStartedEvent } = props;
+  const { form, location, skip, executeStartedEvent, companyId } = props;
 
   const { id, chat, simple, question: questionIndex } = lowerCaseQueryParams(
     location.search
   );
 
-  const skipForm = () => {
-    mixpanel.track('Interview started');
-    executeStartedEvent();
-    router.push(`record${location.search}`);
+  const skipForm = (e) => {
+    e.preventDefault();
+
+    form.validateFields((err, fieldsValue) => {
+      if (err) return;
+      mixpanel.track('Interview started');
+      executeStartedEvent();
+      router.push(`record${location.search}`);
+    })
   };
+
+  const GdprCheckbox =
+    <Checkbox> I agree to the <a rel="noopener noreferrer" target="_blank" href='https://blog.deephire.com/privacy'>Terms & Conditions</a></Checkbox>
+
+
+  const checkboxField = (companyId) => {
+    if (GmpSingaporeCompanyId === companyId) {
+      return <FormItem >
+        {form.getFieldDecorator('terms', {
+          valuePropName: 'checked',
+          initialValue: false,
+          rules: [
+            {
+              transform: value => String(value),
+              type: 'enum',
+              enum: ['true'],
+              message: 'Please review the Terms & Conditions.',
+            },
+          ],
+        })(GdprCheckbox)}
+      </FormItem>
+    }
+    else return
+  }
+
 
   const nameEmailForm = () => (
     <>
@@ -52,6 +84,8 @@ const SignIn = Form.create()(props => {
             })(<Input placeholder="email" />)}
           </FormItem>
           <Form.Item>
+
+            {checkboxField(companyId)}
             <Button type="primary" htmlType="submit">
               Next
             </Button>
@@ -62,17 +96,19 @@ const SignIn = Form.create()(props => {
   );
 
   const skipFormButton = () => (
-    <>
-      <h1 style={{ fontSize: 20 }}>Click the button below to get started!</h1>
+    <Form>
+      <h1 style={{ fontSize: 20, marginBottom: 40 }}>Click the button below to get started!</h1>
+      {checkboxField(companyId)}
       <Button
         size="large"
-        style={{ marginTop: 40, marginBottom: 40 }}
+        style={{ marginBottom: 40 }}
         type="primary"
         onClick={skipForm}
       >
         Take Interview Now
       </Button>
-    </>
+    </Form>
+
   );
 
   // if (fullNameParam && emailParam) {
@@ -86,6 +122,7 @@ const SignIn = Form.create()(props => {
 
     form.validateFields((err, fieldsValue) => {
       if (err) return;
+
       const { fullName, email } = fieldsValue;
 
       mixpanel.alias(email);
@@ -109,8 +146,8 @@ const SignIn = Form.create()(props => {
 
       router.push(
         `record?id=${id}&fullName=${fullName}&email=${email}${
-          simple === '1' ? '&simple=' + simple : ''
-        }${chat === '0' ? '&chat=' + chat : ''}${questionIndex ? '&question=' + questionIndex: ''}`
+        simple === '1' ? '&simple=' + simple : ''
+        }${chat === '0' ? '&chat=' + chat : ''}${questionIndex ? '&question=' + questionIndex : ''}`
       );
 
       form.resetFields();
@@ -123,6 +160,6 @@ const SignIn = Form.create()(props => {
 SignIn.propTypes = {
   location: PropTypes.object.isRequired,
   skip: PropTypes.bool.isRequired,
-  companyInfo: PropTypes.object,
+  companyId: PropTypes.string
 };
 export default SignIn;

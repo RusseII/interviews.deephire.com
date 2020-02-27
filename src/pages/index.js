@@ -113,7 +113,7 @@ const Index = ({ location }) => {
 
       <Divider />
 
-      <SignIn executeStartedEvent={executeStartedEvent} location={location} skip={fullNameParam && emailParam} />
+      <SignIn executeStartedEvent={executeStartedEvent} companyId={companyId} location={location} skip={fullNameParam && emailParam} />
     </div>
   );
 };
