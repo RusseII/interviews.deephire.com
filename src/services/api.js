@@ -62,6 +62,7 @@ export const storeInterviewQuestionRework = async (
         ...medias,
         uuid,
       },
+      completeInterviewData
       // DetectRTC
     }),
   });
