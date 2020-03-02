@@ -9,7 +9,7 @@ import styles from './index.less';
 
 const FormItem = Form.Item;
 
-
+const GmpSingaporeDataProtection = 'https://deephire.s3.amazonaws.com/GMP+-+Data+Protection+Policy+for+Video+Interview.pdf'
 const GmpSingaporeCompanyId = '5e546dc52851550001802430'
 const SignIn = Form.create()(props => {
   const { form, location, skip, executeStartedEvent, companyId } = props;
@@ -30,7 +30,7 @@ const SignIn = Form.create()(props => {
   };
 
   const GdprCheckbox =
-    <Checkbox> I agree to the <a rel="noopener noreferrer" target="_blank" href='https://blog.deephire.com/privacy'>Terms & Conditions</a></Checkbox>
+    <Checkbox> I agree to <a rel="noopener noreferrer" target="_blank" href={GmpSingaporeDataProtection}>GMP's Data Protection Policy</a> & the <a rel="noopener noreferrer" target="_blank" href='https://blog.deephire.com/privacy'>Terms & Conditions</a></Checkbox>
 
 
   const checkboxField = (companyId) => {
