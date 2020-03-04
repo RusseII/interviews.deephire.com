@@ -1,4 +1,4 @@
-/* global CameraTag */
+/* global CameraTag $crisp */
 import React, { useEffect, useState } from 'react';
 import styles from './style.less';
 import qs from 'qs';
@@ -21,9 +21,13 @@ import {
 
 const DetectRTC = require('detectrtc');
 
-const simple = qs.parse(window.location.search)['simple'];
+// const simple = qs.parse(window.location.search)['simple'];
 const cameraId = 'DeepHire';
 
+const logEvent = (event) => {
+  $crisp.push(["set", "session:event", [[["video_error", { event: event }, "red"]]]])
+  console.log(event)
+}
 
 const setupObservers = (onUpload, setRecording, setUploadProgress, setInitialized, setError) => {
   CameraTag.observe(cameraId, 'published', ({ medias, uuid }) => {
@@ -41,28 +45,30 @@ const setupObservers = (onUpload, setRecording, setUploadProgress, setInitialize
   });
 
   CameraTag.observe(cameraId, 'noMic', () => {
-    console.log("No Mic detected");
+    logEvent('noMic')
   });
 
   CameraTag.observe(cameraId, 'uploadAborted', (errorDetails) => {
-    console.log("uploadAborted", errorDetails);
+    logEvent('uploadAborted')
   });
 
   CameraTag.observe(cameraId, 'serverError', () => {
-    console.log("serverError");
+    logEvent('serverError')
   });
   CameraTag.observe(cameraId, 'cameraDenied', () => {
     setError('Camera Permissions Denied')
-    console.log("cameraDenied");
+    logEvent('cameraDenied')
+
   });
 
   CameraTag.observe(cameraId, 'micDenied', () => {
-    setError('Mic Permissions Denied')
-    console.log("micDenied");
+    logEvent('micDenied')
+
   });
 
   CameraTag.observe(cameraId, 'serverDisconnected', () => {
-    console.log("serverDisconnected");
+    logEvent('serverDisconnected')
+
   });
 
   CameraTag.observe(cameraId, 'recordingStopped', () => {
