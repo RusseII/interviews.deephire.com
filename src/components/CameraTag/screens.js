@@ -1,3 +1,4 @@
+/* global $crisp */
 import React, { useEffect, useState, useRef } from 'react';
 import styles from './style.less';
 import { Button, Radio, Icon, Statistic, Spin, Progress, Row, Col } from 'antd';
@@ -88,10 +89,25 @@ export const CompletedScreen = () => (
   <div className={styles.tester} id={`${cameraId}-completed-screen`}></div>
 );
 
-// export const ErrorScreen = () => (
-//   <div className={styles.tester} id={`${cameraId}-error-screen`}>
-//   </div>
-// );
+export const ErrorScreen = ({error}) => (
+  <div className={styles.tester} id={`${cameraId}-error-screen`}>
+    {error ? knownError(error) : unknownError()}
+  </div>
+);
+
+const unknownError = () => (
+  <>
+  <div>Error please try another browser or device</div>
+  <Button onClick={() => $crisp.push(["do", "chat:open"])} type='primary' size='large'> Chat with our support</Button>
+  </>
+)
+
+const knownError = (error) => (
+   <>
+  <div>{error}</div>
+  <Button type='primary' onClick={() => window.open('https://help.deephire.com/en/article/camera-permissions-denied-1tnw6xc/?1583347484514', '_blank')} size='large'> How to fix camera issues</Button>
+  </>
+)
 
 export const AcceptScreen = ({mobile}) => (
   <div className={styles.tester} id={`${cameraId}-accept-screen`}>
