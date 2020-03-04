@@ -14,6 +14,10 @@ export default props => {
         mixpanel.track('Unsupported iOS browser used');
       }
       break;
+    case 'Edge':
+      alert('We are currently having issues with the the Microsoft Edge browser. Please use Google Chrome or Firefox instead for your interview.')
+      mixpanel.track('Edge Browser Used');
+      break;
     default:
       return props.children;
   }
