@@ -16,7 +16,7 @@ import {
   MobileStartScreen,
   SmsScreen,
   CameraDetectionScreen,
-  UploadScreen,
+  UploadScreen, ErrorScreen
 } from './screens';
 
 const DetectRTC = require('detectrtc');
@@ -25,7 +25,7 @@ const simple = qs.parse(window.location.search)['simple'];
 const cameraId = 'DeepHire';
 
 
-const setupObservers = (onUpload, setRecording, setUploadProgress, setInitialized) => {
+const setupObservers = (onUpload, setRecording, setUploadProgress, setInitialized, setError) => {
   CameraTag.observe(cameraId, 'published', ({ medias, uuid }) => {
     setUploadProgress(0);
     const myCamera = CameraTag.cameras[cameraId];
@@ -39,6 +39,32 @@ const setupObservers = (onUpload, setRecording, setUploadProgress, setInitialize
   CameraTag.observe(cameraId, 'recordingStarted', () => {
     setRecording(true);
   });
+
+  CameraTag.observe(cameraId, 'noMic', () => {
+    console.log("No Mic detected");
+  });
+
+  CameraTag.observe(cameraId, 'uploadAborted', (errorDetails) => {
+    console.log("uploadAborted", errorDetails);
+  });
+
+  CameraTag.observe(cameraId, 'serverError', () => {
+    console.log("serverError");
+  });
+  CameraTag.observe(cameraId, 'cameraDenied', () => {
+    setError('Camera Permissions Denied')
+    console.log("cameraDenied");
+  });
+
+  CameraTag.observe(cameraId, 'micDenied', () => {
+    setError('Mic Permissions Denied')
+    console.log("micDenied");
+  });
+
+  CameraTag.observe(cameraId, 'serverDisconnected', () => {
+    console.log("serverDisconnected");
+  });
+
   CameraTag.observe(cameraId, 'recordingStopped', () => {
     setRecording(false);
   });
@@ -63,6 +89,7 @@ const Record = ({ onUpload, name, description, maxLength }) => {
   const [recording, setRecording] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [initialized, setInitialized] = useState(false);
+  const [error, setError] = useState(null)
   
 
   let mobile = false;
@@ -75,7 +102,7 @@ const Record = ({ onUpload, name, description, maxLength }) => {
     useEffect(() => {
       CameraTag.setup();
 
-      setupObservers(onUpload, setRecording, setUploadProgress, setInitialized);
+      setupObservers(onUpload, setRecording, setUploadProgress, setInitialized,setError);
       return () => {
         CameraTag.cameras[cameraId].destroy();
       };
@@ -110,7 +137,7 @@ const Record = ({ onUpload, name, description, maxLength }) => {
         <WaitScreen />
         <CompletedScreen />
         <AcceptScreen mobile={mobile} />
-        {/* <ErrorScreen /> */}
+        <ErrorScreen error={error} />
         <PlaybackScreen />
         <PausedScreen />
 
