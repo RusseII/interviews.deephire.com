@@ -58,7 +58,11 @@ const setupObservers = (onUpload, setRecording, setUploadProgress, setInitialize
   CameraTag.observe(cameraId, 'cameraDenied', () => {
     setError('Camera Permissions Denied')
     logEvent('cameraDenied')
+  });
 
+  CameraTag.observe(cameraId, 'hardwareAccessDenied', () => {
+    setError('Camera Permissions Denied')
+    logEvent('hardwareAccessDenied')
   });
 
   CameraTag.observe(cameraId, 'micDenied', () => {
