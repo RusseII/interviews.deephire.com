@@ -1,11 +1,12 @@
 /* global mixpanel $crisp */
 import styles from './index.less';
-import { Layout, Row, Col } from 'antd';
+import { Layout, Row, Col, Alert } from 'antd';
 import React, { useState, useEffect } from 'react';
 import { lowerCaseQueryParams } from '@/services/helpers';
 import { fetchInterview, fetchCompanyInfo } from '@/services/api';
 import { router } from 'umi';
 const { Footer, Content, Header } = Layout;
+const DetectRTC = require('detectrtc');
 
 const defaultInterviewValue = {
   interview: null,
@@ -74,6 +75,7 @@ const BasicLayout = ({ children, location }) => {
 
   return (
     <Layout>
+      {DetectRTC?.browser?.isEdge && <Alert type="error" style={{textAlign: 'center'}} message="We are currently having issues with people's microphones on the Microsoft Edge browser. Please use Google Chrome or Firefox instead for your interview." banner />}
       <CompleteInterviewDataContext.Provider value={completeInterviewData}>
         {simple !== '1' && (
           <Header className={styles.header}>
@@ -89,7 +91,7 @@ const BasicLayout = ({ children, location }) => {
             </Row>
           </Header>
         )}
-
+        
         <Content className={simple === '1' ? styles.simpleContent : styles.content}>
           {children}
         </Content>
