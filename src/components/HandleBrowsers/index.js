@@ -4,7 +4,11 @@ const DetectRTC = require('detectrtc');
 
 export default props => {
   const { browser } = DetectRTC;
-
+ 
+  if  (DetectRTC?.browser?.isEdge) {
+      alert('We are currently having issues with the the Microsoft Edge browser. Please use Google Chrome or Firefox instead for your interview.')
+      mixpanel.track('Edge Browser Used');
+  }
   switch (DetectRTC && DetectRTC.osName) {
     case 'iOS':
       if (browser.name === 'Safari') {
@@ -14,10 +18,7 @@ export default props => {
         mixpanel.track('Unsupported iOS browser used');
       }
       break;
-    case 'Edge':
-      alert('We are currently having issues with the the Microsoft Edge browser. Please use Google Chrome or Firefox instead for your interview.')
-      mixpanel.track('Edge Browser Used');
-      break;
+ 
     default:
       return props.children;
   }
