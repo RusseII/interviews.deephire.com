@@ -109,7 +109,7 @@ const Record = ({ location }) => {
         router.push(`/victory${location.search}`);
         return index;
       } else {
-        storeInterviewQuestionRework(interviewData);
+        storeInterviewQuestionRework(interviewData, completeInterviewData);
         addQuestionIndexQueryParam(index + 1)
         return index + 1;
         
