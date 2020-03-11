@@ -42,7 +42,6 @@ export const storeInterviewQuestionRework = async (
   createdBy,
   companyId, completeInterviewData
 ) => {
-  console.log(DetectRTC);
 
   const result = await fetch(`${apiUrl}/videos`, {
     method: 'POST',
