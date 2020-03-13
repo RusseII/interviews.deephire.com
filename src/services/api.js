@@ -40,7 +40,7 @@ export const sendEmail = data => {
 export const storeInterviewQuestionRework = async (
   { interviewId, userId, userName, candidateEmail, interviewName, question, medias, uuid },
   createdBy,
-  companyId, completeInterviewData
+  companyId, completeInterviewData, completion
 ) => {
 
   const result = await fetch(`${apiUrl}/videos`, {
@@ -65,12 +65,13 @@ export const storeInterviewQuestionRework = async (
       // DetectRTC
     }),
   });
+
   if (result.status === 201) {
     const location = result.headers.get('Location');
     if (location) {
       const n = location.lastIndexOf('/');
       const videosId = location.substring(n + 1);
-      if (createdBy) {
+      if (completion) {
         const { thumbnail640x480 } = medias;
         victoryEvent(
           interviewId,
