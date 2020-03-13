@@ -101,7 +101,7 @@ const Record = ({ location }) => {
 
       if (index + 1 === interviewQuestions.length) {
 
-        storeInterviewQuestionRework(interviewData, data.createdBy, companyId, completeInterviewData);
+        storeInterviewQuestionRework(interviewData, data.createdBy, companyId, completeInterviewData, true);
         mixpanel.people.set({
           interviewStage: 'completed',
         });
@@ -109,7 +109,7 @@ const Record = ({ location }) => {
         router.push(`/victory${location.search}`);
         return index;
       } else {
-        storeInterviewQuestionRework(interviewData, data.createdBy, companyId, completeInterviewData, true);
+        storeInterviewQuestionRework(interviewData, data.createdBy, companyId, completeInterviewData);
         addQuestionIndexQueryParam(index + 1)
         return index + 1;
         
