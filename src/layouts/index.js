@@ -5,8 +5,11 @@ import React, { useState, useEffect } from 'react';
 import { lowerCaseQueryParams } from '@/services/helpers';
 import { fetchInterview, fetchCompanyInfo } from '@/services/api';
 import { router } from 'umi';
+import * as Sentry from '@sentry/browser';
 const { Footer, Content, Header } = Layout;
 const DetectRTC = require('detectrtc');
+
+Sentry.init({dsn: "https://ba050977b865461497954ae331877145@sentry.io/5187820"});
 
 const defaultInterviewValue = {
   interview: null,
