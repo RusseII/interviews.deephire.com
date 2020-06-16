@@ -166,6 +166,25 @@ export const startedEvent = (candidateEmail, userName, companyId, interviewName,
   });
 };
 
+
+export const clickedEvent = (candidateEmail, userName, companyId, interviewName, completeInterviewData) => {
+  var data = {
+    candidateEmail,
+    userName,
+    companyId,
+    interviewName,
+    completeInterviewData
+  };
+
+  fetch(`${apiUrl}/events/clicked`, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data),
+  });
+};
 export const victoryEvent = (
   interviewId,
   candidateName,

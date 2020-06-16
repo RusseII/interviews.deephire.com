@@ -3,7 +3,7 @@ import SignIn from '@/components/SignIn';
 import { Col, Row, Divider } from 'antd';
 import React, { useEffect, useContext } from 'react';
 import { lowerCaseQueryParams } from '@/services/helpers';
-import { startedEvent } from '@/services/api';
+import { startedEvent, clickedEvent } from '@/services/api';
 import { CompleteInterviewDataContext } from '@/layouts'
 
 import undrawPhoto from '@/../public/undrawPhoto.png';
@@ -71,10 +71,14 @@ const Index = ({ location }) => {
   const executeStartedEvent = async (candidateEmail = emailParam, userName = fullNameParam) => {
     return await startedEvent(candidateEmail, userName, companyId, interviewName, completeInterviewData );
   };
+  const executeClickedEvent = (candidateEmail, userName) => {
+    return clickedEvent(candidateEmail, userName, companyId, interviewName, completeInterviewData );
+  };
 
   const useOnMount = () =>
     useEffect(() => {
       if (emailParam && fullNameParam && id) {
+        executeClickedEvent(emailParam, fullNameParam)
         identify(emailParam, fullNameParam, id);
       }
     }, []);
