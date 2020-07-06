@@ -115,7 +115,7 @@ export const notifyRecruiter = (
     recipients: [createdBy || 'noemail@deephire.com'],
     candidateEmail,
     interviewName,
-    candidateUrl: `https://recruiter.deephire.com/candidates/view-candidate/?id=${videosId}`,
+    candidateUrl: `https://recruiter.deephire.com/one-way/candidates/candidate/?id=${videosId}`,
     candidateThumbnail: thumbnail640x480,
   };
 
@@ -205,7 +205,7 @@ export const victoryEvent = (
     interviewId,
     companyId,
     interviewName,
-    candidateUrl: `https://recruiter.deephire.com/candidates/view-candidate/?id=${videosId}`,
+    candidateUrl: `https://recruiter.deephire.com/one-way/candidates/candidate/?id=${videosId}`,
     completeInterviewData
   };
 

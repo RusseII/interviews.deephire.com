@@ -7,6 +7,7 @@ function openChat() {
 function setDetails(email, nickname) {
   $crisp.push(['set', 'user:email', email]);
   $crisp.push(['set', 'user:nickname', [nickname]]);
+  $crisp.push(["set", "session:segments", [["one-way-interview"]]])
 }
 function setCompany(recruiter, interviewName) {
   $crisp.push(['set', 'user:company', [recruiter, { employment: ['Job Seeker', interviewName] }]]);
