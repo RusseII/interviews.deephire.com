@@ -12,7 +12,10 @@ const apiUrl = 'https://a.deephire.com/v1';
 
 export const submitFeedback = async (interviewId, companyId, feedback) => {
   const data = {...feedback, interviewId, companyId}
-  const resp = await fetch(`${apiUrl}/interviews/${interviewId}/feedback`, { method: "POST", body: JSON.stringify(data)} );
+  const resp = await fetch(`${apiUrl}/interviews/${interviewId}/feedback`, { method: "POST", headers: {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  }, body: JSON.stringify(data)} );
   return resp;
 };
 
