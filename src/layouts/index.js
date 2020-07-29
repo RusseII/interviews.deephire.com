@@ -24,7 +24,7 @@ const BasicLayout = ({ children, location }) => {
       'https://atelier.swiftideas.com/union-demo/wp-content/uploads/sites/5/2014/05/unionproducts-img-blank.png',
   });
 
-  const [completeInterviewData, setComplateInterviewInfo] = useState({
+  const [completeInterviewData, setCompleteInterviewData] = useState({
     interviewData: null,
     companyData: null,
   });
@@ -44,7 +44,7 @@ const BasicLayout = ({ children, location }) => {
         const { companyId, companyName, createdBy, _id, interviewName } = interviewData;
   
         const info = await fetchCompanyInfo(companyId);
-        setComplateInterviewInfo({interviewData, companyData: info})
+        setCompleteInterviewData({interviewData, companyData: info})
         setCompanyInfo(info);
         $crisp.push([
           'set',
