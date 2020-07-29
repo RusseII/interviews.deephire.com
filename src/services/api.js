@@ -8,6 +8,16 @@ const apiUrl = 'https://a.deephire.com/v1';
 // const apiUrl = 'http://localhost:3000/v1';
 // const openTokApi = 'http://localhost:8081';
 
+
+
+export const submitFeedback = async (interviewId, companyId, feedback) => {
+  const data = {...feedback, interviewId, companyId}
+  const resp = await fetch(`${apiUrl}/interviews/${interviewId}/feedback`, { method: "POST", body: JSON.stringify(data)} );
+  return resp;
+};
+
+
+
 export const fetchInterview = async id => {
   const resp = await fetch(`${apiUrl}/interviews/${id}`);
   if (resp.ok) {
@@ -115,7 +125,7 @@ export const notifyRecruiter = (
     recipients: [createdBy || 'noemail@deephire.com'],
     candidateEmail,
     interviewName,
-    candidateUrl: `https://recruiter.deephire.com/candidates/view-candidate/?id=${videosId}`,
+    candidateUrl: `https://recruiter.deephire.com/one-way/candidates/candidate/?id=${videosId}`,
     candidateThumbnail: thumbnail640x480,
   };
 
@@ -205,7 +215,7 @@ export const victoryEvent = (
     interviewId,
     companyId,
     interviewName,
-    candidateUrl: `https://recruiter.deephire.com/candidates/view-candidate/?id=${videosId}`,
+    candidateUrl: `https://recruiter.deephire.com/one-way/candidates/candidate/?id=${videosId}`,
     completeInterviewData
   };
 

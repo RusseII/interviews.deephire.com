@@ -1,6 +1,6 @@
 /* global mixpanel */
 import { hideChat } from '@/services/crisp';
-import { Icon } from 'antd';
+import { ArrowDownOutlined } from '@ant-design/icons';
 import { useEffect } from 'react';
 
 export default () => {
@@ -28,10 +28,7 @@ export default () => {
         Click Safari button below
       </div>
 
-      <Icon
-        style={{ fontSize: 40, position: 'absolute', right: 5, bottom: 40 }}
-        type="arrow-down"
-      />
+      <ArrowDownOutlined style={{ fontSize: 40, position: 'absolute', right: 5, bottom: 40 }} />
     </div>
   );
 };

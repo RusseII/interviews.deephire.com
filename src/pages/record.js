@@ -5,6 +5,7 @@ import CameraTag from '@/components/CameraTag';
 import ReactPlayer from 'react-player'
 
 import {  storeInterviewQuestionRework } from '@/services/api';
+import { InfoOutlined } from '@ant-design/icons';
 import { Typography, Row, Col, List, Button, Drawer } from 'antd';
 
 import styles from './index.less';
@@ -138,7 +139,7 @@ const Record = ({ location }) => {
                 onClick={() => setDrawerVisible(true)}
           
                 shape="circle"
-                icon="info"
+                icon={<InfoOutlined />}
                 style={{marginLeft: 8}}
               />
             </Title>
