@@ -1,5 +1,8 @@
 /* global FS mixpanel $crisp */
-import { Form, Input, Button, Checkbox } from 'antd';
+import { Form } from '@ant-design/compatible';
+
+import '@ant-design/compatible/assets/index.css';
+import { Input, Button, Checkbox } from 'antd';
 import { router } from 'umi';
 import PropTypes from 'prop-types';
 import { lowerCaseQueryParams } from '@/services/helpers';

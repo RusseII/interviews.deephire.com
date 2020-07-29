@@ -1,7 +1,15 @@
 /* global $crisp */
 import React, { useEffect, useState, useRef } from 'react';
 import styles from './style.less';
-import { Button, Radio, Icon, Statistic, Spin, Progress, Row, Col } from 'antd';
+import {
+  CameraFilled,
+  CheckOutlined,
+  PlayCircleFilled,
+  RedoOutlined,
+  SettingOutlined,
+  StopFilled,
+} from '@ant-design/icons';
+import { Button, Radio, Statistic, Spin, Progress, Row, Col } from 'antd';
 import Timer from '@/components/Timer';
 
 
@@ -14,7 +22,7 @@ export const StartScreen = () => (
       style={{ position: 'absolute', right: 0, top: 0, margin: 5 }}
       size='small'
       shape='circle'
-      icon='setting'
+      icon={<SettingOutlined />}
     />
 
     <Button
@@ -30,7 +38,7 @@ export const StartScreen = () => (
         transform: 'translate(-50%, -50%)',
       }}
     >
-      <Icon theme='filled' spin={false} type='camera' />
+      <CameraFilled spin={false} />
       Record Answer
     </Button>
   </div>
@@ -59,7 +67,7 @@ export const RecordingScreen = ({ maxLength, recording }) => {
           transform: 'translate(-50%, -50%)',
         }}
       >
-        <Icon theme='filled' spin={true} type='stop' />
+        <StopFilled spin={true} />
         Stop Recording
       </Button>
     </div>
@@ -124,7 +132,7 @@ export const AcceptScreen = ({mobile}) => (
           color: 'white',
         }}
       >
-       { !mobile &&  <Icon type='redo' /> }
+       { !mobile &&  <RedoOutlined /> }
          Retake
       </Button>
 
@@ -140,20 +148,17 @@ export const AcceptScreen = ({mobile}) => (
         }}
       >
         Submit
-        { !mobile &&  <Icon type='check' />}
+        { !mobile &&  <CheckOutlined />}
       </Button>
       <div className='cameratag_play' style={{ width: '100%', height: 'calc(100% - 60px)' }}>
-        <Icon
+        <PlayCircleFilled
           style={{
             fontSize: 64,
             left: '50%',
             top: '50%',
             position: 'absolute',
             transform: 'translate(-50%, -50%)',
-          }}
-          theme='filled'
-          type='play-circle'
-        />
+          }} />
       </div>
     </div>
   </div>

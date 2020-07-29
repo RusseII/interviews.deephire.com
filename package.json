@@ -8,6 +8,8 @@
     "precommit": "lint-staged"
   },
   "dependencies": {
+    "@ant-design/compatible": "^1.0.4",
+    "@ant-design/icons": "^4.2.1",
     "@sentry/browser": "^5.15.4",
     "antd": "4.4.0",
     "array.prototype.findindex": "^2.0.2",
