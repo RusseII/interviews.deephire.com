@@ -41,6 +41,7 @@ const setupObservers = (onUpload, setRecording, setUploadProgress, setInitialize
   });
 
   CameraTag.observe(cameraId, 'recordingStarted', () => {
+    CameraTag.cameras[cameraId].showRecorder();
     setRecording(true);
   });
 
@@ -72,11 +73,16 @@ const setupObservers = (onUpload, setRecording, setUploadProgress, setInitialize
 
   CameraTag.observe(cameraId, 'serverDisconnected', () => {
     logEvent('serverDisconnected')
-
   });
 
   CameraTag.observe(cameraId, 'recordingStopped', () => {
     setRecording(false);
+    CameraTag.cameras[cameraId].showRecorder();
+  });
+
+  CameraTag.observe(cameraId, 'playbackStarted', () => {
+    setRecording(false);
+    CameraTag.cameras[cameraId].showPlayer();
   });
 
   CameraTag.observe(cameraId, 'uploadProgress', percent => {
