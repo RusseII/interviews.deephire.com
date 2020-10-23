@@ -77,7 +77,7 @@ const setupObservers = (onUpload, setRecording, setUploadProgress, setInitialize
 
   CameraTag.observe(cameraId, 'recordingStopped', () => {
     setRecording(false);
-    CameraTag.cameras[cameraId].showRecorder();
+    CameraTag.cameras[cameraId].showRecorder(); // To display the recorder's video preview. 
   });
 
   CameraTag.observe(cameraId, 'playbackStarted', () => {
