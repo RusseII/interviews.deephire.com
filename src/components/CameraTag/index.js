@@ -41,16 +41,16 @@ const setupObservers = ({onUpload, setRecording, setUploadProgress, setInitializ
     onUpload(medias, uuid);
   });
 
-  var maxAudioVolume = -1; 
+  var maxAudioVolume = 0; 
   // Check the max volume after 5 seconds to diagnose audio issues   
   const detectAudioIssues = () => {
     setTimeout(() => {
       if (maxAudioVolume == 0) {
         logEvent(`No audio`);
         setAudioWarning(`No audio detected! Please check your microphone and retry.`);
-      } else if (maxAudioVolume < 3) {
+      } else if (maxAudioVolume < 5) {
         logEvent(`Quiet audio`);
-        setAudioWarning(`Your audio is quiet. You may need to adjust your microphone.`);        
+        setAudioWarning(`Are you talking? Your audio is quiet. You may need to adjust your microphone.`);        
       }  
     }, 5000);
   }
