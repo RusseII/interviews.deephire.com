@@ -48,10 +48,7 @@ const setupObservers = ({onUpload, setRecording, setUploadProgress, setInitializ
       if (maxAudioVolume == 0) {
         logEvent(`No audio`);
         setAudioWarning(`No audio detected! Please check your microphone and retry.`);
-      } else if (maxAudioVolume < 5) {
-        logEvent(`Quiet audio`);
-        setAudioWarning(`Are you talking? Your audio is quiet. You may need to adjust your microphone.`);        
-      }  
+      }
     }, 5000);
   }
 
