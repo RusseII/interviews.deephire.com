@@ -29,7 +29,8 @@ const logEvent = (event) => {
   console.log(event)
 }
 
-const setupObservers = (onUpload, setRecording, setUploadProgress, setInitialized, setError) => {
+const setupObservers = ({onUpload, setRecording, setUploadProgress, setInitialized, setError, setAudioWarning}) => {
+
   CameraTag.observe(cameraId, 'published', ({ medias, uuid }) => {
     setUploadProgress(0);
     const myCamera = CameraTag.cameras[cameraId];
@@ -40,9 +41,27 @@ const setupObservers = (onUpload, setRecording, setUploadProgress, setInitialize
     onUpload(medias, uuid);
   });
 
+  var maxAudioVolume = 0; 
+  // Check the max volume after 5 seconds to diagnose audio issues   
+  const detectAudioIssues = () => {
+    setTimeout(() => {
+      if (maxAudioVolume == 0) {
+        logEvent(`No audio`);
+        setAudioWarning(`No audio detected! Please check your microphone and retry.`);
+      }
+    }, 5000);
+  }
+
+  CameraTag.observe(cameraId, 'audioLevel', (volume) => {
+    // Get the max volume 
+    if (volume > maxAudioVolume) maxAudioVolume = volume;
+  });
+
   CameraTag.observe(cameraId, 'recordingStarted', () => {
     CameraTag.cameras[cameraId].showRecorder();
     setRecording(true);
+    setAudioWarning(false);
+    detectAudioIssues();
   });
 
   CameraTag.observe(cameraId, 'noMic', () => {
@@ -68,7 +87,6 @@ const setupObservers = (onUpload, setRecording, setUploadProgress, setInitialize
 
   CameraTag.observe(cameraId, 'micDenied', () => {
     logEvent('micDenied')
-
   });
 
   CameraTag.observe(cameraId, 'serverDisconnected', () => {
@@ -105,6 +123,7 @@ const Record = ({ onUpload, name, description, maxLength }) => {
   const [recording, setRecording] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [initialized, setInitialized] = useState(false);
+  const [audioWarning, setAudioWarning] = useState(false); 
   const [error, setError] = useState(null)
   
 
@@ -118,7 +137,7 @@ const Record = ({ onUpload, name, description, maxLength }) => {
     useEffect(() => {
       CameraTag.setup();
 
-      setupObservers(onUpload, setRecording, setUploadProgress, setInitialized,setError);
+      setupObservers({onUpload, setRecording, setUploadProgress, setInitialized, setError, setAudioWarning});
       return () => {
         CameraTag.cameras[cameraId].destroy();
       };
@@ -148,7 +167,7 @@ const Record = ({ onUpload, name, description, maxLength }) => {
         />
         {/* </div> */}
         <StartScreen />
-        <RecordingScreen maxLength={maxLength} recording={recording} />
+        <RecordingScreen maxLength={maxLength} recording={recording} warning={audioWarning}/>
         <CountDownScreen />
         <WaitScreen />
         <CompletedScreen />

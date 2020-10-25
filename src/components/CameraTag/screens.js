@@ -44,15 +44,15 @@ export const StartScreen = () => (
   </div>
 );
 
-export const RecordingScreen = ({ maxLength, recording }) => {
+export const RecordingScreen = ({ maxLength, recording, warning }) => {
 
   return (
     <div className={styles.tester} id={`${cameraId}-recording-screen`}>
      {recording && <Timer
-      
         style={{ position: 'absolute', right: 0, margin: 10 }}
         seconds={maxLength}
       ></Timer>}
+      {warning && <div className={styles.audio_warning}>{warning}</div>}
       {/* <div className="cameratag_record_timer_prompt"/> */}
       <Button
         type='danger'
