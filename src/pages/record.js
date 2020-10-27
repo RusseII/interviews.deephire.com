@@ -143,6 +143,7 @@ const Record = ({ location }) => {
                 style={{marginLeft: 8}}
               />
             </Title>
+            <Paragraph style={{ fontSize: "1.5em"}}> This question is timed! You have {answerTime || interviewConfig.answerTime} seconds and unlimited retakes.</Paragraph>
 
             {hint && (
               <Title level={4} type="secondary" style={{ marginTop: 0 }}>
