@@ -58,7 +58,6 @@ const setupObservers = ({onUpload, setRecording, setUploadProgress, setInitializ
   });
 
   CameraTag.observe(cameraId, 'recordingStarted', () => {
-    CameraTag.cameras[cameraId].showRecorder();
     setRecording(true);
     setAudioWarning(false);
     detectAudioIssues();
@@ -91,16 +90,11 @@ const setupObservers = ({onUpload, setRecording, setUploadProgress, setInitializ
 
   CameraTag.observe(cameraId, 'serverDisconnected', () => {
     logEvent('serverDisconnected')
+
   });
 
   CameraTag.observe(cameraId, 'recordingStopped', () => {
     setRecording(false);
-    CameraTag.cameras[cameraId].showRecorder(); // To display the recorder's video preview. 
-  });
-
-  CameraTag.observe(cameraId, 'playbackStarted', () => {
-    setRecording(false);
-    CameraTag.cameras[cameraId].showPlayer();
   });
 
   CameraTag.observe(cameraId, 'uploadProgress', percent => {
