@@ -137,8 +137,7 @@ const Record = ({ location }) => {
       }`}</h3> */}
         <Row type="flex" justify="center">
           <Col style={{ textAlign: 'center' }} lg={12} sm={20} xs={24}>
-            {/* TODO: Figure out what style the 'simple' property needs. */}
-            <Paragraph style={{marginBottom: 0, marginTop: simple ? 0:0}} type="secondary">{`Question ${index + 1}/${interviewQuestions.length}`}</Paragraph>
+            <Paragraph style={{marginBottom: 0}} type="secondary">{`Question ${index + 1}/${interviewQuestions.length}`}</Paragraph>
             <Title level={mobile ? 4 : 2} style={{ marginBottom: 8, marginTop: 0 }}>
               {question}
               <Button
@@ -165,7 +164,7 @@ const Record = ({ location }) => {
           maxLength={answerTime || interviewConfig.answerTime}
         />
            <Row type="flex" justify="center" style={{textAlign: 'center'}}>
-              <Paragraph style={{ fontSize: (mobile) ? "1.25em" : "1.75em"}}> This question is timed! You have {answerTime || interviewConfig.answerTime} seconds and unlimited retakes.</Paragraph>
+              <Paragraph style={{ fontSize: (mobile) ? "1.25em" : "1.75em", marginBottom: 0}}> This question is timed! You have {answerTime || interviewConfig.answerTime} seconds and unlimited retakes.</Paragraph>
            </Row>
       </div>
     </HandleBrowsers>
