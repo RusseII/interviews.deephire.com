@@ -119,19 +119,12 @@ const setupObservers = ({onUpload, setRecording, setUploadProgress, setInitializ
   })
 };
 
-const Record = ({ onUpload, name, description, maxLength }) => {
+const CameraTagRoot = ({ onUpload, name, description, maxLength, mobile }) => {
   const [recording, setRecording] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [initialized, setInitialized] = useState(false);
   const [audioWarning, setAudioWarning] = useState(false); 
-  const [error, setError] = useState(null)
-  
-
-  let mobile = false;
-  const width = () =>
-    window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
-
-  if (width() < 576) mobile = true;
+  const [error, setError] = useState(null);
 
   const useCameraTagSetup = () =>
     useEffect(() => {
@@ -186,4 +179,4 @@ const Record = ({ onUpload, name, description, maxLength }) => {
   );
 };
 
-export default Record;
+export default CameraTagRoot;
