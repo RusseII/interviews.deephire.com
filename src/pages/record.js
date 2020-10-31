@@ -86,6 +86,11 @@ const Record = ({ location }) => {
   const data = completeInterviewData?.interviewData
   const companyId = completeInterviewData?.companyData?._id
   
+  let mobile = false;
+  const width = () =>
+    window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+
+  if (width() < 576) mobile = true;
 
   const completedQ = (medias, uuid) => {
     setIndex(index => {
@@ -132,8 +137,8 @@ const Record = ({ location }) => {
       }`}</h3> */}
         <Row type="flex" justify="center">
           <Col style={{ textAlign: 'center' }} lg={12} sm={20} xs={24}>
-            <Paragraph style={{marginBottom: 0, marginTop: simple ? 0: -20}} type="secondary">{`Question ${index + 1}/${interviewQuestions.length}`}</Paragraph>
-            <Title level={2} style={{ marginBottom: 8, marginTop: 0 }}>
+            <Paragraph style={{marginBottom: 0}} type="secondary">{`Question ${index + 1}/${interviewQuestions.length}`}</Paragraph>
+            <Title level={mobile ? 4 : 2} style={{ marginBottom: 8, marginTop: 0 }}>
               {question}
               <Button
                 onClick={() => setDrawerVisible(true)}
@@ -152,11 +157,15 @@ const Record = ({ location }) => {
           </Col>
         </Row>
         <CameraTag
+          mobile={mobile}
           name={`${createdBy} ${fullName} ${data.interviewName}`}
           description={`${JSON.stringify(currentQuestion)} ${email} ${id} ${index} ${data.createdBy}`}
           onUpload={completedQ}
           maxLength={answerTime || interviewConfig.answerTime}
         />
+           <Row type="flex" justify="center" style={{textAlign: 'center'}}>
+              <Paragraph style={{ fontSize: (mobile) ? "1.25em" : "1.75em", marginBottom: 0}}> This question is timed! You have {answerTime || interviewConfig.answerTime} seconds and unlimited retakes.</Paragraph>
+           </Row>
       </div>
     </HandleBrowsers>
   );
