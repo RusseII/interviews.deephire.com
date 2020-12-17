@@ -7,21 +7,18 @@ import { router } from 'umi';
 import PropTypes from 'prop-types';
 import { lowerCaseQueryParams } from '@/services/helpers';
 
-
 import styles from './index.less';
 
 const FormItem = Form.Item;
 
-const GmpSingaporeDataProtection = 'https://deephire.s3.amazonaws.com/GMP+-+Data+Protection+Policy+for+Video+Interview.pdf'
-const GmpSingaporeCompanyId = '5e546dc52851550001802430'
+const appleoneProtection = 'https://deephire.s3.amazonaws.com/Agreement.pdf';
+const appleOneCompayId = '5e95d7d3aed1120001480d69';
 const SignIn = Form.create()(props => {
   const { form, location, skip, executeStartedEvent, companyId } = props;
 
-  const { id, chat, simple, question: questionIndex } = lowerCaseQueryParams(
-    location.search
-  );
+  const { id, chat, simple, question: questionIndex } = lowerCaseQueryParams(location.search);
 
-  const skipForm = (e) => {
+  const skipForm = e => {
     e.preventDefault();
 
     form.validateFields((err, fieldsValue) => {
@@ -29,33 +26,44 @@ const SignIn = Form.create()(props => {
       mixpanel.track('Interview started');
       executeStartedEvent();
       router.push(`record${location.search}`);
-    })
+    });
   };
 
-  const GdprCheckbox =
-    <Checkbox> I agree to <a rel="noopener noreferrer" target="_blank" href={GmpSingaporeDataProtection}>GMP's Data Protection Policy</a> & the <a rel="noopener noreferrer" target="_blank" href='https://blog.deephire.com/privacy'>Terms & Conditions</a></Checkbox>
+  const AppleOneCheckBox = (
+    <Checkbox>
+      {' '}
+      I agree to{' '}
+      <a rel="noopener noreferrer" target="_blank" href={appleoneProtection}>
+        AppleOne's Agreement
+      </a>{' '}
+      & the{' '}
+      <a rel="noopener noreferrer" target="_blank" href="https://blog.deephire.com/privacy">
+        Terms & Conditions
+      </a>
+    </Checkbox>
+  );
 
-
-  const checkboxField = (companyId) => {
-    if (GmpSingaporeCompanyId === companyId) {
-      return <FormItem >
-        {form.getFieldDecorator('terms', {
-          valuePropName: 'checked',
-          initialValue: false,
-          rules: [
-            {
-              transform: value => String(value),
-              type: 'enum',
-              enum: ['true'],
-              message: 'Please review the Terms & Conditions.',
-            },
-          ],
-        })(GdprCheckbox)}
-      </FormItem>
+  const checkboxField = companyId => {
+    if (appleOneCompayId === companyId) {
+      return (
+        <FormItem>
+          {form.getFieldDecorator('terms', {
+            valuePropName: 'checked',
+            initialValue: false,
+            rules: [
+              {
+                transform: value => String(value),
+                type: 'enum',
+                enum: ['true'],
+                message: 'Please review the Terms & Conditions.',
+              },
+            ],
+          })(AppleOneCheckBox)}
+        </FormItem>
+      );
+    } else {
     }
-    else return
-  }
-
+  };
 
   const nameEmailForm = () => (
     <>
@@ -87,7 +95,6 @@ const SignIn = Form.create()(props => {
             })(<Input placeholder="email" />)}
           </FormItem>
           <Form.Item>
-
             {checkboxField(companyId)}
             <Button type="primary" htmlType="submit">
               Next
@@ -102,16 +109,10 @@ const SignIn = Form.create()(props => {
     <Form>
       <h1 style={{ fontSize: 20, marginBottom: 40 }}>Click the button below to get started!</h1>
       {checkboxField(companyId)}
-      <Button
-        size="large"
-        style={{ marginBottom: 40 }}
-        type="primary"
-        onClick={skipForm}
-      >
+      <Button size="large" style={{ marginBottom: 40 }} type="primary" onClick={skipForm}>
         Take Interview Now
       </Button>
     </Form>
-
   );
 
   // if (fullNameParam && emailParam) {
@@ -149,7 +150,7 @@ const SignIn = Form.create()(props => {
 
       router.push(
         `record?id=${id}&fullName=${fullName}&email=${email}${
-        simple === '1' ? '&simple=' + simple : ''
+          simple === '1' ? '&simple=' + simple : ''
         }${chat === '0' ? '&chat=' + chat : ''}${questionIndex ? '&question=' + questionIndex : ''}`
       );
 
@@ -163,6 +164,6 @@ const SignIn = Form.create()(props => {
 SignIn.propTypes = {
   location: PropTypes.object.isRequired,
   skip: PropTypes.bool.isRequired,
-  companyId: PropTypes.string
+  companyId: PropTypes.string,
 };
 export default SignIn;
