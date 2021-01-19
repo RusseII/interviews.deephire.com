@@ -38,7 +38,7 @@ function replaceUrlParam(url, paramName, paramValue)
 }
 
 const addQuestionIndexQueryParam = (index) => {
-  const myNewURL = replaceUrlParam(window.location.href, 'question', index)
+  const myNewURL = replaceUrlParam(window.location.href, 'question', index + 1)
 window.history.pushState({}, document.title, myNewURL );
 }
 
@@ -77,7 +77,7 @@ const TipDrawer = ({ drawerVisible, setDrawerVisible, questionInfo, tips, exampl
 );
 const Record = ({ location }) => {
   const {id, fullname: fullName, email, simple, question: questionIndex} = lowerCaseQueryParams(location.search)
-  const startingQuestionIndex = parseInt(questionIndex)
+  const startingQuestionIndex = parseInt(questionIndex) - 1
 
   const [index, setIndex] = useState( startingQuestionIndex ? startingQuestionIndex: 0 );
 

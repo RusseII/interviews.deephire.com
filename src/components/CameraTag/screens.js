@@ -52,6 +52,7 @@ export const RecordingScreen = ({ maxLength, recording, warning }) => {
         style={{ position: 'absolute', right: 0, margin: 10 }}
         seconds={maxLength}
       ></Timer>}
+      {console.log({warning})}
       {warning && <div className={styles.audio_warning}>{warning}</div>}
       {/* <div className="cameratag_record_timer_prompt"/> */}
       <Button
