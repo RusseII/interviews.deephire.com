@@ -1,7 +1,7 @@
 /* global mixpanel $crisp */
 import styles from './index.less';
 import { Layout, Row, Col, Alert } from 'antd';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { lowerCaseQueryParams } from '@/services/helpers';
 // import { fetchInterview, fetchcompanyData } from '@/services/api';
 import { router } from 'umi';
@@ -19,13 +19,19 @@ const defaultInterviewValue = {
 export const CompleteInterviewDataContext = React.createContext(defaultInterviewValue);
 
 const BasicLayout = ({ children, location }) => {
-  const [pageBranding, setBranding] = useState({});
+  let pageBranding = useRef();
 
   const { id, simple } = lowerCaseQueryParams(location.search);
 
-  const { data: interviewData, isError: interviewError } = useInterview(id);
+  const { data: interviewData, isError: isInterviewError } = useInterview(id);
 
-  const { data: companyData, isError: companyError } = useCompany(interviewData?.companyId);
+  const { data: companyData, isError: isCompanyError } = useCompany(interviewData?.companyId);
+
+  const recruiterCompany = interviewData?.recruiterCompany;
+
+  if (companyData?.brands && recruiterCompany) {
+    pageBranding = companyData.brands[recruiterCompany];
+  }
 
   const completeInterviewData = { interviewData, companyData: companyData };
 
@@ -34,7 +40,7 @@ const BasicLayout = ({ children, location }) => {
     console.log(interviewData);
     console.log(companyData);
 
-    if (companyError || interviewError) {
+    if (isCompanyError || isInterviewError) {
       mixpanel.track('Invalid ID');
       router.push('/404');
     }
@@ -46,14 +52,7 @@ const BasicLayout = ({ children, location }) => {
         createdBy,
         _id,
         interviewName,
-        recruiterCompany,
       } = interviewData;
-
-      if (companyData?.brands && recruiterCompany) {
-        setBranding(() => {
-          return companyData.brands[recruiterCompany];
-        });
-      }
 
       $crisp.push(['set', 'session:data', [['createdBy', createdBy], ['companyId', companyId]]]);
       $crisp.push([
@@ -73,7 +72,7 @@ const BasicLayout = ({ children, location }) => {
 
       mixpanel.track('Interview visited');
     }
-  }, [companyData, interviewData, companyError, interviewError]);
+  }, [companyData, interviewData, isCompanyError, isInterviewError]);
 
   return (
     <Layout>
@@ -89,11 +88,11 @@ const BasicLayout = ({ children, location }) => {
         {simple !== '1' && (
           <Header className={styles.header}>
             <Row type="flex" justify="space-between">
-              <Col>{pageBranding?.name || companyData?.companyName || 'DeepHire'}</Col>
+              <Col>{pageBranding.name || companyData?.companyName || 'DeepHire'}</Col>
               <Col>
                 <img
-                  src={pageBranding?.logo || companyData?.logo || 'https://s3.amazonaws.com/deephire/dh_vertical.png'}
-                  alt={pageBranding?.name || companyData?.companyName}
+                  src={pageBranding.logo || companyData?.logo || 'https://s3.amazonaws.com/deephire/dh_vertical.png'}
+                  alt={pageBranding.name || companyData?.companyName}
                   className={styles.logo}
                 />
               </Col>
