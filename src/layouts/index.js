@@ -1,7 +1,7 @@
 /* global mixpanel $crisp */
 import styles from './index.less';
 import { Layout, Row, Col, Alert } from 'antd';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import { lowerCaseQueryParams } from '@/services/helpers';
 // import { fetchInterview, fetchcompanyData } from '@/services/api';
 import { router } from 'umi';
@@ -19,7 +19,7 @@ const defaultInterviewValue = {
 export const CompleteInterviewDataContext = React.createContext(defaultInterviewValue);
 
 const BasicLayout = ({ children, location }) => {
-  let pageBranding = useRef();
+  let pageBranding;
 
   const { id, simple } = lowerCaseQueryParams(location.search);
 
