@@ -3,7 +3,6 @@ import styles from './index.less';
 import { Layout, Row, Col, Alert } from 'antd';
 import React, { useEffect } from 'react';
 import { lowerCaseQueryParams } from '@/services/helpers';
-// import { fetchInterview, fetchcompanyData } from '@/services/api';
 import { router } from 'umi';
 import * as Sentry from '@sentry/browser';
 import { useCompany, useInterview } from '../services/apiHooks';
