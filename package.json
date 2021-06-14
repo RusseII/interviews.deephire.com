@@ -26,7 +26,6 @@
     "react-dom": "^16.7.0",
     "react-loading-screen": "0.0.17",
     "react-player": "^1.9.3",
-    "swr": "^0.5.6",
     "uuid": "3.3.2",
     "vimeo": "^2.1.1"
   },
