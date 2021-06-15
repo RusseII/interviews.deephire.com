@@ -1,5 +1,5 @@
 import useSWR from 'swr';
-import fetcher from '../fetcher';
+import fetcher from './fetcher';
 
 export const useCompany = id => {
   const { data, error, mutate } = useSWR( id ? [`/v1/companies/${id}`] : null, fetcher);
