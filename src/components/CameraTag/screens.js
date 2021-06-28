@@ -1,5 +1,7 @@
 /* global $crisp */
-import React, { useEffect, useState, useRef } from 'react';
+import React from 'react';
+import { useInterview } from '../../services/apiHooks';
+
 import styles from './style.less';
 import {
   CameraFilled,
@@ -9,7 +11,7 @@ import {
   SettingOutlined,
   StopFilled,
 } from '@ant-design/icons';
-import { Button, Radio, Statistic, Spin, Progress, Row, Col } from 'antd';
+import { Button, Progress, Row, Col } from 'antd';
 import Timer from '@/components/Timer';
 
 const cameraId = 'DeepHire';
@@ -128,39 +130,42 @@ const knownError = error => (
   </>
 );
 
-export const AcceptScreen = ({ mobile }) => (
-  <div className={styles.tester} id={`${cameraId}-accept-screen`}>
-    <div style={{ width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,.8)' }}>
-      <RetakeButton mobile={mobile} />
+export const AcceptScreen = ({ mobile }) => {
+  const { data: interviewData } = useInterview();
+  return (
+    <div className={styles.tester} id={`${cameraId}-accept-screen`}>
+      <div style={{ width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,.8)' }}>
+        {!interviewData?.disableRetakes && <RetakeButton mobile={mobile} />}
 
-      <Button
-        type="primary"
-        className="cameratag_publish"
-        shape="round"
-        size={'large'}
-        style={{
-          position: 'absolute',
-          bottom: 20,
-          right: 20,
-        }}
-      >
-        Submit
-        {!mobile && <CheckOutlined />}
-      </Button>
-      <div className="cameratag_play" style={{ width: '100%', height: 'calc(100% - 60px)' }}>
-        <PlayCircleFilled
+        <Button
+          type="primary"
+          className="cameratag_publish"
+          shape="round"
+          size={'large'}
           style={{
-            fontSize: 64,
-            left: '50%',
-            top: '50%',
             position: 'absolute',
-            transform: 'translate(-50%, -50%)',
+            bottom: 20,
+            right: 20,
           }}
-        />
+        >
+          Submit
+          {!mobile && <CheckOutlined />}
+        </Button>
+        <div className="cameratag_play" style={{ width: '100%', height: 'calc(100% - 60px)' }}>
+          <PlayCircleFilled
+            style={{
+              fontSize: 64,
+              left: '50%',
+              top: '50%',
+              position: 'absolute',
+              transform: 'translate(-50%, -50%)',
+            }}
+          />
+        </div>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const RetakeButton = ({ mobile }) => (
   <Button
