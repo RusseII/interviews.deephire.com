@@ -2,7 +2,6 @@
 import styles from './index.less';
 import { Layout, Row, Col, Alert } from 'antd';
 import React, { useEffect } from 'react';
-import { lowerCaseQueryParams } from '@/services/helpers';
 import { router } from 'umi';
 import * as Sentry from '@sentry/browser';
 import { useCompany, useInterview } from '../services/apiHooks';
@@ -17,12 +16,11 @@ const defaultInterviewValue = {
 };
 export const CompleteInterviewDataContext = React.createContext(defaultInterviewValue);
 
-const BasicLayout = ({ children, location }) => {
+const BasicLayout = ({ children }) => {
   let pageBranding;
 
-  const { id, simple } = lowerCaseQueryParams(location.search);
 
-  const { data: interviewData, isError: isInterviewError } = useInterview(id);
+  const { data: interviewData, isError: isInterviewError } = useInterview();
 
   const { data: companyData, isError: isCompanyError } = useCompany(interviewData?.companyId);
 
@@ -35,20 +33,13 @@ const BasicLayout = ({ children, location }) => {
   const completeInterviewData = { interviewData, companyData: companyData };
 
   useEffect(() => {
-
     if (isCompanyError || isInterviewError) {
       mixpanel.track('Invalid ID');
       router.push('/404');
     }
 
     if (interviewData) {
-      const {
-        companyId,
-        companyName,
-        createdBy,
-        _id,
-        interviewName,
-      } = interviewData;
+      const { companyId, companyName, createdBy, _id, interviewName } = interviewData;
 
       $crisp.push(['set', 'session:data', [['createdBy', createdBy], ['companyId', companyId]]]);
       $crisp.push([
@@ -81,13 +72,17 @@ const BasicLayout = ({ children, location }) => {
         />
       )}
       <CompleteInterviewDataContext.Provider value={completeInterviewData}>
-        {simple !== '1' && (
+        {(
           <Header className={styles.header}>
             <Row type="flex" justify="space-between">
               <Col>{pageBranding?.name || companyData?.companyName || 'DeepHire'}</Col>
               <Col>
                 <img
-                  src={pageBranding?.logo || companyData?.logo || 'https://s3.amazonaws.com/deephire/dh_vertical.png'}
+                  src={
+                    pageBranding?.logo ||
+                    companyData?.logo ||
+                    'https://s3.amazonaws.com/deephire/dh_vertical.png'
+                  }
                   alt={pageBranding?.name || companyData?.companyName}
                   className={styles.logo}
                 />
@@ -96,12 +91,10 @@ const BasicLayout = ({ children, location }) => {
           </Header>
         )}
 
-        <Content className={simple === '1' ? styles.simpleContent : styles.content}>
+        <Content className={styles.content}>
           {children}
         </Content>
-        {simple !== '1' && (
-          <Footer className={styles.footer}>Powered by DeepHire | Find your fit.</Footer>
-        )}
+        {<Footer className={styles.footer}>Powered by DeepHire | Find your fit.</Footer>}
       </CompleteInterviewDataContext.Provider>
     </Layout>
   );
