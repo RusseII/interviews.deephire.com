@@ -118,7 +118,7 @@ const knownError = error => (
       type="primary"
       onClick={() =>
         window.open(
-          'https://help.deephire.com/en/article/camera-permissions-denied-1tnw6xc/?1583347484514',
+          'https://help.deephire.com/videoInterviewErrors',
           '_blank'
         )
       }
