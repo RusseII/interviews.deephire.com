@@ -104,7 +104,7 @@ export const ErrorScreen = ({ error }) => (
 const unknownError = () => (
   <>
     <div>Error please try another browser or device</div>
-    <Button onClick={() => $crisp.push(['do', 'chat:open'])} type="primary" size="large">
+    <Button onClick={() => $crisp.push(['do', 'chat:hide'])} type="primary" size="large">
       {' '}
       Chat with our support
     </Button>

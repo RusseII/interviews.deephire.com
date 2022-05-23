@@ -41,10 +41,11 @@ const BasicLayout = ({ children }) => {
     if (interviewData) {
       const { companyId, companyName, createdBy, _id, interviewName } = interviewData;
 
-      $crisp.push(['set', 'session:data', [['createdBy', createdBy], ['companyId', companyId]]]);
+      $crisp.push(['set', 'chat:hide', 'session:data', [['createdBy', createdBy], ['companyId', companyId]]]);
       $crisp.push([
         'set',
         'user:company',
+        'chat:hide',
         [
           companyId,
           { description: `Job Seeker. Interview createdBy: ${createdBy}, ${companyName}` },

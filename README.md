@@ -1,5 +1,5 @@
 # Browser Support
-[Supported Browser List \| DeepHire Helpdesk](https://help.deephire.com/en/article/supported-browser-list-agyz4m/)
+[Supported Browser List \| DeepHire Helpdesk](https://help.deephire.com/supportedBrowsers)
 
 # Run Locally
 `yarn`

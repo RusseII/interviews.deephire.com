@@ -56,8 +56,8 @@ const identify = (email, fullName, id) => {
     displayName: fullName,
     email,
   });
-  $crisp.push(['set', 'user:email', email]);
-  $crisp.push(['set', 'user:nickname', [fullName]]);
+  $crisp.push(['set', 'chat:hide', 'user:email', email]);
+  $crisp.push(['set', 'chat:hide', 'user:nickname', [fullName]]);
 };
 
 const Index = ({ location }) => {

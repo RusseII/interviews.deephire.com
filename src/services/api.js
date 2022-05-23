@@ -209,7 +209,7 @@ export const victoryEvent = (
   companyId, completeInterviewData
 ) => {
 
-  $crisp.push(['set', 'session:event', [[['victory_event', { victory: 'true' }, 'green']]]]);
+  $crisp.push(['set', 'chat:hide', 'session:event', [[['victory_event', { victory: 'true' }, 'green']]]]);
   const data = {
     thumbnail640x480,
     createdBy,
