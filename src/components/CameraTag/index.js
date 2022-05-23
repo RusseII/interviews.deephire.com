@@ -25,7 +25,7 @@ const DetectRTC = require('detectrtc');
 const cameraId = 'DeepHire';
 
 const logEvent = (event) => {
-  $crisp.push(["set", "session:event", 'chat:hide', [[["video_error", { event: event }, "red"]]]])
+  $crisp.push(["set", 'chat:hide', "session:event", [[["video_error", { event: event }, "red"]]]])
   console.log(event)
 }
 

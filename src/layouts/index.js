@@ -44,8 +44,8 @@ const BasicLayout = ({ children }) => {
       $crisp.push(['set', 'chat:hide', 'session:data', [['createdBy', createdBy], ['companyId', companyId]]]);
       $crisp.push([
         'set',
-        'user:company',
         'chat:hide',
+        'user:company',
         [
           companyId,
           { description: `Job Seeker. Interview createdBy: ${createdBy}, ${companyName}` },

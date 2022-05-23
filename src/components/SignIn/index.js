@@ -142,8 +142,8 @@ const SignIn = Form.create()(props => {
         displayName: fullName,
         email,
       });
-      $crisp.push(['set', 'user:email', email, 'chat:hide']);
-      $crisp.push(['set', 'user:nickname', [fullName], 'chat:hide']);
+      // $crisp.push(['set', 'user:email', email]);
+      // $crisp.push(['set', 'user:nickname', [fullName]]);
 
       // router.push(`record${location.search}`);
       executeStartedEvent(email, fullName);
