@@ -1,4 +1,3 @@
-/* global $crisp */
 import React from 'react';
 import { useInterview } from '../../services/apiHooks';
 
@@ -104,10 +103,6 @@ export const ErrorScreen = ({ error }) => (
 const unknownError = () => (
   <>
     <div>Error please try another browser or device</div>
-    <Button onClick={() => $crisp.push(['do', 'chat:hide'])} type="primary" size="large">
-      {' '}
-      Chat with our support
-    </Button>
   </>
 );
 

@@ -1,4 +1,4 @@
-/* global mixpanel $crisp */
+/* global mixpanel */
 import styles from './index.less';
 import { Layout, Row, Col, Alert } from 'antd';
 import React, { useEffect } from 'react';
@@ -40,17 +40,6 @@ const BasicLayout = ({ children }) => {
 
     if (interviewData) {
       const { companyId, companyName, createdBy, _id, interviewName } = interviewData;
-
-      $crisp.push(['set', 'chat:hide', 'session:data', [['createdBy', createdBy], ['companyId', companyId]]]);
-      $crisp.push([
-        'set',
-        'chat:hide',
-        'user:company',
-        [
-          companyId,
-          { description: `Job Seeker. Interview createdBy: ${createdBy}, ${companyName}` },
-        ],
-      ]);
 
       mixpanel.set_group('InterviewCompany', [companyName]);
       mixpanel.set_group('InterviewID', [_id]);
