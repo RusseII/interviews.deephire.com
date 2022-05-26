@@ -1,4 +1,4 @@
-/* global FS mixpanel $crisp */
+/* global FS mixpanel */
 import { Form } from '@ant-design/compatible';
 
 import '@ant-design/compatible/assets/index.css';
@@ -142,8 +142,6 @@ const SignIn = Form.create()(props => {
         displayName: fullName,
         email,
       });
-      $crisp.push(['set', 'user:email', email]);
-      $crisp.push(['set', 'user:nickname', [fullName]]);
 
       // router.push(`record${location.search}`);
       executeStartedEvent(email, fullName);

@@ -1,5 +1,4 @@
 
-import { openChat } from '@/services/crisp';
 import { Button, Row, Typography } from 'antd';
 import React from 'react';
 import { lowerCaseQueryParams } from '@/services/helpers.js';
@@ -33,7 +32,7 @@ export default ({location}) => {
         </div>
       </Row>
 
-      {/* <Button type="primary" onClick={openChat} className={styles.button}>
+      {/* <Button type="primary" onClick={} className={styles.button}>
           Back
         </Button> */}
         <Button type="primary" onClick={() => router.push(`record${location.search}`)} className={styles.button}>

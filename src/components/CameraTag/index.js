@@ -1,4 +1,4 @@
-/* global CameraTag $crisp */
+/* global CameraTag */
 import React, { useEffect, useState } from 'react';
 import styles from './style.less';
 import qs from 'qs';
@@ -25,7 +25,6 @@ const DetectRTC = require('detectrtc');
 const cameraId = 'DeepHire';
 
 const logEvent = (event) => {
-  $crisp.push(["set", "session:event", [[["video_error", { event: event }, "red"]]]])
   console.log(event)
 }
 

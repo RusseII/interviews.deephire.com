@@ -1,4 +1,4 @@
-/* global mixpanel FS $crisp*/
+/* global mixpanel FS */
 import SignIn from '@/components/SignIn';
 import { Col, Row, Divider } from 'antd';
 import React, { useEffect, useContext } from 'react';
@@ -56,8 +56,6 @@ const identify = (email, fullName, id) => {
     displayName: fullName,
     email,
   });
-  $crisp.push(['set', 'user:email', email]);
-  $crisp.push(['set', 'user:nickname', [fullName]]);
 };
 
 const Index = ({ location }) => {
